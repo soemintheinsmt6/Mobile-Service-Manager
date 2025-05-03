@@ -28,5 +28,23 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+    <string>This app needs access to store and retrieve database files.</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>This app needs access to the downloads folder for database operations.</string>
+    <key>NSDesktopFolderUsageDescription</key>
+    <string>This app needs access to the desktop folder for database operations.</string>
+    <key>NSApplicationSupportFolderUsageDescription</key>
+    <string>This app needs access to the application support folder for database operations.</string>
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+    <key>com.apple.security.files.user-selected.read-only</key>
+    <true/>
+    <key>com.apple.security.network.client</key>
+    <true/>
 </dict>
 </plist>
