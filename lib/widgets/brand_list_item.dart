@@ -8,11 +8,15 @@ import '../models/brand.dart';
 class BrandListItem extends StatelessWidget {
   final Brand brand;
   final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   const BrandListItem({
     super.key,
     required this.brand,
     required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   @override
@@ -20,7 +24,7 @@ class BrandListItem extends StatelessWidget {
     return Card(
       color: AppColors.listItemBackground,
       margin: const EdgeInsets.only(bottom: 8.0),
-      elevation: 1,
+      elevation: 1.5,
       child: GestureDetector(
         onTap: onTap,
         child: Padding(
@@ -28,7 +32,7 @@ class BrandListItem extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Text(brand.name, style: kDefaultFontStyle),
+                child: Text(brand.name, style: kDefaultTextStyle),
               ),
               // Action Buttons
               Row(
@@ -37,11 +41,11 @@ class BrandListItem extends StatelessWidget {
                       icon: CupertinoIcons.pen,
                       iconSize: 22,
                       color: AppColors.primaryButton,
-                      onPressed: () {}),
+                      onPressed: onEdit),
                   CustomIconButton(
                       icon: CupertinoIcons.delete_simple,
                       color: AppColors.dangerButton,
-                      onPressed: () {}),
+                      onPressed: onDelete),
                 ],
               ),
             ],

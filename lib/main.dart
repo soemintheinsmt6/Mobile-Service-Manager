@@ -36,9 +36,9 @@ class MyApp extends StatelessWidget {
       title: 'Mobile Service Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         useMaterial3: true,
+        colorSchemeSeed: Colors.white,
       ),
       home: const MainScreen(),
     );
@@ -55,11 +55,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _screens = [BrandListScreen(), Scaffold()];
-
-  static const List<String> _titles = [
-    'Brand',
-    'Technician',
+  static const List<Widget> _screens = [
+    BrandListScreen(),
+    Scaffold(),
+    Scaffold()
   ];
 
   void _onItemTapped(int index) {
@@ -82,7 +81,7 @@ class _MainScreenState extends State<MainScreen> {
               labelType: NavigationRailLabelType.all,
               backgroundColor: AppColors.navigationBackground,
               selectedLabelTextStyle: GoogleFonts.montserrat(
-                color: AppColors.navigationSelectedText,
+                color: Colors.white,
                 fontWeight: FontWeight.w500,
               ),
               unselectedLabelTextStyle: GoogleFonts.montserrat(
@@ -103,6 +102,13 @@ class _MainScreenState extends State<MainScreen> {
                       color: AppColors.navigationSelectedIcon),
                   label: Text('Technician'),
                 ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.error_outline_rounded,
+                      color: AppColors.navigationUnselectedIcon),
+                  selectedIcon: Icon(Icons.error_outline_rounded,
+                      color: AppColors.navigationSelectedIcon),
+                  label: Text('Error'),
+                ),
               ],
             ),
           ),
@@ -110,29 +116,7 @@ class _MainScreenState extends State<MainScreen> {
           const VerticalDivider(thickness: 1, width: 1),
           // Main Content Area
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Page Title
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  color: AppColors.headerBackground,
-                  width: double.infinity,
-                  child: Text(
-                    _titles[_selectedIndex],
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.headerText,
-                    ),
-                  ),
-                ),
-                // Page Content
-                Expanded(
-                  child: _screens[_selectedIndex],
-                ),
-              ],
-            ),
+            child: _screens[_selectedIndex],
           ),
         ],
       ),

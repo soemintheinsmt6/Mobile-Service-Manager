@@ -47,19 +47,14 @@ dependencies:
   objectbox: ^4.0.1
   objectbox_flutter_libs: any
   flutter_riverpod: ^2.6.1
-  riverpod_annotation: ^2.3.3
-  freezed_annotation: ^2.4.1
-  json_annotation: ^4.8.1
   google_fonts: ^6.2.1
+  rflutter_alert: ^2.0.7
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.4.11
   objectbox_generator: any
-  riverpod_generator: ^2.3.9
-  freezed: ^2.4.6
-  json_serializable: ^6.7.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
