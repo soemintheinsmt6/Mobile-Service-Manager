@@ -1,10 +1,13 @@
+import 'package:mobile_service_manager/models/item.dart';
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
-class Brand {
+class Brand implements Item {
   @Id()
+  @override
   int id = 0; // ObjectBox will auto-increment this if it's 0
 
+  @override
   String name;
 
   Brand({

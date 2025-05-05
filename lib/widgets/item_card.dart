@@ -1,19 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
+import 'package:mobile_service_manager/models/item.dart';
 import 'package:mobile_service_manager/widgets/custom_icon_button.dart';
 import '../constants/app_colors.dart';
-import '../models/brand.dart';
 
-class BrandListItem extends StatelessWidget {
-  final Brand brand;
+class ItemCard extends StatelessWidget {
+  final Item item;
   final VoidCallback onTap;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const BrandListItem({
+  const ItemCard({
     super.key,
-    required this.brand,
+    required this.item,
     required this.onTap,
     required this.onEdit,
     required this.onDelete,
@@ -32,7 +32,7 @@ class BrandListItem extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Text(brand.name, style: kDefaultTextStyle),
+                child: Text(item.name, style: kDefaultTextStyle),
               ),
               // Action Buttons
               Row(
