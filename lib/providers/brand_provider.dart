@@ -1,3 +1,4 @@
+import 'package:mobile_service_manager/repositories/brand_repository.dart';
 import 'package:riverpod/riverpod.dart';
 import '../models/brand.dart';
 import 'repository_providers.dart';
@@ -11,7 +12,7 @@ final brandsProvider =
 
 // Notifier class to manage the brand list state
 class BrandsNotifier extends StateNotifier<List<Brand>> {
-  final repository;
+  final BrandRepository repository;
 
   BrandsNotifier(this.repository) : super([]) {
     // Load brands when initialized

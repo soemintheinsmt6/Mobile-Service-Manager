@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_service_manager/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/screens/brand_list_screen.dart';
+import 'package:mobile_service_manager/screens/fault_list_screen.dart';
 import 'package:mobile_service_manager/screens/technician_list_screen.dart';
 import 'package:window_size/window_size.dart';
 import 'constants/app_colors.dart';
@@ -59,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _screens = [
     BrandListScreen(),
     TechnicianListScreen(),
-    Scaffold()
+    FaultListScreen()
   ];
 
   void _onItemTapped(int index) {

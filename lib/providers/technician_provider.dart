@@ -1,3 +1,4 @@
+import 'package:mobile_service_manager/repositories/technician_repository.dart';
 import 'package:riverpod/riverpod.dart';
 
 import '../models/technician.dart';
@@ -12,7 +13,7 @@ final techniciansProvider =
 
 // Notifier class to manage the technician list state
 class TechniciansNotifier extends StateNotifier<List<Technician>> {
-  final repository;
+  final TechnicianRepository repository;
 
   TechniciansNotifier(this.repository) : super([]) {
     // Load technicians when initialized

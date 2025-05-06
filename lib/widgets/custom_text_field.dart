@@ -39,7 +39,7 @@ class CustomTextField extends StatelessWidget {
           TextField(
             keyboardType: textInputType,
             textInputAction: TextInputAction.next,
-            autofocus: false,
+            autofocus: true,
             style: kDefaultTextStyle,
             obscureText: obscureText,
             decoration: kTextFieldDecoration.copyWith(
