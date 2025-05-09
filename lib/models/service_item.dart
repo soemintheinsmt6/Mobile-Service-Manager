@@ -1,0 +1,50 @@
+import 'package:mobile_service_manager/models/brand.dart';
+import 'package:mobile_service_manager/models/fault.dart';
+import 'package:mobile_service_manager/models/technician.dart';
+import 'package:objectbox/objectbox.dart';
+
+@Entity()
+class ServiceItem {
+  @Id()
+  int id;
+
+  int invoiceId;
+  String customerName;
+  int phoneNumber;
+
+  final brand = ToOne<Brand>();
+  String model;
+  String imei;
+  String issueDate;
+
+  @Backlink()
+  final faults = ToMany<Fault>();
+
+  final technician = ToOne<Technician>();
+
+  int? expense;
+  int? servicePrice;
+  bool simIncluded;
+  bool sdIncluded;
+  String? remark;
+
+  String status;
+  String location;
+
+  ServiceItem({
+    this.id = 0,
+    required this.invoiceId,
+    required this.customerName,
+    required this.phoneNumber,
+    required this.model,
+    required this.imei,
+    required this.issueDate,
+    this.expense,
+    this.servicePrice,
+    this.simIncluded = false,
+    this.sdIncluded = false,
+    this.remark,
+    this.status = 'in_progress',
+    this.location = 'in_store',
+  });
+}

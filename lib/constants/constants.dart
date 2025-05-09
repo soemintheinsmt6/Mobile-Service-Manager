@@ -11,6 +11,11 @@ final kLargeBoldTextStyle = GoogleFonts.montserrat(
   fontWeight: FontWeight.bold,
 );
 
+final kTextFieldTextStyle = GoogleFonts.montserrat(
+  fontSize: 15,
+  fontWeight: FontWeight.w600,
+);
+
 final kHeaderTextStyle = GoogleFonts.montserrat(
   fontSize: 24,
   fontWeight: FontWeight.bold,

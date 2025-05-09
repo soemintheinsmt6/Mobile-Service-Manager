@@ -43,7 +43,7 @@
     },
     {
       "id": "4:2744046361083258745",
-      "lastPropertyId": "2:7680505461191604277",
+      "lastPropertyId": "3:6111243998934329244",
       "name": "Fault",
       "properties": [
         {
@@ -56,13 +56,116 @@
           "id": "2:7680505461191604277",
           "name": "name",
           "type": 9
+        },
+        {
+          "id": "3:6111243998934329244",
+          "name": "serviceItemId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:8701390231569931816",
+          "relationTarget": "ServiceItem"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:2741046769985185864",
+      "lastPropertyId": "16:1448402599571096960",
+      "name": "ServiceItem",
+      "properties": [
+        {
+          "id": "1:4262077426002939470",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2249680476553143644",
+          "name": "invoiceId",
+          "type": 6
+        },
+        {
+          "id": "3:2502521965018990081",
+          "name": "customerName",
+          "type": 9
+        },
+        {
+          "id": "4:7535339852029768487",
+          "name": "phoneNumber",
+          "type": 6
+        },
+        {
+          "id": "5:1875695528495847037",
+          "name": "brandId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "2:4221880691690939450",
+          "relationTarget": "Brand"
+        },
+        {
+          "id": "6:3722695806382409190",
+          "name": "model",
+          "type": 9
+        },
+        {
+          "id": "7:8136006091579036852",
+          "name": "imei",
+          "type": 9
+        },
+        {
+          "id": "8:7345205381407651702",
+          "name": "issueDate",
+          "type": 9
+        },
+        {
+          "id": "9:4084403865013740571",
+          "name": "technicianId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "3:7823934307923419775",
+          "relationTarget": "Technician"
+        },
+        {
+          "id": "10:5206207293693681233",
+          "name": "expense",
+          "type": 6
+        },
+        {
+          "id": "11:4542060225975295651",
+          "name": "servicePrice",
+          "type": 6
+        },
+        {
+          "id": "12:7614448204599981215",
+          "name": "simIncluded",
+          "type": 1
+        },
+        {
+          "id": "13:3066888949636024165",
+          "name": "sdIncluded",
+          "type": 1
+        },
+        {
+          "id": "14:4582928756822897928",
+          "name": "remark",
+          "type": 9
+        },
+        {
+          "id": "15:7303596316115434591",
+          "name": "status",
+          "type": 9
+        },
+        {
+          "id": "16:1448402599571096960",
+          "name": "location",
+          "type": 9
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "4:2744046361083258745",
-  "lastIndexId": "0:0",
+  "lastEntityId": "5:2741046769985185864",
+  "lastIndexId": "3:7823934307923419775",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,

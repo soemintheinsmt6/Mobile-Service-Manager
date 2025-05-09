@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_service_manager/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/screens/brand_list_screen.dart';
 import 'package:mobile_service_manager/screens/fault_list_screen.dart';
+import 'package:mobile_service_manager/screens/service_item_list_screen.dart';
 import 'package:mobile_service_manager/screens/technician_list_screen.dart';
 import 'package:window_size/window_size.dart';
 import 'constants/app_colors.dart';
@@ -58,6 +60,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _screens = [
+    ServiceItemListScreen(),
     BrandListScreen(),
     TechnicianListScreen(),
     FaultListScreen()
@@ -90,6 +93,13 @@ class _MainScreenState extends State<MainScreen> {
                 color: AppColors.navigationUnselectedText,
               ),
               destinations: const [
+                NavigationRailDestination(
+                  icon: Icon(CupertinoIcons.square_list,
+                      color: AppColors.navigationUnselectedIcon),
+                  selectedIcon: Icon(CupertinoIcons.square_list,
+                      color: AppColors.navigationSelectedIcon),
+                  label: Text('Service'),
+                ),
                 NavigationRailDestination(
                   icon: Icon(Icons.phone_android_rounded,
                       color: AppColors.navigationUnselectedIcon),

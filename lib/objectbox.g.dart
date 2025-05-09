@@ -16,6 +16,7 @@ import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
 import 'models/brand.dart';
 import 'models/fault.dart';
+import 'models/service_item.dart';
 import 'models/technician.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -62,7 +63,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(4, 2744046361083258745),
       name: 'Fault',
-      lastPropertyId: const obx_int.IdUid(2, 7680505461191604277),
+      lastPropertyId: const obx_int.IdUid(3, 6111243998934329244),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -74,10 +75,112 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(2, 7680505461191604277),
             name: 'name',
             type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 6111243998934329244),
+            name: 'serviceItemId',
+            type: 11,
+            flags: 520,
+            indexId: const obx_int.IdUid(1, 8701390231569931816),
+            relationTarget: 'ServiceItem')
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(5, 2741046769985185864),
+      name: 'ServiceItem',
+      lastPropertyId: const obx_int.IdUid(16, 1448402599571096960),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 4262077426002939470),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 2249680476553143644),
+            name: 'invoiceId',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 2502521965018990081),
+            name: 'customerName',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 7535339852029768487),
+            name: 'phoneNumber',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 1875695528495847037),
+            name: 'brandId',
+            type: 11,
+            flags: 520,
+            indexId: const obx_int.IdUid(2, 4221880691690939450),
+            relationTarget: 'Brand'),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 3722695806382409190),
+            name: 'model',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 8136006091579036852),
+            name: 'imei',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 7345205381407651702),
+            name: 'issueDate',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(9, 4084403865013740571),
+            name: 'technicianId',
+            type: 11,
+            flags: 520,
+            indexId: const obx_int.IdUid(3, 7823934307923419775),
+            relationTarget: 'Technician'),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(10, 5206207293693681233),
+            name: 'expense',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 4542060225975295651),
+            name: 'servicePrice',
+            type: 6,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(12, 7614448204599981215),
+            name: 'simIncluded',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(13, 3066888949636024165),
+            name: 'sdIncluded',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(14, 4582928756822897928),
+            name: 'remark',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(15, 7303596316115434591),
+            name: 'status',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(16, 1448402599571096960),
+            name: 'location',
+            type: 9,
             flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
-      backlinks: <obx_int.ModelBacklink>[])
+      backlinks: <obx_int.ModelBacklink>[
+        obx_int.ModelBacklink(name: 'faults', srcEntity: 'Fault', srcField: '')
+      ])
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -115,8 +218,8 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(4, 2744046361083258745),
-      lastIndexId: const obx_int.IdUid(0, 0),
+      lastEntityId: const obx_int.IdUid(5, 2741046769985185864),
+      lastIndexId: const obx_int.IdUid(3, 7823934307923419775),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [7379893704960386916],
@@ -184,7 +287,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         }),
     Fault: obx_int.EntityDefinition<Fault>(
         model: _entities[2],
-        toOneRelations: (Fault object) => [],
+        toOneRelations: (Fault object) => [object.serviceItem],
         toManyRelations: (Fault object) => {},
         getId: (Fault object) => object.id,
         setId: (Fault object, int id) {
@@ -192,9 +295,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (Fault object, fb.Builder fbb) {
           final nameOffset = fbb.writeString(object.name);
-          fbb.startTable(3);
+          fbb.startTable(4);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
+          fbb.addInt64(2, object.serviceItem.targetId);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -206,7 +310,111 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final nameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 6, '');
           final object = Fault(id: idParam, name: nameParam);
-
+          object.serviceItem.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
+          object.serviceItem.attach(store);
+          return object;
+        }),
+    ServiceItem: obx_int.EntityDefinition<ServiceItem>(
+        model: _entities[3],
+        toOneRelations: (ServiceItem object) =>
+            [object.brand, object.technician],
+        toManyRelations: (ServiceItem object) => {
+              obx_int.RelInfo<Fault>.toOneBacklink(
+                      3, object.id, (Fault srcObject) => srcObject.serviceItem):
+                  object.faults
+            },
+        getId: (ServiceItem object) => object.id,
+        setId: (ServiceItem object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ServiceItem object, fb.Builder fbb) {
+          final customerNameOffset = fbb.writeString(object.customerName);
+          final modelOffset = fbb.writeString(object.model);
+          final imeiOffset = fbb.writeString(object.imei);
+          final issueDateOffset = fbb.writeString(object.issueDate);
+          final remarkOffset =
+              object.remark == null ? null : fbb.writeString(object.remark!);
+          final statusOffset = fbb.writeString(object.status);
+          final locationOffset = fbb.writeString(object.location);
+          fbb.startTable(17);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(1, object.invoiceId);
+          fbb.addOffset(2, customerNameOffset);
+          fbb.addInt64(3, object.phoneNumber);
+          fbb.addInt64(4, object.brand.targetId);
+          fbb.addOffset(5, modelOffset);
+          fbb.addOffset(6, imeiOffset);
+          fbb.addOffset(7, issueDateOffset);
+          fbb.addInt64(8, object.technician.targetId);
+          fbb.addInt64(9, object.expense);
+          fbb.addInt64(10, object.servicePrice);
+          fbb.addBool(11, object.simIncluded);
+          fbb.addBool(12, object.sdIncluded);
+          fbb.addOffset(13, remarkOffset);
+          fbb.addOffset(14, statusOffset);
+          fbb.addOffset(15, locationOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final invoiceIdParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+          final customerNameParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 8, '');
+          final phoneNumberParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final modelParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 14, '');
+          final imeiParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 16, '');
+          final issueDateParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 18, '');
+          final expenseParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 22);
+          final servicePriceParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 24);
+          final simIncludedParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 26, false);
+          final sdIncludedParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 28, false);
+          final remarkParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 30);
+          final statusParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 32, '');
+          final locationParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 34, '');
+          final object = ServiceItem(
+              id: idParam,
+              invoiceId: invoiceIdParam,
+              customerName: customerNameParam,
+              phoneNumber: phoneNumberParam,
+              model: modelParam,
+              imei: imeiParam,
+              issueDate: issueDateParam,
+              expense: expenseParam,
+              servicePrice: servicePriceParam,
+              simIncluded: simIncludedParam,
+              sdIncluded: sdIncludedParam,
+              remark: remarkParam,
+              status: statusParam,
+              location: locationParam);
+          object.brand.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          object.brand.attach(store);
+          object.technician.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
+          object.technician.attach(store);
+          obx_int.InternalToManyAccess.setRelInfo<ServiceItem>(
+              object.faults,
+              store,
+              obx_int.RelInfo<Fault>.toOneBacklink(
+                  3, object.id, (Fault srcObject) => srcObject.serviceItem));
           return object;
         })
   };
@@ -243,4 +451,79 @@ class Fault_ {
   /// See [Fault.name].
   static final name =
       obx.QueryStringProperty<Fault>(_entities[2].properties[1]);
+
+  /// See [Fault.serviceItem].
+  static final serviceItem =
+      obx.QueryRelationToOne<Fault, ServiceItem>(_entities[2].properties[2]);
+}
+
+/// [ServiceItem] entity fields to define ObjectBox queries.
+class ServiceItem_ {
+  /// See [ServiceItem.id].
+  static final id =
+      obx.QueryIntegerProperty<ServiceItem>(_entities[3].properties[0]);
+
+  /// See [ServiceItem.invoiceId].
+  static final invoiceId =
+      obx.QueryIntegerProperty<ServiceItem>(_entities[3].properties[1]);
+
+  /// See [ServiceItem.customerName].
+  static final customerName =
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[2]);
+
+  /// See [ServiceItem.phoneNumber].
+  static final phoneNumber =
+      obx.QueryIntegerProperty<ServiceItem>(_entities[3].properties[3]);
+
+  /// See [ServiceItem.brand].
+  static final brand =
+      obx.QueryRelationToOne<ServiceItem, Brand>(_entities[3].properties[4]);
+
+  /// See [ServiceItem.model].
+  static final model =
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[5]);
+
+  /// See [ServiceItem.imei].
+  static final imei =
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[6]);
+
+  /// See [ServiceItem.issueDate].
+  static final issueDate =
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[7]);
+
+  /// See [ServiceItem.technician].
+  static final technician = obx.QueryRelationToOne<ServiceItem, Technician>(
+      _entities[3].properties[8]);
+
+  /// See [ServiceItem.expense].
+  static final expense =
+      obx.QueryIntegerProperty<ServiceItem>(_entities[3].properties[9]);
+
+  /// See [ServiceItem.servicePrice].
+  static final servicePrice =
+      obx.QueryIntegerProperty<ServiceItem>(_entities[3].properties[10]);
+
+  /// See [ServiceItem.simIncluded].
+  static final simIncluded =
+      obx.QueryBooleanProperty<ServiceItem>(_entities[3].properties[11]);
+
+  /// See [ServiceItem.sdIncluded].
+  static final sdIncluded =
+      obx.QueryBooleanProperty<ServiceItem>(_entities[3].properties[12]);
+
+  /// See [ServiceItem.remark].
+  static final remark =
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[13]);
+
+  /// See [ServiceItem.status].
+  static final status =
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[14]);
+
+  /// See [ServiceItem.location].
+  static final location =
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[15]);
+
+  /// see [ServiceItem.faults]
+  static final faults =
+      obx.QueryBacklinkToMany<Fault, ServiceItem>(Fault_.serviceItem);
 }

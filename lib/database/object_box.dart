@@ -3,6 +3,7 @@ import 'package:mobile_service_manager/models/fault.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import '../models/brand.dart';
+import '../models/service_item.dart';
 import '../models/technician.dart';
 import '../objectbox.g.dart';
 
@@ -11,6 +12,7 @@ class ObjectBox {
   late final Box<Brand> brandBox;
   late final Box<Technician> technicianBox;
   late final Box<Fault> faultBox;
+  late final Box<ServiceItem> serviceItemBox;
 
   String dbPath = '';
 
@@ -18,6 +20,7 @@ class ObjectBox {
     brandBox = Box<Brand>(_store);
     technicianBox = Box<Technician>(_store);
     faultBox = Box<Fault>(_store);
+    serviceItemBox = Box<ServiceItem>(_store);
   }
 
   static Future<ObjectBox> create() async {
@@ -49,6 +52,11 @@ class ObjectBox {
   Fault? getFault(int id) => faultBox.get(id);
   List<Fault> getAllFaults() => faultBox.getAll();
   bool deleteFault(int id) => faultBox.remove(id);
+
+  /// Service Item
+  int insertServiceItem(ServiceItem item) => serviceItemBox.put(item);
+  List<ServiceItem> getAllServiceItems() => serviceItemBox.getAll();
+  bool deleteServiceItem(int id) => serviceItemBox.remove(id);
 
   void closeStore() => _store.close();
 }
