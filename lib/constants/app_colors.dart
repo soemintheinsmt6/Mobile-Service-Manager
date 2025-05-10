@@ -21,4 +21,6 @@ class AppColors {
   static const Color primaryButton = Color(0xFF3498DB);
   static const Color secondaryButton = Color(0xFF95A5A6);
   static const Color dangerButton = Color(0xFFE74C3C);
+
+  static const Color hintColor = Color(0xFFD1D1D6);
 }

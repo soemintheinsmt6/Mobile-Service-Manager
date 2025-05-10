@@ -1,7 +1,6 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:multi_dropdown/models/value_item.dart';
 import '../constants/app_colors.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
@@ -42,7 +41,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
 
   Brand? selectedBrand;
   Technician? selectedTechnician;
-  final List<Fault> selectedFaults = [];
+  List<Fault> selectedFaults = [];
 
   @override
   void dispose() {
@@ -62,6 +61,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
     final faults = ref.watch(faultsProvider);
 
     return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
       child: Form(
         key: _formKey,
         child: Column(
@@ -107,6 +107,13 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               title: 'IMEI',
               onSaved: (v) => imei = v ?? '',
             ),
+            CustomMultiSelectDropDownTextField(
+              title: 'Error',
+              items: faults,
+              onChanged: (items) {
+                selectedFaults = items.map((e) => e.value as Fault).toList();
+              },
+            ),
             CustomTextFormField(
               title: 'Price',
               keyboardType: TextInputType.number,
@@ -114,6 +121,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
             ),
             CustomDropDownTextField(
               title: 'Technician',
+              clearOption: true,
               dropDownList: technicians.map((tech) {
                 return DropDownValueModel(value: tech, name: tech.name);
               }).toList(),
@@ -136,27 +144,19 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
                     });
                   },
                 ),
-                const SizedBox(width: 15),
-                CustomCheckBox(
-                  name: 'SD',
-                  value: sdIncluded,
-                  onChanged: (value) {
-                    setState(() {
-                      sdIncluded = value;
-                    });
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: CustomCheckBox(
+                    name: 'SD',
+                    value: sdIncluded,
+                    onChanged: (value) {
+                      setState(() {
+                        sdIncluded = value;
+                      });
+                    },
+                  ),
                 ),
               ],
-            ),
-            CustomMultiSelectDropDownTextField(
-              title: 'Error',
-              options: faults
-                  .map((fault) => ValueItem(label: fault.name, value: fault))
-                  .toList(),
-              onChanged: (values) {
-                print(
-                    'Selected items: ${values.map((e) => e.label).join(', ')}');
-              },
             ),
             const SizedBox(height: 16),
             Container(

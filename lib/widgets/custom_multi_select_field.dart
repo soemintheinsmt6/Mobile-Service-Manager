@@ -1,14 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_dropdown/multiselect_dropdown.dart';
+import 'package:mobile_service_manager/constants/app_colors.dart';
 import '../constants/constants.dart';
+import 'package:multi_dropdown/multi_dropdown.dart';
+import '../models/fault.dart';
 
 class CustomMultiSelectDropDownTextField extends StatelessWidget {
   const CustomMultiSelectDropDownTextField({
     super.key,
     required this.title,
     this.showTitle = true,
-    required this.options,
+    required this.items,
     this.initiallySelected = const [],
     this.onChanged,
     this.padding = const EdgeInsets.symmetric(vertical: 10),
@@ -16,13 +18,15 @@ class CustomMultiSelectDropDownTextField extends StatelessWidget {
 
   final String title;
   final bool showTitle;
-  final List<ValueItem> options;
-  final List<ValueItem> initiallySelected;
-  final Function(List<ValueItem>)? onChanged;
+  final List<Fault> items;
+  final List<DropdownItem> initiallySelected;
+  final Function(List<DropdownItem>)? onChanged;
   final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
+    final controller = MultiSelectController<Fault>();
+
     return Padding(
       padding: padding,
       child: Column(
@@ -31,43 +35,58 @@ class CustomMultiSelectDropDownTextField extends StatelessWidget {
           if (showTitle)
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 4),
-              child: Text(title,
-                  style:
-                      kDefaultTextStyle.copyWith(fontWeight: FontWeight.w600)),
+              child: Text(
+                title,
+                style: kDefaultTextStyle.copyWith(fontWeight: FontWeight.w600),
+              ),
             ),
-          MultiSelectDropDown(
-            onOptionSelected: (options) {
+          MultiDropdown(
+            controller: controller,
+            onSelectionChange: (selectedOptions) {
               if (onChanged != null) {
-                onChanged!(options);
+                final list = selectedOptions
+                    .map((fault) =>
+                        DropdownItem(label: fault.name, value: fault))
+                    .toList();
+                onChanged!(list);
+
+                controller.closeDropdown();
               }
             },
-            hint: title,
-            hintStyle: kDefaultTextStyle.copyWith(color: Colors.grey),
-            options: options,
-            selectedOptions: initiallySelected,
-            borderColor: Colors.grey,
-            focusedBorderColor: Colors.grey,
-            fieldBackgroundColor: Colors.transparent,
-            borderWidth: 1,
-            focusedBorderWidth: 2,
-            borderRadius: 8,
-            dropdownBorderRadius: 8,
-            padding: const EdgeInsets.all(8),
-            clearIcon: const Icon(Icons.clear, size: 16),
-            chipConfig: ChipConfig(
-                wrapType: WrapType.wrap,
-                spacing: 4,
-                runSpacing: 4,
-                deleteIcon: const Icon(CupertinoIcons.clear_circled,
-                    size: 16, color: Colors.black),
-                labelStyle: kDefaultTextStyle,
-                backgroundColor: Colors.white),
-            optionTextStyle: kDefaultTextStyle,
-            selectedOptionIcon:
-                const Icon(CupertinoIcons.checkmark_alt, size: 16),
-            selectedOptionTextColor: Colors.black,
+            items: items
+                .map((fault) => DropdownItem(label: fault.name, value: fault))
+                .toList(),
             searchEnabled: true,
-            suffixIcon: const Icon(Icons.arrow_drop_down, size: 20),
+            chipDecoration: ChipDecoration(
+              spacing: 4,
+              runSpacing: 4,
+              labelStyle: kDefaultTextStyle,
+              deleteIcon: const Icon(CupertinoIcons.clear_circled,
+                  size: 16, color: Colors.black),
+              backgroundColor: const Color(0xFFE0E0E0),
+            ),
+            fieldDecoration: FieldDecoration(
+              hintText: title,
+              hintStyle: kDefaultTextStyle.copyWith(color: AppColors.hintColor),
+              labelStyle: kDefaultTextStyle,
+              showClearIcon: false,
+              backgroundColor: Colors.transparent,
+              padding: const EdgeInsets.all(12),
+              suffixIcon: const Icon(Icons.arrow_drop_down, size: 20),
+              border: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey, width: 2.0),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+            ),
+            dropdownDecoration:
+                const DropdownDecoration(elevation: 2, marginTop: -4),
+            dropdownItemDecoration: const DropdownItemDecoration(
+              selectedIcon: Icon(CupertinoIcons.checkmark_alt, size: 16),
+            ),
           ),
         ],
       ),

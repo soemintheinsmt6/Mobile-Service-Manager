@@ -61,25 +61,28 @@ class BrandListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: brands.length,
-        itemBuilder: (context, index) {
-          final brand = brands[index];
-          return ItemCard(
-            item: brand,
-            onTap: () {},
-            onEdit: () {
-              _updateBrand(context, ref, brand);
-            },
-            onDelete: () async {
-              final result = await showDeleteAlert(context);
-              if (result == true) {
-                ref.read(brandsProvider.notifier).deleteBrand(brand.id);
-              }
-            },
-          );
-        },
+      body: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(overscroll: false),
+        child: ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: brands.length,
+          itemBuilder: (context, index) {
+            final brand = brands[index];
+            return ItemCard(
+              item: brand,
+              onTap: () {},
+              onEdit: () {
+                _updateBrand(context, ref, brand);
+              },
+              onDelete: () async {
+                final result = await showDeleteAlert(context);
+                if (result == true) {
+                  ref.read(brandsProvider.notifier).deleteBrand(brand.id);
+                }
+              },
+            );
+          },
+        ),
       ),
     );
   }

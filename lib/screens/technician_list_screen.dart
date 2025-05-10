@@ -64,27 +64,30 @@ class TechnicianListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: technicians.length,
-        itemBuilder: (context, index) {
-          final technician = technicians[index];
-          return ItemCard(
-            item: technician,
-            onTap: () {},
-            onEdit: () {
-              _updateTechnician(context, ref, technician);
-            },
-            onDelete: () async {
-              final result = await showDeleteAlert(context);
-              if (result == true) {
-                ref
-                    .read(techniciansProvider.notifier)
-                    .deleteTechnician(technician.id);
-              }
-            },
-          );
-        },
+      body: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(overscroll: false),
+        child: ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: technicians.length,
+          itemBuilder: (context, index) {
+            final technician = technicians[index];
+            return ItemCard(
+              item: technician,
+              onTap: () {},
+              onEdit: () {
+                _updateTechnician(context, ref, technician);
+              },
+              onDelete: () async {
+                final result = await showDeleteAlert(context);
+                if (result == true) {
+                  ref
+                      .read(techniciansProvider.notifier)
+                      .deleteTechnician(technician.id);
+                }
+              },
+            );
+          },
+        ),
       ),
     );
   }

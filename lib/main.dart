@@ -40,10 +40,15 @@ class MyApp extends StatelessWidget {
       title: 'Mobile Service Manager',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        useMaterial3: true,
-        colorSchemeSeed: Colors.white,
-      ),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          useMaterial3: true,
+          colorSchemeSeed: Colors.white,
+          textTheme:
+              GoogleFonts.montserratTextTheme(Theme.of(context).textTheme),
+          inputDecorationTheme: const InputDecorationTheme(
+            labelStyle: TextStyle(color: Colors.black),
+            hintStyle: TextStyle(color: AppColors.hintColor),
+          )),
       home: const MainScreen(),
     );
   }

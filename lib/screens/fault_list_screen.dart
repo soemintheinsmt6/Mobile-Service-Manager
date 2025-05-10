@@ -61,35 +61,38 @@ class FaultListScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: faults.length,
-        separatorBuilder: (context, index) => Divider(),
-        itemBuilder: (context, index) {
-          final fault = faults[index];
-          final name = '${index + 1}. ${fault.name}';
+      body: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(overscroll: false),
+        child: ListView.separated(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: faults.length,
+          separatorBuilder: (context, index) => Divider(),
+          itemBuilder: (context, index) {
+            final fault = faults[index];
+            final name = '${index + 1}. ${fault.name}';
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(name, style: kDefaultTextStyle),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _updateFault(context, ref, fault);
-                  },
-                  child: const Icon(
-                    CupertinoIcons.pen,
-                    color: Color(0xFF898989),
-                    size: 22,
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(name, style: kDefaultTextStyle),
                   ),
-                )
-              ],
-            ),
-          );
-        },
+                  GestureDetector(
+                    onTap: () {
+                      _updateFault(context, ref, fault);
+                    },
+                    child: const Icon(
+                      CupertinoIcons.pen,
+                      color: Color(0xFF898989),
+                      size: 22,
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
