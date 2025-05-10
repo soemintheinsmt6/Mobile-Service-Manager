@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-final kDefaultTextStyle = GoogleFonts.montserrat(fontSize: 13);
+final kDefaultTextStyle = GoogleFonts.montserrat(fontSize: 12);
 
-final kBodyTextStyle = GoogleFonts.montserrat(fontSize: 15);
+final kBodyTextStyle = GoogleFonts.montserrat(fontSize: 14);
 
 final kLargeBoldTextStyle = GoogleFonts.montserrat(
   fontSize: 18,
@@ -12,7 +12,7 @@ final kLargeBoldTextStyle = GoogleFonts.montserrat(
 );
 
 final kTextFieldTextStyle = GoogleFonts.montserrat(
-  fontSize: 15,
+  fontSize: 14,
   fontWeight: FontWeight.w600,
 );
 

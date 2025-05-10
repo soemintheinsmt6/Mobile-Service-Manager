@@ -268,7 +268,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               ],
             ),
             Container(
-              padding: const EdgeInsets.only(top: 20, bottom: 20.0),
+              padding: const EdgeInsets.only(top: 10, bottom: 20.0),
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _saveServiceItem,
