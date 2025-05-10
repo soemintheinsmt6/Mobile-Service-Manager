@@ -11,22 +11,20 @@ class CustomMultiSelectDropDownTextField extends StatelessWidget {
     required this.title,
     this.showTitle = true,
     required this.items,
-    this.initiallySelected = const [],
     this.onChanged,
+    this.controller,
     this.padding = const EdgeInsets.symmetric(vertical: 10),
   });
 
   final String title;
   final bool showTitle;
   final List<Fault> items;
-  final List<DropdownItem> initiallySelected;
+  final MultiSelectController<Fault>? controller;
   final Function(List<DropdownItem>)? onChanged;
   final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
-    final controller = MultiSelectController<Fault>();
-
     return Padding(
       padding: padding,
       child: Column(
@@ -50,7 +48,7 @@ class CustomMultiSelectDropDownTextField extends StatelessWidget {
                     .toList();
                 onChanged!(list);
 
-                controller.closeDropdown();
+                controller!.closeDropdown();
               }
             },
             items: items

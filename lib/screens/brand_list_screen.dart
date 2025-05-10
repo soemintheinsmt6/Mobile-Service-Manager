@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
-import 'package:mobile_service_manager/utils/utils.dart';
+import 'package:mobile_service_manager/utils/alert.dart';
 import 'package:mobile_service_manager/widgets/add_new_item.dart';
 import 'package:mobile_service_manager/widgets/update_item.dart';
 import '../constants/app_colors.dart';
 import '../models/brand.dart';
 import '../providers/brand_provider.dart';
+import '../utils/dialog.dart';
 import '../widgets/item_card.dart';
 
 class BrandListScreen extends ConsumerWidget {

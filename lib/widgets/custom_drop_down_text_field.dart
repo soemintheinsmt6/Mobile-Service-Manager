@@ -10,6 +10,7 @@ class CustomDropDownTextField extends StatelessWidget {
     this.showTitle = true,
     required this.dropDownList,
     this.clearOption = false,
+    this.textFieldFocusNode,
     this.initialValue,
     this.controller,
     this.onChanged,
@@ -21,6 +22,7 @@ class CustomDropDownTextField extends StatelessWidget {
   final bool showTitle;
   final List<DropDownValueModel> dropDownList;
   final bool clearOption;
+  final FocusNode? textFieldFocusNode;
   final dynamic initialValue;
   final dynamic controller;
   final Function(dynamic)? onChanged;
@@ -54,8 +56,10 @@ class CustomDropDownTextField extends StatelessWidget {
             clearIconProperty: IconProperty(icon: Icons.clear, size: 18),
             dropDownList: dropDownList,
             controller: controller,
+            textFieldFocusNode: textFieldFocusNode,
             onChanged: (item) => onChanged!(item),
             validator: validator,
+            listPadding: ListPadding(top: 10, bottom: 10),
           ),
         ],
       ),

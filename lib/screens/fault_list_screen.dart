@@ -5,7 +5,7 @@ import 'package:mobile_service_manager/providers/fault_provider.dart';
 import '../constants/app_colors.dart';
 import '../constants/constants.dart';
 import '../models/fault.dart';
-import '../utils/utils.dart';
+import '../utils/dialog.dart';
 import '../widgets/add_new_item.dart';
 import '../widgets/update_item.dart';
 
