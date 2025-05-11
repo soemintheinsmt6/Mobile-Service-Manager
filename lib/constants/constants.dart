@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-final kDefaultTextStyle = GoogleFonts.montserrat(fontSize: 12);
+const kNavigationBarWidth = 95.0;
 
+final kDefaultTextStyle = GoogleFonts.montserrat(fontSize: 12);
 final kBodyTextStyle = GoogleFonts.montserrat(fontSize: 14);
 
 final kLargeBoldTextStyle = GoogleFonts.montserrat(

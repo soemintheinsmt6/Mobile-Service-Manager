@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/screens/brand_list_screen.dart';
 import 'package:mobile_service_manager/screens/fault_list_screen.dart';
@@ -84,7 +85,7 @@ class _MainScreenState extends State<MainScreen> {
       body: Row(
         children: [
           SizedBox(
-            width: 95,
+            width: kNavigationBarWidth,
             child: NavigationRail(
               selectedIndex: _selectedIndex,
               onDestinationSelected: _onItemTapped,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/screens/service_item_form.dart';
 import 'package:mobile_service_manager/widgets/service_tile.dart';
 import '../providers/service_item_provider.dart';
@@ -41,7 +42,9 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const width = 1250.0;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final listWidth = (screenWidth - kNavigationBarWidth) * 4 / 5;
+    final width = listWidth > 1250.0 ? listWidth : 1250.0;
     final serviceItems = ref.watch(serviceItemsProvider);
 
     return Scaffold(
