@@ -191,7 +191,13 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               dropDownList: brands.map((brand) {
                 return DropDownValueModel(value: brand, name: brand.name);
               }).toList(),
-              onChanged: (item) => selectedBrand = item.value,
+              onChanged: (item) {
+                if (item is DropDownValueModel) {
+                  selectedBrand = item.value;
+                } else {
+                  selectedBrand = null;
+                }
+              },
             ),
             CustomTextFormField(
               title: 'Model',
@@ -233,7 +239,13 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               dropDownList: technicians.map((tech) {
                 return DropDownValueModel(value: tech, name: tech.name);
               }).toList(),
-              onChanged: (item) => selectedTechnician = item.value,
+              onChanged: (item) {
+                if (item is DropDownValueModel) {
+                  selectedTechnician = item.value;
+                } else {
+                  selectedTechnician = null;
+                }
+              },
             ),
             CustomTextFormField(
               title: 'Remark',

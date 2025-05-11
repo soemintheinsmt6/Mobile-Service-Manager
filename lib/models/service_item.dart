@@ -34,7 +34,7 @@ class ServiceItem {
   String get simAndSd {
     if (!simIncluded && !sdIncluded) {
       return 'nothing';
-    } else if (simIncluded && !sdIncluded) {
+    } else if (simIncluded && sdIncluded) {
       return 'SIM & SD';
     } else if (simIncluded) {
       return 'SIM';

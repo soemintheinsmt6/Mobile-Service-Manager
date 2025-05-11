@@ -13,18 +13,35 @@ class ServiceItemListScreen extends ConsumerStatefulWidget {
 }
 
 class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
-  final ScrollController _horizontalController = ScrollController();
+  final ScrollController _bodyHorizontalController = ScrollController();
+  final ScrollController _headerHorizontalController = ScrollController();
   final ScrollController _verticalController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+
+    // Synchronize header scroll with body scroll
+    _bodyHorizontalController.addListener(() {
+      if (_headerHorizontalController.hasClients &&
+          _headerHorizontalController.offset !=
+              _bodyHorizontalController.offset) {
+        _headerHorizontalController.jumpTo(_bodyHorizontalController.offset);
+      }
+    });
+  }
+
+  @override
   void dispose() {
-    _horizontalController.dispose();
+    _bodyHorizontalController.dispose();
+    _headerHorizontalController.dispose();
     _verticalController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    const width = 1250.0;
     final serviceItems = ref.watch(serviceItemsProvider);
 
     return Scaffold(
@@ -33,29 +50,52 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
           /// Left - List
           Expanded(
             flex: 4,
-            child: Scrollbar(
-              thumbVisibility: true,
-              controller: _horizontalController,
-              child: SingleChildScrollView(
-                controller: _horizontalController,
-                scrollDirection: Axis.horizontal,
-                physics: const ClampingScrollPhysics(),
-                child: SizedBox(
-                  width: 1200,
-                  child: ListView.builder(
-                    controller: _verticalController,
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    itemCount: serviceItems.length * 40,
-                    itemBuilder: (context, index) {
-                      final item = serviceItems[0];
-
-                      return ServiceTile(item: item, index: index);
-                    },
+            child: Column(
+              children: [
+                // Sticky header (scrolls horizontally only)
+                SingleChildScrollView(
+                  controller: _headerHorizontalController,
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: SizedBox(
+                    width: width,
+                    child: serviceHeader(),
                   ),
                 ),
-              ),
+
+                // Scrollable list (horizontal + vertical)
+                Expanded(
+                  child: Scrollbar(
+                    controller: _bodyHorizontalController,
+                    thumbVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _bodyHorizontalController,
+                      scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
+                      child: SizedBox(
+                        width: width,
+                        child: Scrollbar(
+                          controller: _verticalController,
+                          thumbVisibility: true,
+                          child: ListView.builder(
+                            controller: _verticalController,
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            itemCount: serviceItems.length,
+                            itemBuilder: (context, index) {
+                              final item = serviceItems[index];
+                              return ServiceTile(item: item, index: index);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+
+          /// Divider
           Container(width: 1, color: Colors.grey.shade300),
 
           /// Right - Form

@@ -129,8 +129,7 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-          // Vertical Divider
-          const VerticalDivider(thickness: 1, width: 1),
+
           // Main Content Area
           Expanded(
             child: _screens[_selectedIndex],

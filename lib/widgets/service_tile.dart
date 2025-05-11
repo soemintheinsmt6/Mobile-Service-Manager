@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/models/service_item.dart';
+import 'package:mobile_service_manager/utils/utils.dart';
 import 'package:separated_row/separated_row.dart';
 
 const _rowHeight = 35.0;
@@ -19,7 +20,7 @@ class ServiceTile extends StatelessWidget {
     final error = item.faults.map((e) => e.name).join(', ');
     final date =
         DateFormat('dd MMM yyyy').format(DateTime.parse(item.issueDate));
-    final color = index % 2 == 0 ? Colors.grey.shade200 : Colors.white;
+    final color = index % 2 == 0 ? Colors.white : Colors.grey.shade200;
 
     return Container(
       height: _rowHeight,
@@ -30,10 +31,10 @@ class ServiceTile extends StatelessWidget {
       child: SeparatedRow(
           separatorBuilder: (BuildContext context, int index) => _vDivider(),
           children: [
-            _Box(text: index.toString(), width: 50),
+            _Box(text: (index + 1).toString(), width: 40),
             _Box(
                 text: item.invoiceId.toString(),
-                width: 60,
+                width: 88,
                 alignment: Alignment.centerLeft),
             _Cell(text: item.customerName, flex: 2),
             _Cell(text: item.phoneNumber.toString()),
@@ -43,8 +44,9 @@ class ServiceTile extends StatelessWidget {
             _Cell(text: error, flex: 2),
             _Cell(text: item.simAndSd),
             _Cell(text: date),
-            _Box(text: item.status, color: Colors.greenAccent),
-            _Box(text: item.location, color: Colors.yellowAccent),
+            _Box(text: translate(item.status), color: setColor(item.status)),
+            _Box(
+                text: translate(item.location), color: setColor(item.location)),
           ]),
     );
   }
@@ -54,20 +56,20 @@ Widget serviceHeader() {
   return Container(
     height: _rowHeight,
     decoration: BoxDecoration(
-      color: Colors.lightBlue.shade300,
+      color: const Color(0xFF4372C4),
       border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
     ),
     child: SeparatedRow(
         separatorBuilder: (BuildContext context, int index) => _vDivider(),
         children: const [
-          _Box(text: 'No.', width: 50, isHeader: true),
+          _Box(text: 'No.', width: 40, isHeader: true),
           _Box(
               text: 'Invoice ID',
-              width: 60,
+              width: 88,
               alignment: Alignment.centerLeft,
               isHeader: true),
-          _Cell(text: 'Customer Name', flex: 2, isHeader: true),
-          _Cell(text: 'Phone Number', isHeader: true),
+          _Cell(text: 'Name', flex: 2, isHeader: true),
+          _Cell(text: 'Phone No.', isHeader: true),
           _Cell(text: 'Model', flex: 2, isHeader: true),
           _Cell(text: 'Error', flex: 2, isHeader: true),
           _Cell(text: 'SIM & SD', isHeader: true),
@@ -91,7 +93,10 @@ class _Cell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = isHeader ? kTextFieldTextStyle : kDefaultTextStyle;
+    final textStyle = isHeader
+        ? kBodyTextStyle.copyWith(
+            color: Colors.white, fontWeight: FontWeight.w600)
+        : kDefaultTextStyle;
 
     return Expanded(
       flex: flex,
@@ -121,7 +126,10 @@ class _Box extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = isHeader ? kTextFieldTextStyle : kDefaultTextStyle;
+    final textStyle = isHeader
+        ? kBodyTextStyle.copyWith(
+            color: Colors.white, fontWeight: FontWeight.w600)
+        : kDefaultTextStyle;
     final padding = alignment == Alignment.center ? 0.0 : _leftPadding;
 
     return Container(
