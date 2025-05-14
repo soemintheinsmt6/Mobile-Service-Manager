@@ -13,21 +13,29 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
   final ServiceItemRepository repository;
 
   ServiceItemsNotifier(this.repository) : super([]) {
-    loadItems();
+    loadServiceItems();
   }
 
-  void loadItems() {
-    state = repository.getAllItems();
+  void loadServiceItems() {
+    state = repository.getAllServiceItems();
   }
 
-  Future<void> addItem(ServiceItem item) async {
-    final id = repository.addItem(item);
+  Future<void> addServiceItem(ServiceItem item) async {
+    final id = repository.addServiceItem(item);
     item.id = id;
     state = [...state, item];
   }
 
-  Future<void> deleteItem(int id) async {
-    if (repository.deleteItem(id)) {
+  Future<void> updateServiceItem(ServiceItem item) async {
+    repository.updateServiceItem(item);
+    state = [
+      for (final s in state)
+        if (s.id == item.id) item else s
+    ];
+  }
+
+  Future<void> deleteServiceItem(int id) async {
+    if (repository.deleteServiceItem(id)) {
       state = state.where((item) => item.id != id).toList();
     }
   }

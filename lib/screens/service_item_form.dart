@@ -135,7 +135,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
     newItem.technician.target = selectedTechnician;
     newItem.faults.addAll(selectedFaults);
 
-    ref.read(serviceItemsProvider.notifier).addItem(newItem);
+    ref.read(serviceItemsProvider.notifier).addServiceItem(newItem);
 
     // Reset form
     _formKey.currentState?.reset();
