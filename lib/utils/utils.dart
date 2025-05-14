@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+class AlwaysDisabledFocusNode extends FocusNode {
+  @override
+  bool get hasFocus => false;
+}
+
 Color setColor(String status) {
   switch (status) {
     case 'in_progress':

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/models/service_item.dart';
+import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:mobile_service_manager/utils/utils.dart';
 import 'package:separated_row/separated_row.dart';
 
@@ -18,8 +18,7 @@ class ServiceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final error = item.faults.map((e) => e.name).join(', ');
-    final date =
-        DateFormat('dd MMM yyyy').format(DateTime.parse(item.issueDate));
+    final date = item.issueDate.formattedDate;
     final color = index % 2 == 0 ? Colors.white : Colors.grey.shade200;
 
     return Container(

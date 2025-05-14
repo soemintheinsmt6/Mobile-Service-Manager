@@ -75,7 +75,7 @@ class _SlideInMessageState extends State<_SlideInMessage>
         elevation: 5,
         color: Colors.red.shade400,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
           child: Row(
             children: [
               const Icon(
