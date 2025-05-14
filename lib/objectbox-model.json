@@ -56,21 +56,13 @@
           "id": "2:7680505461191604277",
           "name": "name",
           "type": 9
-        },
-        {
-          "id": "3:6111243998934329244",
-          "name": "serviceItemId",
-          "type": 11,
-          "flags": 520,
-          "indexId": "1:8701390231569931816",
-          "relationTarget": "ServiceItem"
         }
       ],
       "relations": []
     },
     {
       "id": "5:2741046769985185864",
-      "lastPropertyId": "16:1448402599571096960",
+      "lastPropertyId": "17:3307281162366130143",
       "name": "ServiceItem",
       "properties": [
         {
@@ -159,24 +151,38 @@
           "id": "16:1448402599571096960",
           "name": "location",
           "type": 9
+        },
+        {
+          "id": "17:3307281162366130143",
+          "name": "deliveryDate",
+          "type": 9
         }
       ],
-      "relations": []
+      "relations": [
+        {
+          "id": "1:1616147930685325004",
+          "name": "faults",
+          "targetId": "4:2744046361083258745"
+        }
+      ]
     }
   ],
   "lastEntityId": "5:2741046769985185864",
   "lastIndexId": "3:7823934307923419775",
-  "lastRelationId": "0:0",
+  "lastRelationId": "1:1616147930685325004",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [
     7379893704960386916
   ],
-  "retiredIndexUids": [],
+  "retiredIndexUids": [
+    8701390231569931816
+  ],
   "retiredPropertyUids": [
     500841533034733396,
-    2519385740775266796
+    2519385740775266796,
+    6111243998934329244
   ],
   "retiredRelationUids": [],
   "version": 1

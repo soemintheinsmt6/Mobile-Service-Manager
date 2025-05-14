@@ -17,9 +17,13 @@ class ServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final error = item.faults.map((e) => e.name).join(', ');
-    final date = item.issueDate.formattedDate;
     final color = index % 2 == 0 ? Colors.white : Colors.grey.shade200;
+    final phoneNumber =
+        item.phoneNumber == 0 ? '' : item.phoneNumber.toString();
+    final error = item.faults.map((e) => e.name).join(', ');
+    final issueDate = item.issueDate.formattedDate;
+    final deliveryDate =
+        item.deliveryDate == null ? '' : item.deliveryDate!.formattedDate;
 
     return Container(
       height: _rowHeight,
@@ -36,16 +40,17 @@ class ServiceTile extends StatelessWidget {
                 width: 88,
                 alignment: Alignment.centerLeft),
             _Cell(text: item.customerName, flex: 2),
-            _Cell(text: item.phoneNumber.toString()),
+            _Cell(text: phoneNumber),
             _Cell(
                 text: '${item.brand.target?.name ?? ''} ${item.model}',
                 flex: 2),
             _Cell(text: error, flex: 2),
             _Cell(text: item.simAndSd),
-            _Cell(text: date),
+            _Cell(text: issueDate, isCenter: true),
             _Box(text: translate(item.status), color: setColor(item.status)),
             _Box(
                 text: translate(item.location), color: setColor(item.location)),
+            _Box(text: deliveryDate, color: Colors.grey.shade200),
           ]),
     );
   }
@@ -72,9 +77,10 @@ Widget serviceHeader() {
           _Cell(text: 'Model', flex: 2, isHeader: true),
           _Cell(text: 'Error', flex: 2, isHeader: true),
           _Cell(text: 'SIM & SD', isHeader: true),
-          _Cell(text: 'Date', isHeader: true),
-          _Box(text: 'Status', color: Colors.transparent, isHeader: true),
-          _Box(text: 'Delivery', color: Colors.transparent, isHeader: true),
+          _Cell(text: 'Date', isCenter: true, isHeader: true),
+          _Box(text: 'Status', isHeader: true),
+          _Box(text: 'Delivery', isHeader: true),
+          _Box(text: 'Delivery Date', isHeader: true),
         ]),
   );
 }
@@ -82,11 +88,13 @@ Widget serviceHeader() {
 class _Cell extends StatelessWidget {
   final String text;
   final int flex;
+  final bool isCenter;
   final bool isHeader;
 
   const _Cell({
     required this.text,
     this.flex = 1,
+    this.isCenter = false,
     this.isHeader = false,
   });
 
@@ -100,9 +108,12 @@ class _Cell extends StatelessWidget {
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: const EdgeInsets.only(left: _leftPadding),
+        padding: EdgeInsets.only(left: isCenter ? 0.0 : _leftPadding),
         child: Text(text,
-            style: textStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
+            style: textStyle,
+            textAlign: isCenter ? TextAlign.center : TextAlign.left,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis),
       ),
     );
   }

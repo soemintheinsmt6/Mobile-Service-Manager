@@ -16,8 +16,8 @@ class ServiceItem {
   String model;
   String imei;
   String issueDate;
+  String? deliveryDate;
 
-  @Backlink()
   final faults = ToMany<Fault>();
 
   final technician = ToOne<Technician>();
@@ -51,6 +51,7 @@ class ServiceItem {
     required this.model,
     required this.imei,
     required this.issueDate,
+    this.deliveryDate,
     this.expense,
     this.servicePrice,
     this.simIncluded = false,

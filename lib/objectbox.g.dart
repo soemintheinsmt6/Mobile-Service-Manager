@@ -75,21 +75,14 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(2, 7680505461191604277),
             name: 'name',
             type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 6111243998934329244),
-            name: 'serviceItemId',
-            type: 11,
-            flags: 520,
-            indexId: const obx_int.IdUid(1, 8701390231569931816),
-            relationTarget: 'ServiceItem')
+            flags: 0)
       ],
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[]),
   obx_int.ModelEntity(
       id: const obx_int.IdUid(5, 2741046769985185864),
       name: 'ServiceItem',
-      lastPropertyId: const obx_int.IdUid(16, 1448402599571096960),
+      lastPropertyId: const obx_int.IdUid(17, 3307281162366130143),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -175,12 +168,20 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(16, 1448402599571096960),
             name: 'location',
             type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(17, 3307281162366130143),
+            name: 'deliveryDate',
+            type: 9,
             flags: 0)
       ],
-      relations: <obx_int.ModelRelation>[],
-      backlinks: <obx_int.ModelBacklink>[
-        obx_int.ModelBacklink(name: 'faults', srcEntity: 'Fault', srcField: '')
-      ])
+      relations: <obx_int.ModelRelation>[
+        obx_int.ModelRelation(
+            id: const obx_int.IdUid(1, 1616147930685325004),
+            name: 'faults',
+            targetId: const obx_int.IdUid(4, 2744046361083258745))
+      ],
+      backlinks: <obx_int.ModelBacklink>[])
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -220,11 +221,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
       entities: _entities,
       lastEntityId: const obx_int.IdUid(5, 2741046769985185864),
       lastIndexId: const obx_int.IdUid(3, 7823934307923419775),
-      lastRelationId: const obx_int.IdUid(0, 0),
+      lastRelationId: const obx_int.IdUid(1, 1616147930685325004),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [7379893704960386916],
-      retiredIndexUids: const [],
-      retiredPropertyUids: const [500841533034733396, 2519385740775266796],
+      retiredIndexUids: const [8701390231569931816],
+      retiredPropertyUids: const [
+        500841533034733396,
+        2519385740775266796,
+        6111243998934329244
+      ],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
@@ -287,7 +292,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         }),
     Fault: obx_int.EntityDefinition<Fault>(
         model: _entities[2],
-        toOneRelations: (Fault object) => [object.serviceItem],
+        toOneRelations: (Fault object) => [],
         toManyRelations: (Fault object) => {},
         getId: (Fault object) => object.id,
         setId: (Fault object, int id) {
@@ -298,7 +303,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.startTable(4);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, nameOffset);
-          fbb.addInt64(2, object.serviceItem.targetId);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -310,20 +314,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final nameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 6, '');
           final object = Fault(id: idParam, name: nameParam);
-          object.serviceItem.targetId =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0);
-          object.serviceItem.attach(store);
+
           return object;
         }),
     ServiceItem: obx_int.EntityDefinition<ServiceItem>(
         model: _entities[3],
         toOneRelations: (ServiceItem object) =>
             [object.brand, object.technician],
-        toManyRelations: (ServiceItem object) => {
-              obx_int.RelInfo<Fault>.toOneBacklink(
-                      3, object.id, (Fault srcObject) => srcObject.serviceItem):
-                  object.faults
-            },
+        toManyRelations: (ServiceItem object) =>
+            {obx_int.RelInfo<ServiceItem>.toMany(1, object.id): object.faults},
         getId: (ServiceItem object) => object.id,
         setId: (ServiceItem object, int id) {
           object.id = id;
@@ -337,7 +336,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
               object.remark == null ? null : fbb.writeString(object.remark!);
           final statusOffset = fbb.writeString(object.status);
           final locationOffset = fbb.writeString(object.location);
-          fbb.startTable(17);
+          final deliveryDateOffset = object.deliveryDate == null
+              ? null
+              : fbb.writeString(object.deliveryDate!);
+          fbb.startTable(18);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.invoiceId);
           fbb.addOffset(2, customerNameOffset);
@@ -354,6 +356,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(13, remarkOffset);
           fbb.addOffset(14, statusOffset);
           fbb.addOffset(15, locationOffset);
+          fbb.addOffset(16, deliveryDateOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -375,6 +378,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGet(buffer, rootOffset, 16, '');
           final issueDateParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 18, '');
+          final deliveryDateParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 36);
           final expenseParam =
               const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 22);
           final servicePriceParam =
@@ -397,6 +403,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
               model: modelParam,
               imei: imeiParam,
               issueDate: issueDateParam,
+              deliveryDate: deliveryDateParam,
               expense: expenseParam,
               servicePrice: servicePriceParam,
               simIncluded: simIncludedParam,
@@ -410,11 +417,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
           object.technician.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 20, 0);
           object.technician.attach(store);
-          obx_int.InternalToManyAccess.setRelInfo<ServiceItem>(
-              object.faults,
-              store,
-              obx_int.RelInfo<Fault>.toOneBacklink(
-                  3, object.id, (Fault srcObject) => srcObject.serviceItem));
+          obx_int.InternalToManyAccess.setRelInfo<ServiceItem>(object.faults,
+              store, obx_int.RelInfo<ServiceItem>.toMany(1, object.id));
           return object;
         })
   };
@@ -451,10 +455,6 @@ class Fault_ {
   /// See [Fault.name].
   static final name =
       obx.QueryStringProperty<Fault>(_entities[2].properties[1]);
-
-  /// See [Fault.serviceItem].
-  static final serviceItem =
-      obx.QueryRelationToOne<Fault, ServiceItem>(_entities[2].properties[2]);
 }
 
 /// [ServiceItem] entity fields to define ObjectBox queries.
@@ -523,7 +523,11 @@ class ServiceItem_ {
   static final location =
       obx.QueryStringProperty<ServiceItem>(_entities[3].properties[15]);
 
+  /// See [ServiceItem.deliveryDate].
+  static final deliveryDate =
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[16]);
+
   /// see [ServiceItem.faults]
   static final faults =
-      obx.QueryBacklinkToMany<Fault, ServiceItem>(Fault_.serviceItem);
+      obx.QueryRelationToMany<ServiceItem, Fault>(_entities[3].relations[0]);
 }

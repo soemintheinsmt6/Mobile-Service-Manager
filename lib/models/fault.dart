@@ -11,8 +11,6 @@ class Fault implements Item {
   @override
   String name;
 
-  final serviceItem = ToOne<ServiceItem>();
-
   Fault({
     this.id = 0,
     required this.name,

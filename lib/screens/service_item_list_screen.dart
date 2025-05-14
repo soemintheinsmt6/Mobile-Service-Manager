@@ -44,7 +44,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final listWidth = (screenWidth - kNavigationBarWidth) * 4 / 5;
-    final width = listWidth > 1250.0 ? listWidth : 1250.0;
+    final width = listWidth > 1220.0 ? listWidth : 1220.0;
     final serviceItems = ref.watch(serviceItemsProvider);
 
     return Scaffold(
