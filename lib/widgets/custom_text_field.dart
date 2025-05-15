@@ -34,7 +34,7 @@ class CustomTextField extends StatelessWidget {
           if (showTitle)
             Padding(
               padding: const EdgeInsets.only(left: 4.0, bottom: 8),
-              child: Text(title, style: kDefaultTextStyle),
+              child: Text(title, style: titleTextStyle),
             ),
           TextField(
             keyboardType: textInputType,

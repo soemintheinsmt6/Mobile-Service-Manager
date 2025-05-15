@@ -79,8 +79,10 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
     _imeiFocus.dispose();
     _priceFocus.dispose();
     _remarkFocus.dispose();
+
     _brandController.dispose();
     _technicianController.dispose();
+    _faultsController.dispose();
     _dateController.dispose();
     super.dispose();
   }

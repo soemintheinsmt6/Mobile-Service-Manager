@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/screens/service_item_form.dart';
+import 'package:mobile_service_manager/utils/dialog.dart';
+import 'package:mobile_service_manager/widgets/edit_service_item.dart';
 import 'package:mobile_service_manager/widgets/service_tile.dart';
 import '../providers/service_item_provider.dart';
 
@@ -86,7 +88,21 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                             itemCount: serviceItems.length,
                             itemBuilder: (context, index) {
                               final item = serviceItems[index];
-                              return ServiceTile(item: item, index: index);
+                              return ServiceTile(
+                                item: item,
+                                index: index,
+                                onTap: () async {
+                                  final updatedItem =
+                                      await showCustomDialog(context,
+                                          width: 410,
+                                          height: 600,
+                                          child: EditServiceItem(
+                                            serviceItem: item,
+                                          ));
+
+                                  if (updatedItem != null) {}
+                                },
+                              );
                             },
                           ),
                         ),

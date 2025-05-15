@@ -39,9 +39,7 @@ class CustomDropDownTextField extends StatelessWidget {
           if (showTitle)
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 4),
-              child: Text(title,
-                  style:
-                      kDefaultTextStyle.copyWith(fontWeight: FontWeight.w600)),
+              child: Text(title, style: titleTextStyle),
             ),
           DropDownTextField(
             initialValue: initialValue,

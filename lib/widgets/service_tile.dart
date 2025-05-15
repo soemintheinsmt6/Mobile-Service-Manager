@@ -10,10 +10,16 @@ final _dividerColor = Colors.grey.shade300;
 const _leftPadding = 8.0;
 
 class ServiceTile extends StatelessWidget {
-  const ServiceTile({super.key, required this.item, required this.index});
+  const ServiceTile({
+    super.key,
+    required this.item,
+    required this.index,
+    this.onTap,
+  });
 
   final ServiceItem item;
   final int index;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -25,33 +31,38 @@ class ServiceTile extends StatelessWidget {
     final deliveryDate =
         item.deliveryDate == null ? '' : item.deliveryDate!.formattedDate;
 
-    return Container(
-      height: _rowHeight,
-      decoration: BoxDecoration(
-        color: color,
-        border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+    return InkWell(
+      hoverColor: Colors.transparent,
+      onTap: onTap,
+      child: Container(
+        height: _rowHeight,
+        decoration: BoxDecoration(
+          color: color,
+          border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+        ),
+        child: SeparatedRow(
+            separatorBuilder: (BuildContext context, int index) => _vDivider(),
+            children: [
+              _Box(text: (index + 1).toString(), width: 40),
+              _Box(
+                  text: item.invoiceId.toString(),
+                  width: 88,
+                  alignment: Alignment.centerLeft),
+              _Cell(text: item.customerName, flex: 2),
+              _Cell(text: phoneNumber),
+              _Cell(
+                  text: '${item.brand.target?.name ?? ''} ${item.model}',
+                  flex: 2),
+              _Cell(text: error, flex: 2),
+              _Cell(text: item.simAndSd),
+              _Cell(text: issueDate, isCenter: true),
+              _Box(text: translate(item.status), color: setColor(item.status)),
+              _Box(
+                  text: translate(item.location),
+                  color: setColor(item.location)),
+              _Box(text: deliveryDate, color: Colors.grey.shade200),
+            ]),
       ),
-      child: SeparatedRow(
-          separatorBuilder: (BuildContext context, int index) => _vDivider(),
-          children: [
-            _Box(text: (index + 1).toString(), width: 40),
-            _Box(
-                text: item.invoiceId.toString(),
-                width: 88,
-                alignment: Alignment.centerLeft),
-            _Cell(text: item.customerName, flex: 2),
-            _Cell(text: phoneNumber),
-            _Cell(
-                text: '${item.brand.target?.name ?? ''} ${item.model}',
-                flex: 2),
-            _Cell(text: error, flex: 2),
-            _Cell(text: item.simAndSd),
-            _Cell(text: issueDate, isCenter: true),
-            _Box(text: translate(item.status), color: setColor(item.status)),
-            _Box(
-                text: translate(item.location), color: setColor(item.location)),
-            _Box(text: deliveryDate, color: Colors.grey.shade200),
-          ]),
     );
   }
 }

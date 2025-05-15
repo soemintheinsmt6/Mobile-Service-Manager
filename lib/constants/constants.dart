@@ -17,3 +17,5 @@ final kHeaderTextStyle = GoogleFonts.montserrat(
   fontWeight: FontWeight.bold,
   color: AppColors.headerText,
 );
+
+final titleTextStyle = kDefaultTextStyle.copyWith(fontWeight: FontWeight.w600);
