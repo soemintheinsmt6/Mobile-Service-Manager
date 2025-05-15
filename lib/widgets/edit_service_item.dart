@@ -1,24 +1,36 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
+import 'package:mobile_service_manager/models/technician.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
+import '../models/brand.dart';
 import '../models/fault.dart';
 import '../models/service_item.dart';
+import '../providers/brand_provider.dart';
+import '../providers/fault_provider.dart';
+import '../providers/service_item_provider.dart';
+import '../providers/technician_provider.dart';
+import '../utils/alert.dart';
 import '../utils/date_time_picker.dart';
+import 'custom_check_box.dart';
 import 'custom_date_picker_text_field.dart';
+import 'custom_drop_down_text_field.dart';
+import 'custom_multi_select_field.dart';
 import 'custom_text_form_field.dart';
 
-class EditServiceItem extends StatefulWidget {
+class EditServiceItem extends ConsumerStatefulWidget {
   final ServiceItem serviceItem;
 
   const EditServiceItem({super.key, required this.serviceItem});
 
   @override
-  State<EditServiceItem> createState() => _EditServiceItemState();
+  ConsumerState<EditServiceItem> createState() => _EditServiceItemState();
 }
 
-class _EditServiceItemState extends State<EditServiceItem> {
+class _EditServiceItemState extends ConsumerState<EditServiceItem> {
   final TextEditingController _invoiceController = TextEditingController();
   final TextEditingController _customerNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -30,7 +42,8 @@ class _EditServiceItemState extends State<EditServiceItem> {
 
   late SingleValueDropDownController _brandController;
   late SingleValueDropDownController _technicianController;
-  late MultiSelectController<Fault> _faultsController;
+  final MultiSelectController<Fault> _faultsController =
+      MultiSelectController();
   final TextEditingController _issueDateController = TextEditingController();
   final TextEditingController _deliveryDateController = TextEditingController();
 
@@ -43,16 +56,19 @@ class _EditServiceItemState extends State<EditServiceItem> {
   final _expenseFocus = FocusNode();
   final _remarkFocus = FocusNode();
 
+  Brand? _selectedBrand;
+  Technician? _selectedTechnician;
+  List<Fault> _selectedFaults = [];
+  List<int> _selectedFaultIds = [];
+
+  late bool _simIncluded;
+  late bool _sdIncluded;
   DateTime? _issuedDateTime;
   DateTime? _deliveryDateTime;
 
   @override
   void initState() {
     super.initState();
-
-    _brandController = SingleValueDropDownController();
-    _technicianController = SingleValueDropDownController();
-    _faultsController = MultiSelectController();
 
     final item = widget.serviceItem;
     _invoiceController.text = item.invoiceId.toString();
@@ -62,12 +78,31 @@ class _EditServiceItemState extends State<EditServiceItem> {
     _modelController.text = item.model;
     _imeiController.text = item.imei;
     _priceController.text = item.servicePrice?.toString() ?? '';
+    _expenseController.text = item.expense?.toString() ?? '';
     _remarkController.text = item.remark ?? '';
+    _simIncluded = item.simIncluded;
+    _sdIncluded = item.sdIncluded;
+
+    _selectedBrand = item.brand.target;
+    _brandController = SingleValueDropDownController(
+        data: DropDownValueModel(
+            name: _selectedBrand?.name ?? '', value: _selectedBrand));
+
+    _selectedTechnician = item.technician.target;
+    _technicianController = SingleValueDropDownController(
+        data: _selectedTechnician == null
+            ? null
+            : DropDownValueModel(
+                name: _selectedTechnician?.name ?? '',
+                value: _selectedTechnician));
+
+    _selectedFaults = item.faults;
+    _selectedFaultIds = _selectedFaults.map((e) => e.id).toList();
 
     _issuedDateTime = DateTime.parse(item.issueDate);
     _issueDateController.text = _issuedDateTime.toString().formattedDate;
     _deliveryDateTime =
-        item.deliveryDate == null ? null : DateTime.parse(item.issueDate);
+        item.deliveryDate == null ? null : DateTime.parse(item.deliveryDate!);
     _deliveryDateController.text = _deliveryDateTime == null
         ? ''
         : _deliveryDateTime.toString().formattedDate;
@@ -121,8 +156,68 @@ class _EditServiceItemState extends State<EditServiceItem> {
     }
   }
 
+  bool _validateInput() {
+    if (_invoiceController.text.isEmpty ||
+        int.tryParse(_invoiceController.text) == 0) {
+      showErrorMessage(context, 'Invoice ID is invalid');
+      return false;
+    }
+
+    if (_customerNameController.text.isEmpty) {
+      showErrorMessage(context, 'Customer Name is empty');
+      return false;
+    }
+
+    if (_selectedBrand == null) {
+      showErrorMessage(context, 'Brand is empty');
+      return false;
+    }
+
+    if (_modelController.text.isEmpty) {
+      showErrorMessage(context, 'Model is empty');
+      return false;
+    }
+
+    if (_selectedFaults.isEmpty) {
+      showErrorMessage(context, 'Error field is empty');
+      return false;
+    }
+
+    return true;
+  }
+
+  void _updateServiceItem() {
+    if (!_validateInput()) return;
+
+    final updated = widget.serviceItem;
+    updated.invoiceId = int.parse(_invoiceController.text);
+    updated.customerName = _customerNameController.text;
+    updated.phoneNumber = int.tryParse(_phoneNumberController.text) ?? 0;
+    updated.brand.target = _selectedBrand;
+    updated.model = _modelController.text;
+    updated.imei = _imeiController.text;
+    updated.faults.clear();
+    updated.faults.addAll(_selectedFaults);
+    updated.servicePrice = int.tryParse(_priceController.text);
+    updated.expense = int.tryParse(_expenseController.text);
+    updated.technician.target = _selectedTechnician;
+    updated.remark = _remarkController.text;
+    updated.issueDate = _issuedDateTime.toString();
+    updated.deliveryDate = _deliveryDateTime?.toString();
+    updated.simIncluded = _simIncluded;
+    updated.sdIncluded = _sdIncluded;
+
+    ref.read(serviceItemsProvider.notifier).updateServiceItem(updated);
+
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final brands = ref.watch(brandsProvider);
+    final technicians = ref.watch(techniciansProvider);
+    final faults = ref.watch(faultsProvider);
+
     const spacing = EdgeInsets.symmetric(vertical: 5);
 
     return Card(
@@ -130,6 +225,7 @@ class _EditServiceItemState extends State<EditServiceItem> {
         padding: const EdgeInsets.only(right: 30.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
               _title('Invoice ID'),
@@ -145,9 +241,9 @@ class _EditServiceItemState extends State<EditServiceItem> {
               ))
             ]),
             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              _title('Name'),
+              _title('Customer Name'),
               _fixedTile(CustomTextFormField(
-                title: 'Name',
+                title: 'Customer Name',
                 padding: spacing,
                 showTitle: false,
                 focusNode: _customerNameFocus,
@@ -158,15 +254,34 @@ class _EditServiceItemState extends State<EditServiceItem> {
               ))
             ]),
             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              _title('Phone No.'),
+              _title('Phone Number'),
               _fixedTile(CustomTextFormField(
-                title: 'Phone No.',
+                title: 'Phone Number',
                 padding: spacing,
                 showTitle: false,
                 focusNode: _phoneNumberFocus,
                 controller: _phoneNumberController,
                 onFieldSubmitted: (_) {
                   _changeFocus(_modelFocus);
+                },
+              ))
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              _title('Brand'),
+              _fixedTile(CustomDropDownTextField(
+                title: 'Brand',
+                padding: spacing,
+                showTitle: false,
+                controller: _brandController,
+                dropDownList: brands.map((brand) {
+                  return DropDownValueModel(value: brand, name: brand.name);
+                }).toList(),
+                onChanged: (item) {
+                  if (item is DropDownValueModel) {
+                    _selectedBrand = item.value;
+                  } else {
+                    _selectedBrand = null;
+                  }
                 },
               ))
             ]),
@@ -197,6 +312,24 @@ class _EditServiceItemState extends State<EditServiceItem> {
               ))
             ]),
             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              _title('Error'),
+              _fixedTile(CustomMultiSelectDropDownTextField(
+                title: 'Error',
+                padding: spacing,
+                showTitle: false,
+                items: faults
+                    .map((e) => DropdownItem(
+                        label: e.name,
+                        value: e,
+                        selected: _selectedFaultIds.contains(e.id)))
+                    .toList(),
+                controller: _faultsController,
+                onChanged: (items) {
+                  _selectedFaults = items.map((e) => e.value as Fault).toList();
+                },
+              ))
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
               _title('Price'),
               _fixedTile(CustomTextFormField(
                 title: 'Price',
@@ -223,6 +356,26 @@ class _EditServiceItemState extends State<EditServiceItem> {
               ))
             ]),
             Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              _title('Technician'),
+              _fixedTile(CustomDropDownTextField(
+                title: 'Technician',
+                padding: spacing,
+                showTitle: false,
+                controller: _technicianController,
+                dropDownList: technicians.map((technician) {
+                  return DropDownValueModel(
+                      value: technician, name: technician.name);
+                }).toList(),
+                onChanged: (item) {
+                  if (item is DropDownValueModel) {
+                    _selectedTechnician = item.value;
+                  } else {
+                    _selectedTechnician = null;
+                  }
+                },
+              ))
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
               _title('Remark'),
               _fixedTile(CustomTextFormField(
                 title: 'Remark',
@@ -238,6 +391,7 @@ class _EditServiceItemState extends State<EditServiceItem> {
               _title('Issue Date'),
               _fixedTile(CustomDatePickerTextField(
                 title: 'Issue Date',
+                padding: spacing,
                 showTitle: false,
                 controller: _issueDateController,
                 onTap: () async {
@@ -249,6 +403,7 @@ class _EditServiceItemState extends State<EditServiceItem> {
               _title('Delivery Date'),
               _fixedTile(CustomDatePickerTextField(
                 title: 'Delivery Date',
+                padding: spacing,
                 showTitle: false,
                 controller: _deliveryDateController,
                 onTap: () async {
@@ -256,7 +411,7 @@ class _EditServiceItemState extends State<EditServiceItem> {
                 },
               ))
             ]),
-            const SizedBox(height: 16),
+            _accessory(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -266,22 +421,7 @@ class _EditServiceItemState extends State<EditServiceItem> {
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () {
-                    final updated = widget.serviceItem;
-                    updated.invoiceId = int.parse(_invoiceController.text);
-                    updated.customerName = _customerNameController.text;
-                    updated.phoneNumber =
-                        int.tryParse(_phoneNumberController.text) ?? 0;
-                    updated.model = _modelController.text;
-                    updated.imei = _imeiController.text;
-                    updated.servicePrice = int.tryParse(_priceController.text);
-                    updated.expense = int.tryParse(_expenseController.text);
-                    updated.remark = _remarkController.text;
-                    updated.issueDate = _issueDateController.text;
-                    updated.deliveryDate = _deliveryDateController.text;
-
-                    Navigator.pop(context, updated);
-                  },
+                  onPressed: _updateServiceItem,
                   child: const Text("Save"),
                 ),
               ],
@@ -290,6 +430,46 @@ class _EditServiceItemState extends State<EditServiceItem> {
         ),
       ),
     );
+  }
+
+  Widget _accessory() {
+    return _fixedTile(Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            CustomCheckBox(
+              name: 'SIM',
+              value: _simIncluded,
+              onChanged: (value) {
+                setState(() {
+                  _simIncluded = value;
+                });
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: CustomCheckBox(
+                name: 'SD',
+                value: _sdIncluded,
+                onChanged: (value) {
+                  setState(() {
+                    _sdIncluded = value;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+        GestureDetector(
+            onTap: () {},
+            child: Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: Icon(CupertinoIcons.trash,
+                  size: 20, color: Colors.grey.shade600),
+            ))
+      ],
+    ));
   }
 
   Widget _title(String text) {

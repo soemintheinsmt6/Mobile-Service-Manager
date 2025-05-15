@@ -66,7 +66,7 @@ class FaultListScreen extends ConsumerWidget {
         child: ListView.separated(
           padding: const EdgeInsets.all(16.0),
           itemCount: faults.length,
-          separatorBuilder: (context, index) => Divider(),
+          separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {
             final fault = faults[index];
             final name = '${index + 1}. ${fault.name}';

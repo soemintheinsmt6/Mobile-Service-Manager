@@ -238,7 +238,9 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
             ),
             CustomMultiSelectDropDownTextField(
               title: 'Error',
-              items: faults,
+              items: faults
+                  .map((e) => DropdownItem(label: e.name, value: e))
+                  .toList(),
               controller: _faultsController,
               onChanged: (items) {
                 selectedFaults = items.map((e) => e.value as Fault).toList();
@@ -276,7 +278,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               onSaved: (v) => _remark = v,
             ),
             CustomDatePickerTextField(
-              title: 'Date',
+              title: 'Issue Date',
               controller: _dateController,
               onTap: () async {
                 await _createDateTimePicker();

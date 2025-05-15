@@ -88,19 +88,16 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                             itemCount: serviceItems.length,
                             itemBuilder: (context, index) {
                               final item = serviceItems[index];
+
                               return ServiceTile(
                                 item: item,
                                 index: index,
-                                onTap: () async {
-                                  final updatedItem =
-                                      await showCustomDialog(context,
-                                          width: 410,
-                                          height: 600,
-                                          child: EditServiceItem(
-                                            serviceItem: item,
-                                          ));
-
-                                  if (updatedItem != null) {}
+                                onTap: () {
+                                  showCustomDialog(context,
+                                      width: 430,
+                                      height: 800,
+                                      child:
+                                          EditServiceItem(serviceItem: item));
                                 },
                               );
                             },

@@ -18,7 +18,7 @@ class CustomMultiSelectDropDownTextField extends StatelessWidget {
 
   final String title;
   final bool showTitle;
-  final List<Fault> items;
+  final List<DropdownItem<Fault>> items;
   final MultiSelectController<Fault>? controller;
   final Function(List<DropdownItem>)? onChanged;
   final EdgeInsetsGeometry padding;
@@ -48,9 +48,7 @@ class CustomMultiSelectDropDownTextField extends StatelessWidget {
                 controller!.closeDropdown();
               }
             },
-            items: items
-                .map((fault) => DropdownItem(label: fault.name, value: fault))
-                .toList(),
+            items: items,
             searchEnabled: true,
             chipDecoration: ChipDecoration(
               spacing: 4,
