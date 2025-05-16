@@ -10,6 +10,7 @@ class CustomDropDownTextField extends StatelessWidget {
     this.showTitle = true,
     required this.dropDownList,
     this.clearOption = false,
+    this.enableSearch = true,
     this.textFieldFocusNode,
     this.initialValue,
     this.controller,
@@ -22,6 +23,7 @@ class CustomDropDownTextField extends StatelessWidget {
   final bool showTitle;
   final List<DropDownValueModel> dropDownList;
   final bool clearOption;
+  final bool enableSearch;
   final FocusNode? textFieldFocusNode;
   final dynamic initialValue;
   final dynamic controller;
@@ -51,7 +53,7 @@ class CustomDropDownTextField extends StatelessWidget {
               textFieldDecoration:
                   kTextFieldFormDecoration.copyWith(hintText: title),
               clearOption: clearOption,
-              enableSearch: true,
+              enableSearch: enableSearch,
               searchAutofocus: true,
               clearIconProperty: IconProperty(icon: Icons.clear, size: 18),
               dropDownList: dropDownList,
