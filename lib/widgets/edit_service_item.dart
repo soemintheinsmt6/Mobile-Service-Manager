@@ -96,7 +96,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItem> {
                 name: _selectedTechnician?.name ?? '',
                 value: _selectedTechnician));
 
-    _selectedFaults = item.faults;
+    _selectedFaults = item.faults.toList();
     _selectedFaultIds = _selectedFaults.map((e) => e.id).toList();
 
     _issuedDateTime = DateTime.parse(item.issueDate);
@@ -196,8 +196,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItem> {
     updated.brand.target = _selectedBrand;
     updated.model = _modelController.text;
     updated.imei = _imeiController.text;
-    updated.faults.clear();
-    updated.faults.addAll(_selectedFaults);
+    updated.setFaults(_selectedFaults);
     updated.servicePrice = int.tryParse(_priceController.text);
     updated.expense = int.tryParse(_expenseController.text);
     updated.technician.target = _selectedTechnician;
@@ -325,7 +324,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItem> {
                     .toList(),
                 controller: _faultsController,
                 onChanged: (items) {
-                  _selectedFaults = items.map((e) => e.value as Fault).toList();
+                  _selectedFaults = items;
                 },
               ))
             ]),

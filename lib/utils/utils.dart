@@ -5,6 +5,9 @@ class AlwaysDisabledFocusNode extends FocusNode {
   bool get hasFocus => false;
 }
 
+final deviceStatus = ['In Progress', 'Done', 'Return'];
+final deliveryStatus = ['In Store', 'Delivered'];
+
 Color setColor(String status) {
   switch (status) {
     case 'in_progress':
@@ -37,6 +40,26 @@ String translate(String status) {
 
     case 'return':
       return 'Return';
+  }
+  return status;
+}
+
+String store(String status) {
+  switch (status) {
+    case 'In Progress':
+      return 'in_progress';
+
+    case 'In Store':
+      return 'in_store';
+
+    case 'Delivered':
+      return 'delivered';
+
+    case 'Done':
+      return 'done';
+
+    case 'Return':
+      return 'return';
   }
   return status;
 }

@@ -20,7 +20,7 @@ class CustomMultiSelectDropDownTextField extends StatelessWidget {
   final bool showTitle;
   final List<DropdownItem<Fault>> items;
   final MultiSelectController<Fault>? controller;
-  final Function(List<DropdownItem>)? onChanged;
+  final Function(List<Fault>)? onChanged;
   final EdgeInsetsGeometry padding;
 
   @override
@@ -39,11 +39,7 @@ class CustomMultiSelectDropDownTextField extends StatelessWidget {
             controller: controller,
             onSelectionChange: (selectedOptions) {
               if (onChanged != null) {
-                final list = selectedOptions
-                    .map((fault) =>
-                        DropdownItem(label: fault.name, value: fault))
-                    .toList();
-                onChanged!(list);
+                onChanged!(selectedOptions);
 
                 controller!.closeDropdown();
               }

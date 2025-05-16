@@ -60,4 +60,9 @@ class ServiceItem {
     this.status = 'in_progress',
     this.location = 'in_store',
   });
+
+  void setFaults(List<Fault> newFaults) {
+    faults.clear();
+    faults.addAll(newFaults);
+  }
 }

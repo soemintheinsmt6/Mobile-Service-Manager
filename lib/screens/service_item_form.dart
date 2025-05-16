@@ -243,7 +243,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
                   .toList(),
               controller: _faultsController,
               onChanged: (items) {
-                selectedFaults = items.map((e) => e.value as Fault).toList();
+                selectedFaults = items;
               },
             ),
             CustomTextFormField(
