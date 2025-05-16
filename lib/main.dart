@@ -9,6 +9,7 @@ import 'package:mobile_service_manager/screens/brand_list_screen.dart';
 import 'package:mobile_service_manager/screens/fault_list_screen.dart';
 import 'package:mobile_service_manager/screens/service_item_list_screen.dart';
 import 'package:mobile_service_manager/screens/technician_list_screen.dart';
+import 'package:mobile_service_manager/screens/trash_list_screen.dart';
 import 'package:window_size/window_size.dart';
 import 'constants/app_colors.dart';
 import 'database/object_box.dart';
@@ -69,7 +70,8 @@ class _MainScreenState extends State<MainScreen> {
     ServiceItemListScreen(),
     BrandListScreen(),
     TechnicianListScreen(),
-    FaultListScreen()
+    FaultListScreen(),
+    TrashListScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -98,35 +100,15 @@ class _MainScreenState extends State<MainScreen> {
               unselectedLabelTextStyle: GoogleFonts.montserrat(
                 color: AppColors.navigationUnselectedText,
               ),
-              destinations: const [
-                NavigationRailDestination(
-                  icon: Icon(CupertinoIcons.square_list,
-                      color: AppColors.navigationUnselectedIcon),
-                  selectedIcon: Icon(CupertinoIcons.square_list,
-                      color: AppColors.navigationSelectedIcon),
-                  label: Text('Service'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.phone_android_rounded,
-                      color: AppColors.navigationUnselectedIcon),
-                  selectedIcon: Icon(Icons.phone_android_rounded,
-                      color: AppColors.navigationSelectedIcon),
-                  label: Text('Brand'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.engineering,
-                      color: AppColors.navigationUnselectedIcon),
-                  selectedIcon: Icon(Icons.engineering,
-                      color: AppColors.navigationSelectedIcon),
-                  label: Text('Technician'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.error_outline_rounded,
-                      color: AppColors.navigationUnselectedIcon),
-                  selectedIcon: Icon(Icons.error_outline_rounded,
-                      color: AppColors.navigationSelectedIcon),
-                  label: Text('Error'),
-                ),
+              destinations: [
+                _navigationItem(
+                    icon: CupertinoIcons.square_list, text: 'Service'),
+                _navigationItem(
+                    icon: Icons.phone_android_rounded, text: 'Brand'),
+                _navigationItem(icon: Icons.engineering, text: 'Technician'),
+                _navigationItem(
+                    icon: Icons.error_outline_rounded, text: 'Error'),
+                _navigationItem(icon: CupertinoIcons.archivebox, text: 'Bin'),
               ],
             ),
           ),
@@ -137,6 +119,15 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  NavigationRailDestination _navigationItem(
+      {required IconData icon, required String text}) {
+    return NavigationRailDestination(
+      icon: Icon(icon, color: AppColors.navigationUnselectedIcon),
+      selectedIcon: Icon(icon, color: AppColors.navigationSelectedIcon),
+      label: Text(text),
     );
   }
 }

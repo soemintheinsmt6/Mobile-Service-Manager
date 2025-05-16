@@ -28,3 +28,5 @@ final serviceItemRepositoryProvider = Provider<ServiceItemRepository>((ref) {
   final objectBox = ref.watch(objectBoxProvider);
   return ServiceItemRepository(objectBox);
 });
+
+final trashOperationProvider = StateProvider<int>((ref) => 0);

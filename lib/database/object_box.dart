@@ -55,7 +55,21 @@ class ObjectBox {
 
   /// Service Item
   int insertServiceItem(ServiceItem item) => serviceItemBox.put(item);
-  List<ServiceItem> getAllServiceItems() => serviceItemBox.getAll();
+
+  List<ServiceItem> getAllServiceItems() {
+    return serviceItemBox
+        .query(ServiceItem_.isTrash.equals(false))
+        .build()
+        .find();
+  }
+
+  List<ServiceItem> getTrashServiceItems() {
+    return serviceItemBox
+        .query(ServiceItem_.isTrash.equals(true))
+        .build()
+        .find();
+  }
+
   bool deleteServiceItem(int id) => serviceItemBox.remove(id);
 
   void closeStore() => _store.close();

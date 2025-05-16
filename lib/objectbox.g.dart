@@ -82,7 +82,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(5, 2741046769985185864),
       name: 'ServiceItem',
-      lastPropertyId: const obx_int.IdUid(17, 3307281162366130143),
+      lastPropertyId: const obx_int.IdUid(19, 8819220676967962938),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -173,7 +173,13 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(17, 3307281162366130143),
             name: 'deliveryDate',
             type: 9,
-            flags: 0)
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(19, 8819220676967962938),
+            name: 'isTrash',
+            type: 1,
+            flags: 8,
+            indexId: const obx_int.IdUid(4, 8248569735318786504))
       ],
       relations: <obx_int.ModelRelation>[
         obx_int.ModelRelation(
@@ -220,7 +226,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
       lastEntityId: const obx_int.IdUid(5, 2741046769985185864),
-      lastIndexId: const obx_int.IdUid(3, 7823934307923419775),
+      lastIndexId: const obx_int.IdUid(4, 8248569735318786504),
       lastRelationId: const obx_int.IdUid(1, 1616147930685325004),
       lastSequenceId: const obx_int.IdUid(0, 0),
       retiredEntityUids: const [7379893704960386916],
@@ -228,7 +234,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
       retiredPropertyUids: const [
         500841533034733396,
         2519385740775266796,
-        6111243998934329244
+        6111243998934329244,
+        8035667359138108551
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -339,7 +346,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final deliveryDateOffset = object.deliveryDate == null
               ? null
               : fbb.writeString(object.deliveryDate!);
-          fbb.startTable(18);
+          fbb.startTable(20);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.invoiceId);
           fbb.addOffset(2, customerNameOffset);
@@ -357,6 +364,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(14, statusOffset);
           fbb.addOffset(15, locationOffset);
           fbb.addOffset(16, deliveryDateOffset);
+          fbb.addBool(18, object.isTrash);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -395,6 +403,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGet(buffer, rootOffset, 32, '');
           final locationParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 34, '');
+          final isTrashParam =
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 40, false);
           final object = ServiceItem(
               id: idParam,
               invoiceId: invoiceIdParam,
@@ -410,7 +420,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               sdIncluded: sdIncludedParam,
               remark: remarkParam,
               status: statusParam,
-              location: locationParam);
+              location: locationParam,
+              isTrash: isTrashParam);
           object.brand.targetId =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
           object.brand.attach(store);
@@ -526,6 +537,10 @@ class ServiceItem_ {
   /// See [ServiceItem.deliveryDate].
   static final deliveryDate =
       obx.QueryStringProperty<ServiceItem>(_entities[3].properties[16]);
+
+  /// See [ServiceItem.isTrash].
+  static final isTrash =
+      obx.QueryBooleanProperty<ServiceItem>(_entities[3].properties[17]);
 
   /// see [ServiceItem.faults]
   static final faults =

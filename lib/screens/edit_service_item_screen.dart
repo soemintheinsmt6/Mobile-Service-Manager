@@ -237,6 +237,13 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
     Navigator.pop(context);
   }
 
+  void _deleteServiceItem() {
+    ref
+        .read(serviceItemsProvider.notifier)
+        .moveToTrash(widget.serviceItem.id, ref);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final brands = ref.watch(brandsProvider);
@@ -554,7 +561,13 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
           ],
         ),
         GestureDetector(
-            onTap: () {},
+            onTap: () async {
+              final result = await showDeleteAlert(context);
+
+              if (result == true) {
+                _deleteServiceItem();
+              }
+            },
             child: Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: Icon(CupertinoIcons.trash,

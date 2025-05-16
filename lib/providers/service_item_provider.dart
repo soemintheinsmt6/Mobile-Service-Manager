@@ -34,8 +34,24 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
     ];
   }
 
-  Future<void> deleteServiceItem(int id) async {
+  Future moveToTrash(int id, WidgetRef ref) async {
     if (repository.deleteServiceItem(id)) {
+      // Remove from current state since it's now in trash
+      state = state.where((item) => item.id != id).toList();
+
+      ref.read(trashOperationProvider.notifier).state++;
+    }
+  }
+
+  Future restoreFromTrash(int id) async {
+    if (repository.restoreServiceItem(id)) {
+      // If we're viewing trash, remove from current state
+      state = state.where((item) => item.id != id).toList();
+    }
+  }
+
+  Future permanentlyDelete(int id) async {
+    if (repository.permanentlyDeleteServiceItem(id)) {
       state = state.where((item) => item.id != id).toList();
     }
   }

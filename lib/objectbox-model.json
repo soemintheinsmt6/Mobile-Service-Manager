@@ -62,7 +62,7 @@
     },
     {
       "id": "5:2741046769985185864",
-      "lastPropertyId": "17:3307281162366130143",
+      "lastPropertyId": "19:8819220676967962938",
       "name": "ServiceItem",
       "properties": [
         {
@@ -156,6 +156,13 @@
           "id": "17:3307281162366130143",
           "name": "deliveryDate",
           "type": 9
+        },
+        {
+          "id": "19:8819220676967962938",
+          "name": "isTrash",
+          "type": 1,
+          "flags": 8,
+          "indexId": "4:8248569735318786504"
         }
       ],
       "relations": [
@@ -168,7 +175,7 @@
     }
   ],
   "lastEntityId": "5:2741046769985185864",
-  "lastIndexId": "3:7823934307923419775",
+  "lastIndexId": "4:8248569735318786504",
   "lastRelationId": "1:1616147930685325004",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
@@ -182,7 +189,8 @@
   "retiredPropertyUids": [
     500841533034733396,
     2519385740775266796,
-    6111243998934329244
+    6111243998934329244,
+    8035667359138108551
   ],
   "retiredRelationUids": [],
   "version": 1

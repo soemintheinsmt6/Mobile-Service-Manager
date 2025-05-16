@@ -43,6 +43,9 @@ class ServiceItem {
     }
   }
 
+  @Index()
+  bool isTrash;
+
   ServiceItem({
     this.id = 0,
     required this.invoiceId,
@@ -59,6 +62,7 @@ class ServiceItem {
     this.remark,
     this.status = 'in_progress',
     this.location = 'in_store',
+    this.isTrash = false,
   });
 
   void setFaults(List<Fault> newFaults) {

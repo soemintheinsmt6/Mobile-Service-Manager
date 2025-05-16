@@ -67,11 +67,11 @@ class ServiceTile extends StatelessWidget {
   }
 }
 
-Widget serviceHeader() {
+Widget serviceHeader({bool isTrash = false}) {
   return Container(
     height: _rowHeight,
     decoration: BoxDecoration(
-      color: const Color(0xFF4372C4),
+      color: isTrash ? Colors.black54 : const Color(0xFF4372C4),
       border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
     ),
     child: SeparatedRow(
