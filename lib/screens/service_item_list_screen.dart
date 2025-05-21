@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
+import 'package:mobile_service_manager/screens/search_service_items_screen.dart';
 import 'package:mobile_service_manager/screens/service_item_form.dart';
 import 'package:mobile_service_manager/utils/dialog.dart';
 import 'package:mobile_service_manager/screens/edit_service_item_screen.dart';
+import 'package:mobile_service_manager/widgets/right_elevated_button.dart';
 import 'package:mobile_service_manager/widgets/service_tile.dart';
 import '../providers/service_item_provider.dart';
 
@@ -57,7 +59,28 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
             flex: 4,
             child: Column(
               children: [
-                // Sticky header (scrolls horizontally only)
+                Container(
+                  height: 56,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Service List', style: kHeaderTextStyle),
+                      RightElevatedButton(
+                        title: 'Search',
+                        onPressed: () {
+                          showCustomDialog(context,
+                              width: 380,
+                              height: 600,
+                              child: const SearchServiceItemsScreen());
+                        },
+                      )
+                    ],
+                  ),
+                ),
+
+                /// Sticky header (scrolls horizontally only)
                 SingleChildScrollView(
                   controller: _headerHorizontalController,
                   scrollDirection: Axis.horizontal,
@@ -68,7 +91,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                   ),
                 ),
 
-                // Scrollable list (horizontal + vertical)
+                /// Scrollable list (horizontal + vertical)
                 Expanded(
                   child: Scrollbar(
                     controller: _bodyHorizontalController,

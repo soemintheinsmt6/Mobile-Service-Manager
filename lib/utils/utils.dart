@@ -63,3 +63,5 @@ String store(String status) {
   }
   return status;
 }
+
+enum Date { specific, from, to }

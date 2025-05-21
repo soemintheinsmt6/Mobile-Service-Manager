@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/providers/fault_provider.dart';
-import '../constants/app_colors.dart';
+import 'package:mobile_service_manager/widgets/right_elevated_button.dart';
 import '../constants/constants.dart';
 import '../models/fault.dart';
 import '../utils/dialog.dart';
@@ -48,16 +48,9 @@ class FaultListScreen extends ConsumerWidget {
         title: Text('Error', style: kHeaderTextStyle),
         centerTitle: false,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton.icon(
-              onPressed: () => _addNewFault(context, ref),
-              label: Text('Add Error', style: kDefaultTextStyle),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryButton,
-                foregroundColor: Colors.white,
-              ),
-            ),
+          RightElevatedButton(
+            title: 'Add Error',
+            onPressed: () => _addNewFault(context, ref),
           ),
         ],
       ),

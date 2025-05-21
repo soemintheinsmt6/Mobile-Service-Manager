@@ -6,8 +6,8 @@ import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/models/technician.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:mobile_service_manager/utils/utils.dart';
+import 'package:mobile_service_manager/widgets/bar_button.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
-import '../constants/app_colors.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
 import '../models/service_item.dart';
@@ -22,6 +22,7 @@ import '../widgets/custom_date_picker_text_field.dart';
 import '../widgets/custom_drop_down_text_field.dart';
 import '../widgets/custom_multi_select_field.dart';
 import '../widgets/custom_text_form_field.dart';
+import '../widgets/dismiss_button.dart';
 
 const _spacing = EdgeInsets.symmetric(vertical: 5);
 
@@ -253,19 +254,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
     return Card(
       child: Stack(
         children: [
-          Positioned(
-              top: 5,
-              right: 5,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Icon(
-                  CupertinoIcons.clear_circled,
-                  size: 20,
-                  color: Colors.grey.shade600,
-                ),
-              )),
+          const DismissButton(),
           Padding(
             padding: const EdgeInsets.only(right: 35.0),
             child: Column(
@@ -461,17 +450,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                 Container(
                   padding: const EdgeInsets.only(top: 5),
                   width: 260,
-                  child: ElevatedButton.icon(
+                  child: BarButton(
+                    title: 'Update',
                     onPressed: _updateServiceItem,
-                    label: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text('Update'),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: AppColors.primaryButton,
-                      foregroundColor: Colors.white,
-                    ),
                   ),
                 ),
               ],

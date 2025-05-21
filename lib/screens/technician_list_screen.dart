@@ -5,8 +5,8 @@ import 'package:mobile_service_manager/models/technician.dart';
 import 'package:mobile_service_manager/providers/technician_provider.dart';
 import 'package:mobile_service_manager/utils/alert.dart';
 import 'package:mobile_service_manager/widgets/add_new_item.dart';
+import 'package:mobile_service_manager/widgets/right_elevated_button.dart';
 import 'package:mobile_service_manager/widgets/update_item.dart';
-import '../constants/app_colors.dart';
 import '../utils/dialog.dart';
 import '../widgets/item_card.dart';
 
@@ -52,16 +52,9 @@ class TechnicianListScreen extends ConsumerWidget {
         title: Text('Technician', style: kHeaderTextStyle),
         centerTitle: false,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton.icon(
-              onPressed: () => _addNewTechnician(context, ref),
-              label: Text('Add Technician', style: kDefaultTextStyle),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryButton,
-                foregroundColor: Colors.white,
-              ),
-            ),
+          RightElevatedButton(
+            title: 'Add Technician',
+            onPressed: () => _addNewTechnician(context, ref),
           ),
         ],
       ),

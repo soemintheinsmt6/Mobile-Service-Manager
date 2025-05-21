@@ -1,12 +1,11 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/utils/alert.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
+import 'package:mobile_service_manager/widgets/bar_button.dart';
 import 'package:mobile_service_manager/widgets/custom_date_picker_text_field.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
-import '../constants/app_colors.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
 import '../models/service_item.dart';
@@ -313,17 +312,8 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
             Container(
               padding: const EdgeInsets.only(top: 10, bottom: 20.0),
               width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _saveServiceItem,
-                label: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Add Service'),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryButton,
-                  foregroundColor: Colors.white,
-                ),
-              ),
+              child:
+                  BarButton(title: 'Add Service', onPressed: _saveServiceItem),
             ),
           ],
         ),

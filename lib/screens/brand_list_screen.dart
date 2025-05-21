@@ -4,11 +4,11 @@ import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/utils/alert.dart';
 import 'package:mobile_service_manager/widgets/add_new_item.dart';
 import 'package:mobile_service_manager/widgets/update_item.dart';
-import '../constants/app_colors.dart';
 import '../models/brand.dart';
 import '../providers/brand_provider.dart';
 import '../utils/dialog.dart';
 import '../widgets/item_card.dart';
+import '../widgets/right_elevated_button.dart';
 
 class BrandListScreen extends ConsumerWidget {
   const BrandListScreen({super.key});
@@ -49,16 +49,9 @@ class BrandListScreen extends ConsumerWidget {
         title: Text('Brand', style: kHeaderTextStyle),
         centerTitle: false,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: ElevatedButton.icon(
-              onPressed: () => _addNewBrand(context, ref),
-              label: Text('Add Brand', style: kDefaultTextStyle),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryButton,
-                foregroundColor: Colors.white,
-              ),
-            ),
+          RightElevatedButton(
+            title: 'Add Brand',
+            onPressed: () => _addNewBrand(context, ref),
           ),
         ],
       ),

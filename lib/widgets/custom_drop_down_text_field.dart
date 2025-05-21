@@ -55,7 +55,8 @@ class CustomDropDownTextField extends StatelessWidget {
               clearOption: clearOption,
               enableSearch: enableSearch,
               searchAutofocus: true,
-              clearIconProperty: IconProperty(icon: Icons.clear, size: 18),
+              clearIconProperty: IconProperty(
+                  icon: Icons.clear, color: Colors.grey.shade600, size: 16),
               dropDownList: dropDownList,
               controller: controller,
               textFieldFocusNode: textFieldFocusNode,
