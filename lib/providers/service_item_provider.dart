@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_service_manager/models/technician.dart';
 import 'package:mobile_service_manager/providers/repository_providers.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
@@ -65,8 +66,10 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
   void searchServiceItems({
     String? invoiceId,
     String? customerName,
+    String? phoneNumber,
     Brand? brand,
     Fault? fault,
+    Technician? technician,
     String? deviceStatus,
     String? deliveryStatus,
     DateTime? specificDate,
@@ -76,8 +79,10 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
     state = repository.searchServiceItems(
       invoiceId: invoiceId,
       customerName: customerName,
+      phoneNumber: phoneNumber,
       brand: brand,
       fault: fault,
+      technician: technician,
       deviceStatus: deviceStatus,
       deliveryStatus: deliveryStatus,
       specificDate: specificDate,

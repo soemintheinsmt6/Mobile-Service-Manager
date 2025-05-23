@@ -10,7 +10,7 @@ class ServiceItem {
 
   int invoiceId;
   String customerName;
-  int phoneNumber;
+  String phoneNumber;
 
   final brand = ToOne<Brand>();
   String model;

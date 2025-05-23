@@ -54,6 +54,7 @@ dependencies:
   intl: ^0.20.2
   separated_row: ^3.0.4
   omni_datetime_picker: ^1.0.9
+  shared_preferences: ^2.3.3
 
 dev_dependencies:
   flutter_test:

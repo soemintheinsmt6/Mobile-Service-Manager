@@ -103,7 +103,7 @@ final _entities = <obx_int.ModelEntity>[
         obx_int.ModelProperty(
             id: const obx_int.IdUid(4, 7535339852029768487),
             name: 'phoneNumber',
-            type: 6,
+            type: 9,
             flags: 0),
         obx_int.ModelProperty(
             id: const obx_int.IdUid(5, 1875695528495847037),
@@ -336,6 +336,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (ServiceItem object, fb.Builder fbb) {
           final customerNameOffset = fbb.writeString(object.customerName);
+          final phoneNumberOffset = fbb.writeString(object.phoneNumber);
           final modelOffset = fbb.writeString(object.model);
           final imeiOffset = fbb.writeString(object.imei);
           final issueDateOffset = fbb.writeString(object.issueDate);
@@ -350,7 +351,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.invoiceId);
           fbb.addOffset(2, customerNameOffset);
-          fbb.addInt64(3, object.phoneNumber);
+          fbb.addOffset(3, phoneNumberOffset);
           fbb.addInt64(4, object.brand.targetId);
           fbb.addOffset(5, modelOffset);
           fbb.addOffset(6, imeiOffset);
@@ -379,7 +380,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 8, '');
           final phoneNumberParam =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGet(buffer, rootOffset, 10, '');
           final modelParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 14, '');
           final imeiParam = const fb.StringReader(asciiOptimization: true)
@@ -484,7 +486,7 @@ class ServiceItem_ {
 
   /// See [ServiceItem.phoneNumber].
   static final phoneNumber =
-      obx.QueryIntegerProperty<ServiceItem>(_entities[3].properties[3]);
+      obx.QueryStringProperty<ServiceItem>(_entities[3].properties[3]);
 
   /// See [ServiceItem.brand].
   static final brand =

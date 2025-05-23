@@ -46,7 +46,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
   // Form fields
   int _invoiceId = 0;
   String _customerName = '';
-  int _phoneNumber = 0;
+  String _phoneNumber = '';
   String _model = '';
   String _imei = '';
   int? _servicePrice;
@@ -200,8 +200,9 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
             CustomTextFormField(
               title: 'Phone Number',
               focusNode: _phoneNumberFocus,
-              keyboardType: TextInputType.phone,
-              onSaved: (v) => _phoneNumber = int.tryParse(v ?? '') ?? 0,
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              onSaved: (v) => _phoneNumber = v ?? '',
               onFieldSubmitted: (_) {
                 _changeFocus(_modelFocus);
               },

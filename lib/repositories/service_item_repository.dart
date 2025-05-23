@@ -2,6 +2,7 @@ import '../database/object_box.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
 import '../models/service_item.dart';
+import '../models/technician.dart';
 import '../objectbox.g.dart';
 
 class ServiceItemRepository {
@@ -51,8 +52,10 @@ class ServiceItemRepository {
   List<ServiceItem> searchServiceItems({
     String? invoiceId,
     String? customerName,
+    String? phoneNumber,
     Brand? brand,
     Fault? fault,
+    Technician? technician,
     String? deviceStatus,
     String? deliveryStatus,
     DateTime? specificDate,
@@ -66,6 +69,11 @@ class ServiceItemRepository {
     // For brand relationship
     if (brand != null) {
       query.link(ServiceItem_.brand, Brand_.id.equals(brand.id));
+    }
+
+    // For technician relationship
+    if (technician != null) {
+      query.link(ServiceItem_.technician, Technician_.id.equals(technician.id));
     }
 
     // Build and execute the query to get initial results
@@ -93,6 +101,15 @@ class ServiceItemRepository {
           .where((item) => item.customerName
               .toLowerCase()
               .contains(customerName.toLowerCase()))
+          .toList();
+    }
+
+    // Filter by phone number
+    if (phoneNumber != null && phoneNumber.isNotEmpty) {
+      results = results
+          .where((item) => item.phoneNumber
+              .toLowerCase()
+              .contains(phoneNumber.toLowerCase()))
           .toList();
     }
 

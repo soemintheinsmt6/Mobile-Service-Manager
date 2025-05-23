@@ -83,7 +83,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
     _invoiceController.text = item.invoiceId.toString();
     _customerNameController.text = item.customerName;
     _phoneNumberController.text =
-        item.phoneNumber == 0 ? '' : item.phoneNumber.toString();
+        item.phoneNumber == 'null' ? '' : item.phoneNumber.toString();
     _modelController.text = item.model;
     _imeiController.text = item.imei;
     _priceController.text = item.servicePrice?.toString() ?? '';
@@ -217,7 +217,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
     final updated = widget.serviceItem;
     updated.invoiceId = int.parse(_invoiceController.text);
     updated.customerName = _customerNameController.text;
-    updated.phoneNumber = int.tryParse(_phoneNumberController.text) ?? 0;
+    updated.phoneNumber = _phoneNumberController.text;
     updated.brand.target = _selectedBrand;
     updated.model = _modelController.text;
     updated.imei = _imeiController.text;

@@ -1,6 +1,8 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_service_manager/models/technician.dart';
+import 'package:mobile_service_manager/providers/technician_provider.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:mobile_service_manager/utils/utils.dart';
 import 'package:mobile_service_manager/widgets/bar_button.dart';
@@ -30,9 +32,11 @@ class SearchServiceItemsScreen extends ConsumerStatefulWidget {
 class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
   final TextEditingController _invoiceController = TextEditingController();
   final TextEditingController _customerNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
 
   late SingleValueDropDownController _brandController;
   late SingleValueDropDownController _faultController;
+  late SingleValueDropDownController _technicianController;
   late SingleValueDropDownController _deviceStatusController;
   late SingleValueDropDownController _deliveryStatusController;
 
@@ -50,6 +54,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
 
   Brand? _selectedBrand;
   Fault? _selectedFault;
+  Technician? _selectedTechnician;
 
   DateTime? _specificDateTime;
   DateTime? _fromDateTime;
@@ -63,6 +68,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
 
     _brandController = SingleValueDropDownController();
     _faultController = SingleValueDropDownController();
+    _technicianController = SingleValueDropDownController();
     _deviceStatusController = SingleValueDropDownController();
     _deliveryStatusController = SingleValueDropDownController();
   }
@@ -71,8 +77,10 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
   void dispose() {
     _invoiceController.dispose();
     _customerNameController.dispose();
+    _phoneNumberController.dispose();
     _brandController.dispose();
     _faultController.dispose();
+    _technicianController.dispose();
     _specificDateController.dispose();
     _fromDateController.dispose();
     _toDateController.dispose();
@@ -140,8 +148,10 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
     serviceItemsNotifier.searchServiceItems(
       invoiceId: _invoiceController.text.trim(),
       customerName: _customerNameController.text.trim(),
+      phoneNumber: _phoneNumberController.text,
       brand: _selectedBrand,
       fault: _selectedFault,
+      technician: _selectedTechnician,
       deviceStatus: _deviceStatus,
       deliveryStatus: _deliveryStatus,
       specificDate:
@@ -158,13 +168,14 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
   Widget build(BuildContext context) {
     final brands = ref.watch(brandsProvider);
     final faults = ref.watch(faultsProvider);
+    final technicians = ref.watch(techniciansProvider);
 
     return Card(
       child: Stack(
         children: [
           const DismissButton(),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 35.0),
+            padding: const EdgeInsets.symmetric(horizontal: 45.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -174,6 +185,10 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
                 CustomTextFormField(
                   title: 'Customer Name',
                   controller: _customerNameController,
+                ),
+                CustomTextFormField(
+                  title: 'Phone Number',
+                  controller: _phoneNumberController,
                 ),
                 CustomDropDownTextField(
                   title: 'Brand',
@@ -202,6 +217,22 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
                       _selectedFault = item.value;
                     } else {
                       _selectedFault = null;
+                    }
+                  },
+                ),
+                CustomDropDownTextField(
+                  title: 'Technician',
+                  clearOption: true,
+                  controller: _technicianController,
+                  dropDownList: technicians.map((technician) {
+                    return DropDownValueModel(
+                        value: technician, name: technician.name);
+                  }).toList(),
+                  onChanged: (item) {
+                    if (item is DropDownValueModel) {
+                      _selectedTechnician = item.value;
+                    } else {
+                      _selectedTechnician = null;
                     }
                   },
                 ),

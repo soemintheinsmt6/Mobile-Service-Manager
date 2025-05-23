@@ -104,8 +104,8 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                             title: 'Search',
                             onPressed: () {
                               showCustomDialog(context,
-                                  width: 380,
-                                  height: 600,
+                                  width: 400,
+                                  height: 770,
                                   child: const SearchServiceItemsScreen());
                             },
                           ),
