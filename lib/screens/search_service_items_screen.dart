@@ -9,6 +9,8 @@ import '../models/brand.dart';
 import '../models/fault.dart';
 import '../providers/brand_provider.dart';
 import '../providers/fault_provider.dart';
+import '../providers/service_item_provider.dart';
+import '../utils/alert.dart';
 import '../utils/date_time_picker.dart';
 import '../widgets/custom_date_picker_text_field.dart';
 import '../widgets/custom_drop_down_text_field.dart';
@@ -99,7 +101,58 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
     }
   }
 
-  void _updateServiceItem() {}
+  bool _validateInput() {
+    if (_invoiceController.text.isNotEmpty &&
+        int.tryParse(_invoiceController.text) == null) {
+      showErrorMessage(context, 'Invoice ID is invalid');
+      return false;
+    }
+
+    if (_selectedDateType == _dateTypes[1] && _specificDateTime == null) {
+      showErrorMessage(context, 'Please add Specific date');
+      return false;
+    }
+
+    if (_selectedDateType == _dateTypes[1] && _specificDateTime == null) {
+      showErrorMessage(context, 'Please add Specific date');
+      return false;
+    }
+
+    if (_selectedDateType == _dateTypes[2] && _fromDateTime == null) {
+      showErrorMessage(context, 'From Date is needed to fill');
+      return false;
+    }
+
+    if (_selectedDateType == _dateTypes[2] && _toDateTime == null) {
+      showErrorMessage(context, 'To Date is needed to fill');
+      return false;
+    }
+    return true;
+  }
+
+  void _searchServiceItems() {
+    if (!_validateInput()) return;
+
+    // Get the service items notifier
+    final serviceItemsNotifier = ref.read(serviceItemsProvider.notifier);
+
+    // Perform the search
+    serviceItemsNotifier.searchServiceItems(
+      invoiceId: _invoiceController.text.trim(),
+      customerName: _customerNameController.text.trim(),
+      brand: _selectedBrand,
+      fault: _selectedFault,
+      deviceStatus: _deviceStatus,
+      deliveryStatus: _deliveryStatus,
+      specificDate:
+          _selectedDateType == _dateTypes[1] ? _specificDateTime : null,
+      fromDate: _selectedDateType == _dateTypes[2] ? _fromDateTime : null,
+      toDate: _selectedDateType == _dateTypes[2] ? _toDateTime : null,
+    );
+
+    // Close the search dialog
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +224,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.only(top: 10),
                     child: BarButton(
-                        title: 'Search', onPressed: _updateServiceItem)),
+                        title: 'Search', onPressed: _searchServiceItems)),
               ],
             ),
           ),

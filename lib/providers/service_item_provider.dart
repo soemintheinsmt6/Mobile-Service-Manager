@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/providers/repository_providers.dart';
+import '../models/brand.dart';
+import '../models/fault.dart';
 import '../models/service_item.dart';
 import '../repositories/service_item_repository.dart';
 
@@ -11,12 +13,16 @@ final serviceItemsProvider =
 
 class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
   final ServiceItemRepository repository;
+  bool _isSearchActive = false;
 
   ServiceItemsNotifier(this.repository) : super([]) {
     loadServiceItems();
   }
 
+  bool get isSearchActive => _isSearchActive;
+
   void loadServiceItems() {
+    _isSearchActive = false;
     state = repository.getAllServiceItems();
   }
 
@@ -53,6 +59,38 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
   Future permanentlyDelete(int id) async {
     if (repository.permanentlyDeleteServiceItem(id)) {
       state = state.where((item) => item.id != id).toList();
+    }
+  }
+
+  void searchServiceItems({
+    String? invoiceId,
+    String? customerName,
+    Brand? brand,
+    Fault? fault,
+    String? deviceStatus,
+    String? deliveryStatus,
+    DateTime? specificDate,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) {
+    state = repository.searchServiceItems(
+      invoiceId: invoiceId,
+      customerName: customerName,
+      brand: brand,
+      fault: fault,
+      deviceStatus: deviceStatus,
+      deliveryStatus: deliveryStatus,
+      specificDate: specificDate,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+
+    _isSearchActive = true;
+  }
+
+  void resetSearch() {
+    if (_isSearchActive) {
+      loadServiceItems();
     }
   }
 }

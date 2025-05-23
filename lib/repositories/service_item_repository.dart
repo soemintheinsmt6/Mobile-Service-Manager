@@ -1,5 +1,8 @@
 import '../database/object_box.dart';
+import '../models/brand.dart';
+import '../models/fault.dart';
 import '../models/service_item.dart';
+import '../objectbox.g.dart';
 
 class ServiceItemRepository {
   final ObjectBox _objectBox;
@@ -43,5 +46,98 @@ class ServiceItemRepository {
       return true;
     }
     return false;
+  }
+
+  List<ServiceItem> searchServiceItems({
+    String? invoiceId,
+    String? customerName,
+    Brand? brand,
+    Fault? fault,
+    String? deviceStatus,
+    String? deliveryStatus,
+    DateTime? specificDate,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) {
+    // Start with a query for non-trash items
+    final query =
+        _objectBox.serviceItemBox.query(ServiceItem_.isTrash.equals(false));
+
+    // For brand relationship
+    if (brand != null) {
+      query.link(ServiceItem_.brand, Brand_.id.equals(brand.id));
+    }
+
+    // Build and execute the query to get initial results
+    List<ServiceItem> results = query.build().find();
+
+    // Filter by invoiceId
+    if (invoiceId != null && invoiceId.isNotEmpty) {
+      results = results.where((item) {
+        // Try to match as number first, then as string if that fails
+        try {
+          final invoiceIdInt = int.parse(invoiceId);
+          return item.invoiceId == invoiceIdInt;
+        } catch (e) {
+          return item.invoiceId
+              .toString()
+              .toLowerCase()
+              .contains(invoiceId.toLowerCase());
+        }
+      }).toList();
+    }
+
+    // Filter by customer name
+    if (customerName != null && customerName.isNotEmpty) {
+      results = results
+          .where((item) => item.customerName
+              .toLowerCase()
+              .contains(customerName.toLowerCase()))
+          .toList();
+    }
+
+    // Filter by fault
+    if (fault != null) {
+      results = results
+          .where((item) => item.faults.any((f) => f.id == fault.id))
+          .toList();
+    }
+
+    // Filter by status
+    if (deviceStatus != null) {
+      results = results.where((item) => item.status == deviceStatus).toList();
+    }
+
+    // Filter by location
+    if (deliveryStatus != null) {
+      results =
+          results.where((item) => item.location == deliveryStatus).toList();
+    }
+
+    // Filter by specific date
+    if (specificDate != null) {
+      final dateString =
+          specificDate.toString().split(' ')[0]; // Get only the date part
+      results = results.where((item) {
+        final itemDateString =
+            item.issueDate.split(' ')[0]; // Extract date part from stored item
+        return itemDateString == dateString;
+      }).toList();
+    }
+
+    // Filter by date range
+    else if (fromDate != null && toDate != null) {
+      final fromString = fromDate.toString().split(' ')[0];
+      final toString = toDate.toString().split(' ')[0];
+
+      results = results.where((item) {
+        final itemDateString =
+            item.issueDate.split(' ')[0]; // Extract date part from stored item
+        return itemDateString.compareTo(fromString) >= 0 &&
+            itemDateString.compareTo(toString) <= 0;
+      }).toList();
+    }
+
+    return results;
   }
 }
