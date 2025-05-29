@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mobile_service_manager/constants/app_colors.dart';
 import 'package:mobile_service_manager/providers/backup_restore_provider.dart';
 import 'package:mobile_service_manager/providers/brand_provider.dart';
@@ -220,7 +221,10 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               ],
             ),
           ),
-          if (_isLoading) const Center(child: CircularProgressIndicator())
+          if (_isLoading)
+            Center(
+                child: LoadingAnimationWidget.staggeredDotsWave(
+                    color: AppColors.primaryButton, size: 100))
         ],
       ),
     );
