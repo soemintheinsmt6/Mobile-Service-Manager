@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
-import '../constants/app_colors.dart';
+import 'package:mobile_service_manager/widgets/bar_button.dart';
 import 'custom_text_field.dart';
 
 class AddNewItem extends StatefulWidget {
@@ -46,18 +46,11 @@ class _AddNewItemState extends State<AddNewItem> {
             ),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
+              child: BarButton(
+                title: 'Add',
                 onPressed: () {
                   Navigator.pop(context, _controller.text);
                 },
-                label: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text('Add'),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryButton,
-                  foregroundColor: Colors.white,
-                ),
               ),
             ),
           ],

@@ -8,6 +8,7 @@ import 'package:mobile_service_manager/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/screens/brand_list_screen.dart';
 import 'package:mobile_service_manager/screens/fault_list_screen.dart';
 import 'package:mobile_service_manager/screens/service_item_list_screen.dart';
+import 'package:mobile_service_manager/screens/setting_screen.dart';
 import 'package:mobile_service_manager/screens/technician_list_screen.dart';
 import 'package:mobile_service_manager/screens/trash_list_screen.dart';
 import 'package:path/path.dart' as p;
@@ -90,7 +91,8 @@ class _MainScreenState extends State<MainScreen> {
     BrandListScreen(),
     TechnicianListScreen(),
     FaultListScreen(),
-    TrashListScreen()
+    TrashListScreen(),
+    SettingScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -128,6 +130,7 @@ class _MainScreenState extends State<MainScreen> {
                 _navigationItem(
                     icon: Icons.error_outline_rounded, text: 'Error'),
                 _navigationItem(icon: CupertinoIcons.archivebox, text: 'Bin'),
+                _navigationItem(icon: CupertinoIcons.settings, text: 'Setting'),
               ],
             ),
           ),

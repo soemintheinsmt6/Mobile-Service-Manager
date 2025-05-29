@@ -70,3 +70,27 @@ class ServiceItem {
     faults.addAll(newFaults);
   }
 }
+
+extension ServiceItemJson on ServiceItem {
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'invoiceId': invoiceId,
+        'customerName': customerName,
+        'phoneNumber': phoneNumber,
+        'brandId': brand.target?.id,
+        'model': model,
+        'imei': imei,
+        'issueDate': issueDate,
+        'deliveryDate': deliveryDate,
+        'faultIds': faults.map((f) => f.id).toList(),
+        'technicianId': technician.target?.id,
+        'expense': expense,
+        'servicePrice': servicePrice,
+        'simIncluded': simIncluded,
+        'sdIncluded': sdIncluded,
+        'remark': remark,
+        'status': status,
+        'location': location,
+        'isTrash': isTrash,
+      };
+}

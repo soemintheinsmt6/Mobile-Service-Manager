@@ -1,5 +1,4 @@
 import 'package:mobile_service_manager/models/item.dart';
-import 'package:mobile_service_manager/models/service_item.dart';
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
