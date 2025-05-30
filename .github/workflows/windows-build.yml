@@ -42,8 +42,8 @@ jobs:
           [Setup]
           AppName=Mobile Service Manager
           AppVersion=1.0.0
-          AppPublisher=Your Company Name
-          AppPublisherURL=https://your-website.com
+          AppPublisher=Soe Min Thein
+          AppPublisherURL=https://github.com/soemintheinsmt6
           DefaultDirName={autopf}\MobileServiceManager
           DefaultGroupName=Mobile Service Manager
           OutputDir=installer_output

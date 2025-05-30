@@ -1,0 +1,91 @@
+name: Build Mobile Service Manager macOS App
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Enable macOS build
+        run: flutter config --enable-macos-desktop
+
+      - name: Build macOS App
+        run: flutter build macos --release
+
+      - name: Verify build output
+        run: |
+          if [ -d "build/macos/Build/Products/Release/mobile_service_manager.app" ]; then
+            echo "✅ macOS app bundle created successfully"
+            ls -la "build/macos/Build/Products/Release/"
+          else
+            echo "❌ macOS app bundle not found!"
+            find build/macos -name "*.app" -type d
+            exit 1
+          fi
+
+      - name: Install create-dmg
+        run: |
+          brew install create-dmg
+          echo "✅ create-dmg installed successfully"
+
+      - name: Create DMG installer
+        run: |
+          # Create a temporary directory for DMG contents
+          mkdir -p dmg_temp
+          
+          # Copy the app bundle to temp directory
+          cp -R "build/macos/Build/Products/Release/mobile_service_manager.app" dmg_temp/
+          
+          # Create the DMG
+          create-dmg \
+            --volname "Mobile Service Manager" \
+            --volicon "dmg_temp/mobile_service_manager.app/Contents/Resources/AppIcon.icns" \
+            --window-pos 200 120 \
+            --window-size 800 450 \
+            --icon-size 100 \
+            --icon "mobile_service_manager.app" 200 190 \
+            --hide-extension "mobile_service_manager.app" \
+            --app-drop-link 600 185 \
+            --hdiutil-verbose \
+            "MobileServiceManagerInstaller.dmg" \
+            "dmg_temp/"
+          
+          echo "✅ DMG created successfully"
+
+      - name: Verify DMG creation
+        run: |
+          if [ -f "MobileServiceManagerInstaller.dmg" ]; then
+            echo "✅ DMG installer created successfully"
+            ls -lh MobileServiceManagerInstaller.dmg
+          else
+            echo "❌ DMG installer not found!"
+            ls -la
+            exit 1
+          fi
+
+      - name: Upload macOS App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-service-manager-macos-app
+          path: build/macos/Build/Products/Release/mobile_service_manager.app
+
+      - name: Upload macOS DMG Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-service-manager-macos-dmg
+          path: MobileServiceManagerInstaller.dmg
