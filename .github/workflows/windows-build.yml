@@ -25,13 +25,90 @@ jobs:
         run: flutter config --enable-windows-desktop
 
       - name: Build Windows App
-        run: flutter build windows
+        run: flutter build windows --release
 
-      - name: Zip build output
-        run: Compress-Archive -Path build/windows/** -DestinationPath mobile-service-manager.zip
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup -y
+          echo "Inno Setup installed successfully"
 
-      - name: Upload Windows app artifact
+      - name: Create installer output directory
+        run: mkdir installer_output
+
+      - name: Create Inno Setup Script
+        shell: pwsh
+        run: |
+          $setupScript = @'
+          [Setup]
+          AppName=Mobile Service Manager
+          AppVersion=1.0.0
+          AppPublisher=Your Company Name
+          AppPublisherURL=https://your-website.com
+          DefaultDirName={autopf}\MobileServiceManager
+          DefaultGroupName=Mobile Service Manager
+          OutputDir=installer_output
+          OutputBaseFilename=MobileServiceManagerSetup
+          Compression=lzma
+          SolidCompression=yes
+          ArchitecturesAllowed=x64
+          ArchitecturesInstallIn64BitMode=x64
+          SetupIconFile=
+
+          [Languages]
+          Name: "english"; MessagesFile: "compiler:Default.isl"
+
+          [Tasks]
+          Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+          [Files]
+          Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+          [Icons]
+          Name: "{group}\Mobile Service Manager"; Filename: "{app}\mobile_service_manager.exe"
+          Name: "{autodesktop}\Mobile Service Manager"; Filename: "{app}\mobile_service_manager.exe"; Tasks: desktopicon
+
+          [Run]
+          Filename: "{app}\mobile_service_manager.exe"; Description: "{cm:LaunchProgram,Mobile Service Manager}"; Flags: nowait postinstall skipifsilent
+          '@
+          $setupScript | Out-File -FilePath "setup.iss" -Encoding UTF8
+          echo "Inno Setup script created successfully"
+
+      - name: Verify build output exists
+        run: |
+          if (Test-Path "build\windows\x64\runner\Release") {
+            echo "Build output directory exists"
+            Get-ChildItem "build\windows\x64\runner\Release" -Recurse | Select-Object Name, Length
+          } else {
+            echo "Build output directory not found!"
+            exit 1
+          }
+
+      - name: Build Installer
+        shell: pwsh
+        run: |
+          $innoSetupPath = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (Test-Path $innoSetupPath) {
+            echo "Building installer with Inno Setup..."
+            & $innoSetupPath setup.iss
+            echo "Installer built successfully"
+          } else {
+            echo "Inno Setup compiler not found at expected path"
+            exit 1
+          }
+
+      - name: Verify installer was created
+        run: |
+          if (Test-Path "installer_output\MobileServiceManagerSetup.exe") {
+            echo "Installer created successfully"
+            Get-Item "installer_output\MobileServiceManagerSetup.exe" | Select-Object Name, Length
+          } else {
+            echo "Installer file not found!"
+            Get-ChildItem installer_output -ErrorAction SilentlyContinue
+            exit 1
+          }
+
+      - name: Upload Windows Installer
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-service-manager
-          path: mobile-service-manager.zip
+          name: mobile-service-manager-installer
+          path: installer_output/MobileServiceManagerSetup.exe
