@@ -110,5 +110,5 @@ jobs:
       - name: Upload Windows Installer
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-service-manager-installer
+          name: mobile-service-manager-windows-installer
           path: installer_output/MobileServiceManagerSetup.exe

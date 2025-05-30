@@ -27,45 +27,120 @@ jobs:
       - name: Build macOS App
         run: flutter build macos --release
 
+      - name: Verify build output
+        run: |
+          if [ -d "build/macos/Build/Products/Release/mobile_service_manager.app" ]; then
+            echo "✅ macOS app bundle created successfully"
+            ls -la "build/macos/Build/Products/Release/"
+          else
+            echo "❌ macOS app bundle not found!"
+            find build/macos -name "*.app" -type d
+            exit 1
+          fi
+
+      - name: Install create-dmg
+        run: |
+          brew install create-dmg
+          echo "✅ create-dmg installed successfully"
+
       - name: Create installation instructions
         run: |
           cat > INSTALLATION_INSTRUCTIONS.md << 'EOF'
-          # Installation Instructions for macOS
+          # Mobile Service Manager - macOS Installation Guide
 
-          ## The app is unsigned, so you'll need to bypass macOS security checks:
+          ## Installation Steps
 
-          ### Method 1: Using System Preferences (Recommended)
-          1. Download and extract the app
-          2. Try to open the app (you'll get a security warning)
-          3. Go to **System Preferences** > **Security & Privacy** > **General**
-          4. Click **"Open Anyway"** next to the blocked app message
-          5. Confirm by clicking **"Open"** in the dialog
+          ### Step 1: Download and Mount
+          1. Download the DMG file
+          2. Double-click to mount the disk image
+          3. Drag the app to Applications folder (or desired location)
 
-          ### Method 2: Using Terminal (Alternative)
-          1. Download and extract the app
-          2. Open Terminal
-          3. Run: `sudo xattr -rd com.apple.quarantine /path/to/mobile_service_manager.app`
-          4. Replace `/path/to/` with the actual path to your app
-          5. The app should now open normally
+          ### Step 2: Bypass Security Warning
+          When you first try to open the app, you'll see: *"Apple cannot verify that this app is free from malware"*
 
-          ### Method 3: Disable Gatekeeper Temporarily (Not Recommended)
+          **Choose one of these methods:**
+
+          #### Method A: System Preferences (Recommended)
+          1. Try to open the app (you'll get the security warning)
+          2. Go to **System Preferences** → **Security & Privacy** → **General**
+          3. You'll see a message about the blocked app
+          4. Click **"Open Anyway"**
+          5. Confirm by clicking **"Open"** in the confirmation dialog
+
+          #### Method B: Right-Click Method
+          1. Right-click (or Control+click) on the app
+          2. Select **"Open"** from the context menu
+          3. Click **"Open"** in the security dialog
+
+          #### Method C: Terminal Command
           1. Open Terminal
-          2. Run: `sudo spctl --master-disable`
-          3. Install and run the app
-          4. Re-enable with: `sudo spctl --master-enable`
+          2. Run: `sudo xattr -rd com.apple.quarantine /Applications/mobile_service_manager.app`
+          3. Replace the path if you installed the app elsewhere
+          4. Enter your password when prompted
 
-          **Note:** This is an unsigned development build. For production use, the app should be properly code-signed and notarized.
+          ## After First Launch
+          Once you've bypassed the security warning once, the app will open normally in the future.
+
+          ## Troubleshooting
+          - **App won't open at all**: Try Method C (Terminal command)
+          - **Still getting warnings**: Make sure you're using the exact app name and path
+          - **Permission denied**: Make sure you have admin rights on your Mac
+
+          ## About This Build
+          This is an unsigned development build. The security warning is expected and does not indicate any actual security risk.
           EOF
 
-      - name: Create simple ZIP package
+      - name: Create DMG installer
         run: |
-          mkdir -p package
-          cp -R "build/macos/Build/Products/Release/mobile_service_manager.app" package/
-          cp INSTALLATION_INSTRUCTIONS.md package/
-          zip -r MobileServiceManager-macOS.zip package/
+          # Create a temporary directory for DMG contents
+          mkdir -p dmg_temp
+          
+          # Copy the app bundle to temp directory
+          cp -R "build/macos/Build/Products/Release/mobile_service_manager.app" dmg_temp/
+          
+          # Copy installation instructions to DMG
+          cp INSTALLATION_INSTRUCTIONS.md dmg_temp/
+          
+          # Create the DMG with fallback
+          create-dmg \
+            --volname "Mobile Service Manager" \
+            --window-pos 200 120 \
+            --window-size 800 450 \
+            --icon-size 100 \
+            --icon "mobile_service_manager.app" 200 190 \
+            --icon "INSTALLATION_INSTRUCTIONS.md" 400 300 \
+            --hide-extension "mobile_service_manager.app" \
+            --app-drop-link 600 185 \
+            --hdiutil-verbose \
+            "MobileServiceManagerInstaller.dmg" \
+            "dmg_temp/" || {
+            echo "⚠️ create-dmg failed, using hdiutil fallback"
+            hdiutil create -format UDZO -srcfolder dmg_temp -volname "Mobile Service Manager" MobileServiceManagerInstaller.dmg
+          }
+          
+          echo "✅ DMG created successfully"
 
-      - name: Upload macOS Package
+      - name: Verify DMG creation
+        run: |
+          if [ -f "MobileServiceManagerInstaller.dmg" ]; then
+            echo "✅ DMG installer created successfully"
+            ls -lh MobileServiceManagerInstaller.dmg
+          
+            # Show DMG contents for verification
+            echo "📦 DMG contents:"
+            hdiutil attach MobileServiceManagerInstaller.dmg -readonly -nobrowse -mountpoint /tmp/dmg_check
+            ls -la /tmp/dmg_check/
+            hdiutil detach /tmp/dmg_check
+          else
+            echo "❌ DMG installer not found!"
+            ls -la
+            exit 1
+          fi
+
+      - name: Upload macOS DMG Installer
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-service-manager-macos
-          path: MobileServiceManager-macOS.zip
+          name: mobile-service-manager-macos-installer
+          path: |
+            MobileServiceManagerInstaller.dmg
+            INSTALLATION_INSTRUCTIONS.md
