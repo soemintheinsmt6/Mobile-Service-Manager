@@ -27,65 +27,45 @@ jobs:
       - name: Build macOS App
         run: flutter build macos --release
 
-      - name: Verify build output
+      - name: Create installation instructions
         run: |
-          if [ -d "build/macos/Build/Products/Release/mobile_service_manager.app" ]; then
-            echo "✅ macOS app bundle created successfully"
-            ls -la "build/macos/Build/Products/Release/"
-          else
-            echo "❌ macOS app bundle not found!"
-            find build/macos -name "*.app" -type d
-            exit 1
-          fi
+          cat > INSTALLATION_INSTRUCTIONS.md << 'EOF'
+          # Installation Instructions for macOS
 
-      - name: Install create-dmg
+          ## The app is unsigned, so you'll need to bypass macOS security checks:
+
+          ### Method 1: Using System Preferences (Recommended)
+          1. Download and extract the app
+          2. Try to open the app (you'll get a security warning)
+          3. Go to **System Preferences** > **Security & Privacy** > **General**
+          4. Click **"Open Anyway"** next to the blocked app message
+          5. Confirm by clicking **"Open"** in the dialog
+
+          ### Method 2: Using Terminal (Alternative)
+          1. Download and extract the app
+          2. Open Terminal
+          3. Run: `sudo xattr -rd com.apple.quarantine /path/to/mobile_service_manager.app`
+          4. Replace `/path/to/` with the actual path to your app
+          5. The app should now open normally
+
+          ### Method 3: Disable Gatekeeper Temporarily (Not Recommended)
+          1. Open Terminal
+          2. Run: `sudo spctl --master-disable`
+          3. Install and run the app
+          4. Re-enable with: `sudo spctl --master-enable`
+
+          **Note:** This is an unsigned development build. For production use, the app should be properly code-signed and notarized.
+          EOF
+
+      - name: Create simple ZIP package
         run: |
-          brew install create-dmg
-          echo "✅ create-dmg installed successfully"
+          mkdir -p package
+          cp -R "build/macos/Build/Products/Release/mobile_service_manager.app" package/
+          cp INSTALLATION_INSTRUCTIONS.md package/
+          zip -r MobileServiceManager-macOS.zip package/
 
-      - name: Create DMG installer
-        run: |
-          # Create a temporary directory for DMG contents
-          mkdir -p dmg_temp
-          
-          # Copy the app bundle to temp directory
-          cp -R "build/macos/Build/Products/Release/mobile_service_manager.app" dmg_temp/
-          
-          # Create the DMG
-          create-dmg \
-            --volname "Mobile Service Manager" \
-            --volicon "dmg_temp/mobile_service_manager.app/Contents/Resources/AppIcon.icns" \
-            --window-pos 200 120 \
-            --window-size 800 450 \
-            --icon-size 100 \
-            --icon "mobile_service_manager.app" 200 190 \
-            --hide-extension "mobile_service_manager.app" \
-            --app-drop-link 600 185 \
-            --hdiutil-verbose \
-            "MobileServiceManagerInstaller.dmg" \
-            "dmg_temp/"
-          
-          echo "✅ DMG created successfully"
-
-      - name: Verify DMG creation
-        run: |
-          if [ -f "MobileServiceManagerInstaller.dmg" ]; then
-            echo "✅ DMG installer created successfully"
-            ls -lh MobileServiceManagerInstaller.dmg
-          else
-            echo "❌ DMG installer not found!"
-            ls -la
-            exit 1
-          fi
-
-      - name: Upload macOS App Bundle
+      - name: Upload macOS Package
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-service-manager-macos-app
-          path: build/macos/Build/Products/Release/mobile_service_manager.app
-
-      - name: Upload macOS DMG Installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: mobile-service-manager-macos-dmg
-          path: MobileServiceManagerInstaller.dmg
+          name: mobile-service-manager-macos
+          path: MobileServiceManager-macOS.zip
