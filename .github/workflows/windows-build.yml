@@ -32,6 +32,12 @@ jobs:
           choco install innosetup -y
           echo "Inno Setup installed successfully"
 
+      - name: Download Visual C++ Redistributable
+        run: |
+          echo "Downloading Visual C++ Redistributable..."
+          Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile "VC_redist.x64.exe"
+          echo "Downloaded VC++ Redistributable"
+
       - name: Create installer output directory
         run: mkdir installer_output
 
@@ -72,6 +78,12 @@ jobs:
           $mainExe = $exeFiles[0].Name
           echo "Using executable: $mainExe"
           
+          # Check if VC_redist.x64.exe exists
+          if (-not (Test-Path "VC_redist.x64.exe")) {
+            echo "ERROR: VC_redist.x64.exe not found!"
+            exit 1
+          }
+          
           $setupScript = @"
           [Setup]
           AppName=Mobile Service Manager
@@ -98,8 +110,8 @@ jobs:
 
           [Files]
           Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-          ; Include Visual C++ Redistributable
-          Source: "{tmp}\VC_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
+          ; Include Visual C++ Redistributable - Fixed path
+          Source: "VC_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
           [Icons]
           Name: "{group}\Mobile Service Manager"; Filename: "{app}\$mainExe"
@@ -114,22 +126,12 @@ jobs:
           [Code]
           function InitializeSetup(): Boolean;
           begin
-            if not IsDotNetInstalled(net472, 0) then begin
-              MsgBox('Microsoft .NET Framework 4.7.2 or later is required. Please install it first.', mbError, MB_OK);
-              Result := False;
-            end else
-              Result := True;
+            Result := True;
           end;
           "@
           
           $setupScript | Out-File -FilePath "setup.iss" -Encoding UTF8
           echo "Inno Setup script created successfully"
-
-      - name: Download Visual C++ Redistributable
-        run: |
-          echo "Downloading Visual C++ Redistributable..."
-          Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile "VC_redist.x64.exe"
-          echo "Downloaded VC++ Redistributable"
 
       - name: Build Installer
         shell: pwsh
@@ -138,7 +140,12 @@ jobs:
           if (Test-Path $innoSetupPath) {
             echo "Building installer with Inno Setup..."
             & $innoSetupPath setup.iss
-            echo "Installer built successfully"
+            if ($LASTEXITCODE -eq 0) {
+              echo "Installer built successfully"
+            } else {
+              echo "Installer build failed with exit code $LASTEXITCODE"
+              exit 1
+            }
           } else {
             echo "Inno Setup compiler not found at expected path"
             exit 1
