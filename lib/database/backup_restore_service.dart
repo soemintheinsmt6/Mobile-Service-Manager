@@ -10,10 +10,10 @@ import '../models/fault.dart';
 import '../models/service_item.dart';
 import '../models/technician.dart';
 
-class BackupRestoreProvider {
+class BackupRestoreService {
   final ObjectBox _box;
 
-  BackupRestoreProvider(this._box);
+  BackupRestoreService(this._box);
 
   /// Creates a complete backup of all data
   Future<String?> createBackup() async {

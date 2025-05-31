@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mobile_service_manager/constants/app_colors.dart';
-import 'package:mobile_service_manager/providers/backup_restore_provider.dart';
+import 'package:mobile_service_manager/database/backup_restore_service.dart';
 import 'package:mobile_service_manager/providers/brand_provider.dart';
 import 'package:mobile_service_manager/providers/fault_provider.dart';
 import 'package:mobile_service_manager/providers/object_box_provider.dart';
@@ -18,7 +18,7 @@ class SettingScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingScreenState extends ConsumerState<SettingScreen> {
-  late final BackupRestoreProvider _backupRestore;
+  late BackupRestoreService _backupRestoreService;
   bool _isLoading = false;
 
   Future<void> _createBackup() async {
@@ -27,7 +27,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     });
 
     try {
-      final filePath = await _backupRestore.createBackup();
+      final filePath = await _backupRestoreService.createBackup();
       if (filePath != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -84,7 +84,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     });
 
     try {
-      final success = await _backupRestore.restoreFromBackup(
+      final success = await _backupRestoreService.restoreFromBackup(
         clearExisting: clearExisting,
       );
 
@@ -127,7 +127,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
     final objectBox = ProviderScope.containerOf(context, listen: false)
         .read(objectBoxProvider);
-    _backupRestore = BackupRestoreProvider(objectBox);
+    _backupRestoreService = BackupRestoreService(objectBox);
   }
 
   @override

@@ -35,10 +35,44 @@ jobs:
       - name: Create installer output directory
         run: mkdir installer_output
 
+      - name: Verify build output and find executable
+        run: |
+          if (Test-Path "build\windows\x64\runner\Release") {
+            echo "Build output directory exists"
+            echo "=== Contents of Release directory ==="
+            Get-ChildItem "build\windows\x64\runner\Release" -Recurse | Select-Object Name, FullName, Length
+          
+            echo "=== Looking for .exe files ==="
+            $exeFiles = Get-ChildItem "build\windows\x64\runner\Release" -Filter "*.exe" -Recurse
+            if ($exeFiles) {
+              foreach ($exe in $exeFiles) {
+                echo "Found executable: $($exe.Name) at $($exe.FullName)"
+              }
+            } else {
+              echo "No .exe files found!"
+            }
+          
+            echo "=== Looking for .dll files ==="
+            Get-ChildItem "build\windows\x64\runner\Release" -Filter "*.dll" -Recurse | Select-Object Name
+          } else {
+            echo "Build output directory not found!"
+            exit 1
+          }
+
       - name: Create Inno Setup Script
         shell: pwsh
         run: |
-          $setupScript = @'
+          # First, let's find the actual executable name
+          $exeFiles = Get-ChildItem "build\windows\x64\runner\Release" -Filter "*.exe" -Recurse
+          if (-not $exeFiles) {
+            echo "ERROR: No executable found!"
+            exit 1
+          }
+          
+          $mainExe = $exeFiles[0].Name
+          echo "Using executable: $mainExe"
+          
+          $setupScript = @"
           [Setup]
           AppName=Mobile Service Manager
           AppVersion=1.0.0
@@ -52,7 +86,9 @@ jobs:
           SolidCompression=yes
           ArchitecturesAllowed=x64
           ArchitecturesInstallIn64BitMode=x64
-          SetupIconFile=
+          MinVersion=6.1sp1
+          PrivilegesRequired=admin
+          DisableProgramGroupPage=yes
 
           [Languages]
           Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -62,26 +98,38 @@ jobs:
 
           [Files]
           Source: "build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+          ; Include Visual C++ Redistributable
+          Source: "{tmp}\VC_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 
           [Icons]
-          Name: "{group}\Mobile Service Manager"; Filename: "{app}\mobile_service_manager.exe"
-          Name: "{autodesktop}\Mobile Service Manager"; Filename: "{app}\mobile_service_manager.exe"; Tasks: desktopicon
+          Name: "{group}\Mobile Service Manager"; Filename: "{app}\$mainExe"
+          Name: "{autodesktop}\Mobile Service Manager"; Filename: "{app}\$mainExe"; Tasks: desktopicon
 
           [Run]
-          Filename: "{app}\mobile_service_manager.exe"; Description: "{cm:LaunchProgram,Mobile Service Manager}"; Flags: nowait postinstall skipifsilent
-          '@
+          ; Install Visual C++ Redistributable silently
+          Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/quiet /norestart"; StatusMsg: "Installing Visual C++ Redistributable..."; Flags: waituntilterminated
+          ; Launch the app after installation
+          Filename: "{app}\$mainExe"; Description: "{cm:LaunchProgram,Mobile Service Manager}"; Flags: nowait postinstall skipifsilent
+
+          [Code]
+          function InitializeSetup(): Boolean;
+          begin
+            if not IsDotNetInstalled(net472, 0) then begin
+              MsgBox('Microsoft .NET Framework 4.7.2 or later is required. Please install it first.', mbError, MB_OK);
+              Result := False;
+            end else
+              Result := True;
+          end;
+          "@
+          
           $setupScript | Out-File -FilePath "setup.iss" -Encoding UTF8
           echo "Inno Setup script created successfully"
 
-      - name: Verify build output exists
+      - name: Download Visual C++ Redistributable
         run: |
-          if (Test-Path "build\windows\x64\runner\Release") {
-            echo "Build output directory exists"
-            Get-ChildItem "build\windows\x64\runner\Release" -Recurse | Select-Object Name, Length
-          } else {
-            echo "Build output directory not found!"
-            exit 1
-          }
+          echo "Downloading Visual C++ Redistributable..."
+          Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile "VC_redist.x64.exe"
+          echo "Downloaded VC++ Redistributable"
 
       - name: Build Installer
         shell: pwsh
@@ -95,6 +143,56 @@ jobs:
             echo "Inno Setup compiler not found at expected path"
             exit 1
           }
+
+      - name: Create troubleshooting guide
+        run: |
+          @'
+          # Windows Installation Troubleshooting Guide
+
+          ## If the app doesn't start after installation:
+
+          ### Method 1: Check Windows Event Viewer
+          1. Press `Win + R`, type `eventvwr.msc`, press Enter
+          2. Go to Windows Logs → Application
+          3. Look for errors related to your app name
+          4. Check the error details for missing dependencies
+
+          ### Method 2: Run from Command Line (for debugging)
+          1. Open Command Prompt as Administrator
+          2. Navigate to: `cd "C:\Program Files\MobileServiceManager"`
+          3. Run the executable directly to see any error messages
+          4. Look for missing DLL errors
+
+          ### Method 3: Install Visual C++ Redistributable Manually
+          If the automatic installation failed:
+          1. Download from: https://aka.ms/vs/17/release/vc_redist.x64.exe
+          2. Run as Administrator
+          3. Restart your computer
+          4. Try running the app again
+
+          ### Method 4: Windows Compatibility
+          1. Right-click the app executable
+          2. Select Properties → Compatibility
+          3. Try "Run this program in compatibility mode for Windows 10"
+          4. Check "Run this program as an administrator"
+
+          ### Method 5: Windows Defender/Antivirus
+          1. Check if Windows Defender quarantined the app
+          2. Add the installation folder to Windows Defender exclusions
+          3. Temporarily disable real-time protection and try again
+
+          ## Common Issues:
+          - **Silent crash**: Usually missing Visual C++ runtime
+          - **Access denied**: Run as administrator
+          - **File not found**: Antivirus blocked the executable
+          - **DLL errors**: Missing system dependencies
+
+          ## Get More Help:
+          If none of these work, please create an issue with:
+          1. Windows version
+          2. Error messages from Event Viewer
+          3. Antivirus software you're using
+          '@ | Out-File -FilePath "WINDOWS_TROUBLESHOOTING.md" -Encoding UTF8
 
       - name: Verify installer was created
         run: |
@@ -111,4 +209,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mobile-service-manager-windows-installer
-          path: installer_output/MobileServiceManagerSetup.exe
+          path: |
+            installer_output/MobileServiceManagerSetup.exe
+            WINDOWS_TROUBLESHOOTING.md
