@@ -49,9 +49,14 @@ class BackupRestoreService {
       );
 
       if (result != null) {
-        final file = File(result);
+        String finalPath = result;
+        if (!finalPath.toLowerCase().endsWith('.json')) {
+          finalPath = '$finalPath.json';
+        }
+
+        final file = File(finalPath);
         await file.writeAsString(jsonString);
-        return result;
+        return finalPath;
       }
 
       return null;
