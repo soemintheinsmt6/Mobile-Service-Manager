@@ -1,6 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/models/fault.dart';
 import 'package:mobile_service_manager/repositories/fault_repository.dart';
-import 'package:riverpod/riverpod.dart';
 import 'repository_providers.dart';
 
 // Provider for the list of all brands

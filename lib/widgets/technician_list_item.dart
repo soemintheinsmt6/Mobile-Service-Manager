@@ -48,7 +48,7 @@ class TechnicianListItem extends StatelessWidget {
                       'Specialization',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.listItemText.withOpacity(0.7),
+                        color: AppColors.listItemText.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -56,7 +56,7 @@ class TechnicianListItem extends StatelessWidget {
                       'Experience',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.listItemText.withOpacity(0.7),
+                        color: AppColors.listItemText.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -64,7 +64,7 @@ class TechnicianListItem extends StatelessWidget {
                       'Contact',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.listItemText.withOpacity(0.7),
+                        color: AppColors.listItemText.withValues(alpha: 0.7),
                       ),
                     ),
                   ],

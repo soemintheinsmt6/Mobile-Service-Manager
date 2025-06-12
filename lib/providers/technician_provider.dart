@@ -1,5 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/repositories/technician_repository.dart';
-import 'package:riverpod/riverpod.dart';
 import '../models/technician.dart';
 import 'repository_providers.dart';
 

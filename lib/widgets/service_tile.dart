@@ -25,7 +25,7 @@ class ServiceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = index % 2 == 0 ? Colors.white : Colors.grey.shade200;
     final phoneNumber =
-        item.phoneNumber == 0 ? '' : item.phoneNumber.toString();
+        item.phoneNumber == 'null' ? '' : item.phoneNumber.toString();
     final error = item.faults.map((e) => e.name).join(', ');
     final issueDate = item.issueDate.formattedDate;
     final deliveryDate =

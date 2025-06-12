@@ -1,4 +1,4 @@
-import 'package:riverpod/riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../database/object_box.dart';
 
 // StateProvider to hold and update the ObjectBox instance

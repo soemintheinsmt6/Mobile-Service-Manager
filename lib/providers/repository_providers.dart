@@ -1,5 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/repositories/fault_repository.dart';
-import 'package:riverpod/riverpod.dart';
 import '../repositories/brand_repository.dart';
 import '../repositories/service_item_repository.dart';
 import '../repositories/technician_repository.dart';

@@ -6,7 +6,7 @@ Future<dynamic> showCustomDialog(BuildContext context,
       context: context,
       barrierDismissible: true,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54.withOpacity(0.5),
+      barrierColor: Colors.black54.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (BuildContext buildContext, Animation animation,
           Animation secondaryAnimation) {
