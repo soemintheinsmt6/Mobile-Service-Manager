@@ -153,7 +153,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                 onTap: () {
                                   showCustomDialog(context,
                                       width: 435,
-                                      height: 815,
+                                      height: 830,
                                       child: EditServiceItemScreen(
                                           serviceItem: item));
                                 },

@@ -2,6 +2,7 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile_service_manager/constants/app_colors.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/models/technician.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
@@ -75,6 +76,8 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
   late String _deviceStatus;
   late String _deliveryStatus;
 
+  int _profit = 0;
+
   @override
   void initState() {
     super.initState();
@@ -88,6 +91,10 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
     _imeiController.text = item.imei;
     _priceController.text = item.servicePrice?.toString() ?? '';
     _expenseController.text = item.expense?.toString() ?? '';
+    _priceController.addListener(_calculateProfit);
+    _expenseController.addListener(_calculateProfit);
+    _calculateProfit();
+
     _remarkController.text = item.remark ?? '';
     _simIncluded = item.simIncluded;
     _sdIncluded = item.sdIncluded;
@@ -126,6 +133,24 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
         data: DropDownValueModel(name: deliveryStatus, value: deliveryStatus));
   }
 
+  void _calculateProfit() {
+    try {
+      final int price = int.parse(
+          _priceController.text.isEmpty ? '0' : _priceController.text);
+      final int expense = int.parse(
+          _expenseController.text.isEmpty ? '0' : _expenseController.text);
+
+      setState(() {
+        _profit = price - expense;
+      });
+    } catch (e) {
+      setState(() {
+        _profit = 0;
+      });
+      debugPrint('Error parsing input: $e');
+    }
+  }
+
   @override
   void dispose() {
     _invoiceController.dispose();
@@ -133,6 +158,8 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
     _phoneNumberController.dispose();
     _modelController.dispose();
     _imeiController.dispose();
+    _priceController.removeListener(_calculateProfit);
+    _expenseController.removeListener(_calculateProfit);
     _priceController.dispose();
     _expenseController.dispose();
     _remarkController.dispose();
@@ -447,11 +474,20 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                 ]),
                 _changeDeviceStatusTile(),
                 _accessory(),
+                if (_profit != 0)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 16.0),
+                    child: Text('Profit: ${_profit.toMMks()}',
+                        style: kDefaultTextStyle.copyWith(
+                            color: _profit < 0
+                                ? AppColors.dangerButton
+                                : Colors.black)),
+                  ),
                 Container(
                   padding: const EdgeInsets.only(top: 5),
                   width: 260,
                   child: BarButton(
-                    title: 'Update',
+                    title: 'Save',
                     onPressed: _updateServiceItem,
                   ),
                 ),

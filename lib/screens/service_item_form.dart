@@ -200,8 +200,6 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
             CustomTextFormField(
               title: 'Phone Number',
               focusNode: _phoneNumberFocus,
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
               onSaved: (v) => _phoneNumber = v ?? '',
               onFieldSubmitted: (_) {
                 _changeFocus(_modelFocus);
