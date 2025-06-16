@@ -1,3 +1,5 @@
+import 'package:mobile_service_manager/utils/extension.dart';
+
 class DailyRevenue {
   final DateTime date;
   final int totalServiceItemCount;
@@ -23,6 +25,5 @@ class DailyRevenue {
     required this.profit,
   });
 
-  // Helper method to format date for display
-  String get formattedDate => '${date.day}/${date.month}/${date.year}';
+  String get formattedDate => date.toString().formattedDate;
 }
