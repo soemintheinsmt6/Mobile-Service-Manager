@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/repositories/fault_repository.dart';
 import '../repositories/brand_repository.dart';
+import '../repositories/revenue_repository.dart';
 import '../repositories/service_item_repository.dart';
 import '../repositories/technician_repository.dart';
 import 'object_box_provider.dart';
@@ -27,6 +28,12 @@ final faultRepositoryProvider = Provider<FaultRepository>((ref) {
 final serviceItemRepositoryProvider = Provider<ServiceItemRepository>((ref) {
   final objectBox = ref.watch(objectBoxProvider);
   return ServiceItemRepository(objectBox);
+});
+
+// Revenue repository provider
+final revenueRepositoryProvider = Provider<RevenueRepository>((ref) {
+  final objectBox = ref.watch(objectBoxProvider);
+  return RevenueRepository(objectBox);
 });
 
 final trashOperationProvider = StateProvider<int>((ref) => 0);

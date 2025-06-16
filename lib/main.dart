@@ -7,6 +7,7 @@ import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/screens/brand_list_screen.dart';
 import 'package:mobile_service_manager/screens/fault_list_screen.dart';
+import 'package:mobile_service_manager/screens/revenue_screen.dart';
 import 'package:mobile_service_manager/screens/service_item_list_screen.dart';
 import 'package:mobile_service_manager/screens/setting_screen.dart';
 import 'package:mobile_service_manager/screens/technician_list_screen.dart';
@@ -92,6 +93,7 @@ class _MainScreenState extends State<MainScreen> {
     TechnicianListScreen(),
     FaultListScreen(),
     TrashListScreen(),
+    RevenueScreen(),
     SettingScreen()
   ];
 
@@ -130,6 +132,8 @@ class _MainScreenState extends State<MainScreen> {
                 _navigationItem(
                     icon: Icons.error_outline_rounded, text: 'Error'),
                 _navigationItem(icon: CupertinoIcons.archivebox, text: 'Bin'),
+                _navigationItem(
+                    icon: CupertinoIcons.money_dollar_circle, text: 'Revenue'),
                 _navigationItem(icon: CupertinoIcons.settings, text: 'Setting'),
               ],
             ),

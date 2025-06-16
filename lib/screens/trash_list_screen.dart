@@ -45,6 +45,9 @@ class _TrashListScreenState extends ConsumerState<TrashListScreen> {
     final trashItems = ref.watch(trashServiceItemProvider);
 
     return Scaffold(
+      appBar: AppBar(
+          title: Text('Deleted Service List', style: kHeaderTextStyle),
+          centerTitle: false),
       body: Column(
         children: [
           // Sticky header (scrolls horizontally only)
