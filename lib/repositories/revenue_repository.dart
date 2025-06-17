@@ -1,5 +1,5 @@
 import '../database/object_box.dart';
-import '../models/daily_revenue.dart';
+import '../models/revenue.dart';
 import '../models/service_item.dart';
 
 class RevenueRepository {
@@ -7,7 +7,7 @@ class RevenueRepository {
 
   RevenueRepository(this._objectBox);
 
-  DailyRevenue getDailyRevenue(DateTime selectedDate) {
+  Revenue getDailyRevenue(DateTime selectedDate) {
     // Get all service items for the selected date
     List<ServiceItem> dayItems = _getServiceItemsForDate(selectedDate);
 
@@ -31,7 +31,7 @@ class RevenueRepository {
         dayItems.fold(0, (sum, item) => sum + (item.expense ?? 0));
     int profit = priceTotal - expenseTotal;
 
-    return DailyRevenue(
+    return Revenue(
       date: selectedDate,
       totalServiceItemCount: dayItems.length,
       doneCount: doneCount,
@@ -62,9 +62,8 @@ class RevenueRepository {
   }
 
   // Get revenue data for a date range
-  List<DailyRevenue> getRevenueForDateRange(
-      DateTime fromDate, DateTime toDate) {
-    List<DailyRevenue> revenueList = [];
+  List<Revenue> getRevenueForDateRange(DateTime fromDate, DateTime toDate) {
+    List<Revenue> revenueList = [];
     DateTime currentDate = fromDate;
 
     while (currentDate.isBefore(toDate.add(const Duration(days: 1)))) {
@@ -76,11 +75,11 @@ class RevenueRepository {
   }
 
   // Get monthly revenue summary
-  DailyRevenue getMonthlyRevenue(int year, int month) {
+  Revenue getMonthlyRevenue(int year, int month) {
     DateTime firstDay = DateTime(year, month, 1);
     DateTime lastDay = DateTime(year, month + 1, 0);
 
-    List<DailyRevenue> monthlyData = getRevenueForDateRange(firstDay, lastDay);
+    List<Revenue> monthlyData = getRevenueForDateRange(firstDay, lastDay);
 
     // Aggregate all daily data into monthly summary
     int totalServiceItemCount =
@@ -99,7 +98,7 @@ class RevenueRepository {
         monthlyData.fold(0, (sum, day) => sum + day.expenseTotal);
     int profit = priceTotal - expenseTotal;
 
-    return DailyRevenue(
+    return Revenue(
       date: firstDay,
       totalServiceItemCount: totalServiceItemCount,
       doneCount: doneCount,

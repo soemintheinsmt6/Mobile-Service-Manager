@@ -11,6 +11,13 @@ extension DateFormatter on String {
   }
 }
 
+extension NumberFormatting on int {
+  String formatted() {
+    final numberFormat = NumberFormat('#,##0');
+    return numberFormat.format(this);
+  }
+}
+
 extension CurrencyFormatting on int {
   String toMMks({String symbol = ' Ks'}) {
     final NumberFormat numberFormat = NumberFormat.currency(

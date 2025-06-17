@@ -1,6 +1,6 @@
 import 'package:mobile_service_manager/utils/extension.dart';
 
-class DailyRevenue {
+class Revenue {
   final DateTime date;
   final int totalServiceItemCount;
   final int doneCount;
@@ -13,7 +13,7 @@ class DailyRevenue {
   final int expenseTotal;
   final int profit;
 
-  DailyRevenue({
+  Revenue({
     required this.date,
     required this.totalServiceItemCount,
     required this.doneCount,

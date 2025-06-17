@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_service_manager/models/daily_revenue.dart';
+import 'package:mobile_service_manager/models/revenue.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
 import '../constants/app_colors.dart';
 
 class RevenueCard extends StatelessWidget {
-  const RevenueCard({super.key, required this.revenue});
+  const RevenueCard({
+    super.key,
+    required this.title,
+    required this.revenue,
+  });
 
-  final DailyRevenue revenue;
+  final String title;
+  final Revenue revenue;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -25,19 +30,13 @@ class RevenueCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    revenue.formattedDate,
+                    title,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryButton,
                         ),
                   ),
-                  Text(
-                    'Total: ${revenue.totalServiceItemCount}',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryButton,
-                        ),
-                  ),
+                  _totalItems(),
                 ],
               ),
             ),
@@ -77,7 +76,7 @@ class RevenueCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Location Counts
             Padding(
@@ -103,16 +102,21 @@ class RevenueCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Financial Summary
             Padding(
-              padding: const EdgeInsets.only(left: 4.0),
-              child: Text(
-                'Financial Summary',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Financial Summary',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  if (revenue.priceTotal > 0) _profitMargin(),
+                ],
               ),
             ),
             const SizedBox(height: 8),
@@ -132,7 +136,7 @@ class RevenueCard extends StatelessWidget {
                       'Total Expense', revenue.expenseTotal, Colors.red[700]!),
                   const Divider(),
                   _buildFinancialRow(
-                    'Profit',
+                    'Net Profit',
                     revenue.profit,
                     revenue.profit >= 0 ? Colors.green[700]! : Colors.red[700]!,
                     isProfit: true,
@@ -141,6 +145,51 @@ class RevenueCard extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _totalItems() {
+    return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue[300]!, Colors.blue[400]!],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Text(
+          'Total Items: ${revenue.totalServiceItemCount}',
+          style: const TextStyle(fontSize: 18, color: Colors.white),
+        ));
+  }
+
+  Widget _profitMargin() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: revenue.profit >= 0 ? Colors.green[50] : Colors.red[50],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: revenue.profit >= 0 ? Colors.green[300]! : Colors.red[300]!,
+        ),
+      ),
+      child: Text(
+        'Profit Margin: ${((revenue.profit / revenue.priceTotal) * 100).toStringAsFixed(2)}%',
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: revenue.profit >= 0 ? Colors.green[700] : Colors.red[700],
         ),
       ),
     );
@@ -157,7 +206,7 @@ class RevenueCard extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            count.toString(),
+            count.formatted(),
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
