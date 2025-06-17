@@ -6,6 +6,7 @@ class DailyRevenue {
   final int doneCount;
   final int inProgressCount;
   final int returnCount;
+  final int freeCount;
   final int inStoreCount;
   final int deliveredCount;
   final int priceTotal;
@@ -18,6 +19,7 @@ class DailyRevenue {
     required this.doneCount,
     required this.inProgressCount,
     required this.returnCount,
+    required this.freeCount,
     required this.inStoreCount,
     required this.deliveredCount,
     required this.priceTotal,

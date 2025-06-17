@@ -70,6 +70,11 @@ class RevenueCard extends StatelessWidget {
                   child: _buildStatusCard(
                       'Return', revenue.returnCount, Colors.red),
                 ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildStatusCard(
+                      'Free', revenue.freeCount, Colors.grey.shade600),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -121,7 +126,7 @@ class RevenueCard extends StatelessWidget {
               child: Column(
                 children: [
                   _buildFinancialRow(
-                      'Total Price', revenue.priceTotal, Colors.green[700]!),
+                      'Total Income', revenue.priceTotal, Colors.green[700]!),
                   const Divider(),
                   _buildFinancialRow(
                       'Total Expense', revenue.expenseTotal, Colors.red[700]!),

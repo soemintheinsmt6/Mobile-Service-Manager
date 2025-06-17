@@ -37,7 +37,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
   late SingleValueDropDownController _brandController;
   late SingleValueDropDownController _faultController;
   late SingleValueDropDownController _technicianController;
-  late SingleValueDropDownController _deviceStatusController;
+  late SingleValueDropDownController _serviceStatusController;
   late SingleValueDropDownController _deliveryStatusController;
 
   final TextEditingController _specificDateController = TextEditingController();
@@ -69,7 +69,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
     _brandController = SingleValueDropDownController();
     _faultController = SingleValueDropDownController();
     _technicianController = SingleValueDropDownController();
-    _deviceStatusController = SingleValueDropDownController();
+    _serviceStatusController = SingleValueDropDownController();
     _deliveryStatusController = SingleValueDropDownController();
   }
 
@@ -84,7 +84,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
     _specificDateController.dispose();
     _fromDateController.dispose();
     _toDateController.dispose();
-    _deviceStatusController.dispose();
+    _serviceStatusController.dispose();
     _deliveryStatusController.dispose();
     super.dispose();
   }
@@ -325,13 +325,13 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
               children: [
                 Expanded(
                   child: CustomDropDownTextField(
-                    title: 'Device Status',
+                    title: 'Service Status',
                     padding: EdgeInsets.zero,
                     showTitle: false,
                     enableSearch: false,
                     clearOption: true,
-                    controller: _deviceStatusController,
-                    dropDownList: deviceStatus
+                    controller: _serviceStatusController,
+                    dropDownList: serviceStatus
                         .map((e) => DropDownValueModel(name: e, value: e))
                         .toList(),
                     onChanged: (item) {

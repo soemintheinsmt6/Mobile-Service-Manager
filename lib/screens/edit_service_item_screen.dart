@@ -501,7 +501,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
 
   Widget _changeDeviceStatusTile() {
     return SizedBox(
-      width: 260,
+      width: 285,
       child: Row(
         children: [
           Expanded(
@@ -511,7 +511,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
               showTitle: false,
               enableSearch: false,
               controller: _deviceStatusController,
-              dropDownList: deviceStatus
+              dropDownList: serviceStatus
                   .map((e) => DropDownValueModel(name: e, value: e))
                   .toList(),
               onChanged: (item) {
@@ -602,7 +602,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
     return Container(
       padding: const EdgeInsets.only(left: 10),
       alignment: Alignment.centerRight,
-      width: 270,
+      width: 295,
       child: child,
     );
   }

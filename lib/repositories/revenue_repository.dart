@@ -16,6 +16,7 @@ class RevenueRepository {
     int inProgressCount =
         dayItems.where((item) => item.status == 'in_progress').length;
     int returnCount = dayItems.where((item) => item.status == 'return').length;
+    int freeCount = dayItems.where((item) => item.status == 'free').length;
 
     // Calculate counts by location
     int inStoreCount =
@@ -36,6 +37,7 @@ class RevenueRepository {
       doneCount: doneCount,
       inProgressCount: inProgressCount,
       returnCount: returnCount,
+      freeCount: freeCount,
       inStoreCount: inStoreCount,
       deliveredCount: deliveredCount,
       priceTotal: priceTotal,
@@ -87,6 +89,7 @@ class RevenueRepository {
     int inProgressCount =
         monthlyData.fold(0, (sum, day) => sum + day.inProgressCount);
     int returnCount = monthlyData.fold(0, (sum, day) => sum + day.returnCount);
+    int freeCount = monthlyData.fold(0, (sum, day) => sum + day.freeCount);
     int inStoreCount =
         monthlyData.fold(0, (sum, day) => sum + day.inStoreCount);
     int deliveredCount =
@@ -102,6 +105,7 @@ class RevenueRepository {
       doneCount: doneCount,
       inProgressCount: inProgressCount,
       returnCount: returnCount,
+      freeCount: freeCount,
       inStoreCount: inStoreCount,
       deliveredCount: deliveredCount,
       priceTotal: priceTotal,
