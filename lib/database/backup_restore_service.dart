@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:mobile_service_manager/database/object_box.dart';
-import 'package:path_provider/path_provider.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
 import '../models/service_item.dart';
@@ -18,22 +17,19 @@ class BackupRestoreService {
   /// Creates a complete backup of all data
   Future<String?> createBackup() async {
     try {
+      // Get all data first (this is fast enough to run on main thread)
       final brands = _box.getAllBrands();
       final technicians = _box.getAllTechnicians();
       final faults = _box.getAllFaults();
       final serviceItems = _box.getAllServiceItems();
 
-      // Create backup data structure
-      final backupData = {
-        'version': '1.0',
-        'timestamp': DateTime.now().toIso8601String(),
-        'data': {
-          'brands': brands.map((b) => b.toJson()).toList(),
-          'technicians': technicians.map((t) => t.toJson()).toList(),
-          'faults': faults.map((f) => f.toJson()).toList(),
-          'serviceItems': serviceItems.map((s) => s.toJson()).toList(),
-        }
-      };
+      // Run the heavy JSON conversion in the background
+      final backupData = await compute(_convertToBackupData, {
+        'brands': brands.map((b) => b.toJson()).toList(),
+        'technicians': technicians.map((t) => t.toJson()).toList(),
+        'faults': faults.map((f) => f.toJson()).toList(),
+        'serviceItems': serviceItems.map((s) => s.toJson()).toList(),
+      });
 
       // Convert to JSON string
       final jsonString = const JsonEncoder.withIndent('  ').convert(backupData);
@@ -66,9 +62,20 @@ class BackupRestoreService {
     }
   }
 
+  /// Background function to convert data to backup format
+  static Map<String, dynamic> _convertToBackupData(Map<String, dynamic> data) {
+    return {
+      'version': '1.0',
+      'timestamp': DateTime.now().toIso8601String(),
+      'data': data,
+    };
+  }
+
   /// Restore data from a backup file
-  Future<bool> restoreFromBackup({bool clearExisting = true}) async {
+  Future<bool> restoreFromBackup({bool clearExisting = true, Function(String)? onProgress}) async {
     try {
+      onProgress?.call('Selecting backup file...');
+      
       // Pick backup file
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -77,10 +84,16 @@ class BackupRestoreService {
       );
 
       if (result != null && result.files.single.path != null) {
+        onProgress?.call('Reading backup file...');
         final file = File(result.files.single.path!);
         final jsonString = await file.readAsString();
 
-        return await _restoreFromJsonString(jsonString, clearExisting);
+        // Parse JSON in background to avoid blocking UI
+        onProgress?.call('Parsing backup data...');
+        final backupData = await compute(_parseBackupData, jsonString);
+        
+        // Perform the actual restore operations (ObjectBox operations must be on main thread)
+        return await _restoreFromJsonString(backupData, clearExisting, onProgress);
       }
 
       return false;
@@ -90,20 +103,24 @@ class BackupRestoreService {
     }
   }
 
-  /// Restores data from JSON string
+  /// Background function to parse backup data
+  static Map<String, dynamic> _parseBackupData(String jsonString) {
+    return jsonDecode(jsonString) as Map<String, dynamic>;
+  }
+
+  /// Restores data from parsed backup data
   Future<bool> _restoreFromJsonString(
-      String jsonString, bool clearExisting) async {
+      Map<String, dynamic> backupData, bool clearExisting, Function(String)? onProgress) async {
     try {
-      final backupData = jsonDecode(jsonString) as Map<String, dynamic>;
       final data = backupData['data'] as Map<String, dynamic>;
 
       if (clearExisting) {
         // Clear existing data and use simple restore
         await _clearAllData();
-        return await _restoreWithClearData(data);
+        return await _restoreWithClearData(data, onProgress);
       } else {
         // Merge data with duplicate detection
-        return await _mergeDataWithDuplicateDetection(data);
+        return await _mergeDataWithDuplicateDetection(data, onProgress);
       }
     } catch (e) {
       debugPrint('Error in restore process: $e');
@@ -112,50 +129,80 @@ class BackupRestoreService {
   }
 
   /// Simple restore for cleared database
-  Future<bool> _restoreWithClearData(Map<String, dynamic> data) async {
+  Future<bool> _restoreWithClearData(Map<String, dynamic> data, Function(String)? onProgress) async {
     try {
+      onProgress?.call('Clearing existing data...');
       // Create ID mapping for relationships
       final Map<int, int> brandIdMap = {};
       final Map<int, int> technicianIdMap = {};
       final Map<int, int> faultIdMap = {};
 
       // Restore brands
+      onProgress?.call('Restoring brands...');
       final brandsData = data['brands'] as List<dynamic>;
-      for (final brandJson in brandsData) {
+      for (int i = 0; i < brandsData.length; i++) {
+        final brandJson = brandsData[i];
         final oldId = brandJson['id'] as int;
         final brand = Brand.fromJson(brandJson);
         brand.id = 0; // Reset ID
         final newId = _box.brandBox.put(brand);
         brandIdMap[oldId] = newId;
+        
+        // Update progress every 10 items
+        if (i % 10 == 0) {
+          onProgress?.call('Restoring brands... ${i + 1}/${brandsData.length}');
+        }
       }
 
       // Restore technicians
+      onProgress?.call('Restoring technicians...');
       final techniciansData = data['technicians'] as List<dynamic>;
-      for (final technicianJson in techniciansData) {
+      for (int i = 0; i < techniciansData.length; i++) {
+        final technicianJson = techniciansData[i];
         final oldId = technicianJson['id'] as int;
         final technician = Technician.fromJson(technicianJson);
         technician.id = 0; // Reset ID
         final newId = _box.technicianBox.put(technician);
         technicianIdMap[oldId] = newId;
+        
+        // Update progress every 10 items
+        if (i % 10 == 0) {
+          onProgress?.call('Restoring technicians... ${i + 1}/${techniciansData.length}');
+        }
       }
 
       // Restore faults
+      onProgress?.call('Restoring faults...');
       final faultsData = data['faults'] as List<dynamic>;
-      for (final faultJson in faultsData) {
+      for (int i = 0; i < faultsData.length; i++) {
+        final faultJson = faultsData[i];
         final oldId = faultJson['id'] as int;
         final fault = Fault.fromJson(faultJson);
         fault.id = 0; // Reset ID
         final newId = _box.faultBox.put(fault);
         faultIdMap[oldId] = newId;
+        
+        // Update progress every 10 items
+        if (i % 10 == 0) {
+          onProgress?.call('Restoring faults... ${i + 1}/${faultsData.length}');
+        }
       }
 
       // Restore service items
+      onProgress?.call('Restoring service items...');
       final serviceItemsData = data['serviceItems'] as List<dynamic>;
-      for (final itemData in serviceItemsData) {
+      for (int i = 0; i < serviceItemsData.length; i++) {
+        final itemData = serviceItemsData[i];
         await _restoreServiceItem(
             itemData, brandIdMap, technicianIdMap, faultIdMap);
+        
+        // Update progress every 10 items
+        if (i % 10 == 0) {
+          onProgress?.call('Restoring service items... ${i + 1}/${serviceItemsData.length}');
+        }
       }
 
+      onProgress?.call('Restore completed successfully!');
       return true;
     } catch (e) {
       debugPrint('Error in clear restore: $e');
@@ -165,8 +212,9 @@ class BackupRestoreService {
 
   /// Advanced merge with duplicate detection and ID sequence handling
   Future<bool> _mergeDataWithDuplicateDetection(
-      Map<String, dynamic> data) async {
+      Map<String, dynamic> data, Function(String)? onProgress) async {
     try {
+      onProgress?.call('Analyzing existing data...');
       // Get existing data for duplicate detection
       final existingBrands = _box.getAllBrands();
       final existingTechnicians = _box.getAllTechnicians();
@@ -179,11 +227,14 @@ class BackupRestoreService {
       final Map<int, int> faultIdMap = {};
 
       // Fix ObjectBox ID sequences first
+      onProgress?.call('Preparing ID sequences...');
       await _fixIdSequences(data);
 
       // Merge brands with duplicate detection
+      onProgress?.call('Merging brands...');
       final brandsData = data['brands'] as List<dynamic>;
-      for (final brandJson in brandsData) {
+      for (int i = 0; i < brandsData.length; i++) {
+        final brandJson = brandsData[i];
         final oldId = brandJson['id'] as int;
         final brandName = brandJson['name'] as String;
 
@@ -203,11 +254,18 @@ class BackupRestoreService {
           final newId = _box.brandBox.put(brand);
           brandIdMap[oldId] = newId;
         }
+        
+        // Update progress every 10 items
+        if (i % 10 == 0) {
+          onProgress?.call('Merging brands... ${i + 1}/${brandsData.length}');
+        }
       }
 
       // Merge technicians with duplicate detection
+      onProgress?.call('Merging technicians...');
       final techniciansData = data['technicians'] as List<dynamic>;
-      for (final technicianJson in techniciansData) {
+      for (int i = 0; i < techniciansData.length; i++) {
+        final technicianJson = techniciansData[i];
         final oldId = technicianJson['id'] as int;
         final technicianName = technicianJson['name'] as String;
 
@@ -228,11 +286,18 @@ class BackupRestoreService {
           final newId = _box.technicianBox.put(technician);
           technicianIdMap[oldId] = newId;
         }
+        
+        // Update progress every 10 items
+        if (i % 10 == 0) {
+          onProgress?.call('Merging technicians... ${i + 1}/${techniciansData.length}');
+        }
       }
 
       // Merge faults with duplicate detection
+      onProgress?.call('Merging faults...');
       final faultsData = data['faults'] as List<dynamic>;
-      for (final faultJson in faultsData) {
+      for (int i = 0; i < faultsData.length; i++) {
+        final faultJson = faultsData[i];
         final oldId = faultJson['id'] as int;
         final faultName = faultJson['name'] as String;
 
@@ -252,15 +317,28 @@ class BackupRestoreService {
           final newId = _box.faultBox.put(fault);
           faultIdMap[oldId] = newId;
         }
+        
+        // Update progress every 10 items
+        if (i % 10 == 0) {
+          onProgress?.call('Merging faults... ${i + 1}/${faultsData.length}');
+        }
       }
 
       // Merge service items with duplicate detection
+      onProgress?.call('Merging service items...');
       final serviceItemsData = data['serviceItems'] as List<dynamic>;
-      for (final itemData in serviceItemsData) {
+      for (int i = 0; i < serviceItemsData.length; i++) {
+        final itemData = serviceItemsData[i];
         await _mergeServiceItem(itemData, brandIdMap, technicianIdMap,
             faultIdMap, existingServiceItems);
+        
+        // Update progress every 10 items
+        if (i % 10 == 0) {
+          onProgress?.call('Merging service items... ${i + 1}/${serviceItemsData.length}');
+        }
       }
 
+      onProgress?.call('Merge completed successfully!');
       return true;
     } catch (e) {
       debugPrint('Error in merge: $e');
@@ -559,85 +637,8 @@ class BackupRestoreService {
     _box.serviceItemBox.removeAll();
   }
 
-  /// Creates an automatic backup to Documents folder
-  Future<String?> createAutoBackup() async {
-    try {
-      final documentsDir = await getApplicationDocumentsDirectory();
-      final backupsDir = Directory('${documentsDir.path}/ServiceBackups');
-
-      if (!await backupsDir.exists()) {
-        await backupsDir.create(recursive: true);
-      }
-
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final backupFile = File('${backupsDir.path}/auto_backup_$timestamp.json');
-
-      // Get all data
-      final brands = _box.brandBox.getAll();
-      final technicians = _box.technicianBox.getAll();
-      final faults = _box.faultBox.getAll();
-      final serviceItems = _box.serviceItemBox.getAll();
-
-      final backupData = {
-        'version': '1.0',
-        'timestamp': DateTime.now().toIso8601String(),
-        'data': {
-          'brands': brands.map((b) => b.toJson()).toList(),
-          'technicians': technicians.map((t) => t.toJson()).toList(),
-          'faults': faults.map((f) => f.toJson()).toList(),
-          'serviceItems': serviceItems.map((s) => s.toJson()).toList(),
-        }
-      };
-
-      final jsonString = const JsonEncoder.withIndent('  ').convert(backupData);
-      await backupFile.writeAsString(jsonString);
-
-      return backupFile.path;
-    } catch (e) {
-      debugPrint('Error creating auto backup: $e');
-      return null;
-    }
-  }
-
-  /// Gets list of available backup files
-  Future<List<FileSystemEntity>> getAvailableBackups() async {
-    try {
-      final documentsDir = await getApplicationDocumentsDirectory();
-      final backupsDir = Directory('${documentsDir.path}/ServiceBackups');
-
-      if (await backupsDir.exists()) {
-        return backupsDir
-            .listSync()
-            .where((file) => file.path.endsWith('.json'))
-            .toList()
-          ..sort(
-              (a, b) => b.statSync().modified.compareTo(a.statSync().modified));
-      }
-
-      return [];
-    } catch (e) {
-      debugPrint('Error getting backup files: $e');
-      return [];
-    }
-  }
-
-  /// Validates backup file format
-  Future<bool> validateBackupFile(String filePath) async {
-    try {
-      final file = File(filePath);
-      final jsonString = await file.readAsString();
-      final data = jsonDecode(jsonString) as Map<String, dynamic>;
-
-      return data.containsKey('version') &&
-          data.containsKey('data') &&
-          data['data'] is Map<String, dynamic>;
-    } catch (e) {
-      return false;
-    }
-  }
-
   /// Merge data from backup without clearing existing data
-  Future<bool> mergeFromBackup() async {
-    return await restoreFromBackup(clearExisting: false);
+  Future<bool> mergeFromBackup({Function(String)? onProgress}) async {
+    return await restoreFromBackup(clearExisting: false, onProgress: onProgress);
   }
 }

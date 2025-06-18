@@ -86,6 +86,11 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     try {
       final success = await _backupRestoreService.restoreFromBackup(
         clearExisting: clearExisting,
+        onProgress: (progress) {
+          if (mounted) {
+            debugPrint('Restore progress: $progress');
+          }
+        },
       );
 
       if (success && mounted) {
