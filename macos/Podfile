@@ -41,12 +41,15 @@ post_install do |installer|
     flutter_additional_macos_build_settings(target)
 
     target.build_configurations.each do |config|
-      # ✅ Fix deployment target
+      # ✅ Set minimum deployment target
       config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'
 
-      # ✅ Fix access level import error (Swift 5.9+)
+      # ✅ Suppress Swift warnings for Firebase (optional)
       config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['']
       config.build_settings['OTHER_SWIFT_FLAGS'] << '-enable-experimental-feature' << 'AccessLevelOnImport'
+
+      # ✅ Suppress warning about Run Script phase
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
     end
   end
 end
