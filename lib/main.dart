@@ -1,5 +1,5 @@
 import 'dart:io';
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +16,7 @@ import 'package:mobile_service_manager/screens/trash_list_screen.dart';
 import 'package:window_size/window_size.dart';
 import 'constants/app_colors.dart';
 import 'database/object_box.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,11 +28,11 @@ void main() async {
 
   final objectBox = await ObjectBox.create();
 
-  // try {
-  //   await _initializeFirebase();
-  // } catch (e) {
-  //   debugPrint('Firebase initialization error: $e');
-  // }
+  try {
+    await _initializeFirebase();
+  } catch (e) {
+    debugPrint('Firebase initialization error: $e');
+  }
 
   runApp(
     ProviderScope(
@@ -43,9 +44,9 @@ void main() async {
   );
 }
 
-// Future<void> _initializeFirebase() async {
-//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-// }
+Future<void> _initializeFirebase() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
