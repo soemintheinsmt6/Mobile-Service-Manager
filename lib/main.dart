@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_size/window_size.dart';
 import 'constants/app_colors.dart';
 import 'database/object_box.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,9 +28,15 @@ void main() async {
     setWindowMinSize(const Size(800, 600));
     setWindowTitle('Mobile Service Manager');
   }
-  await tempDeleteObjectBoxDatabase();
 
   final objectBox = await ObjectBox.create();
+
+  try {
+    await _initializeFirebase();
+  } catch (e) {
+    debugPrint('Firebase initialization error: $e');
+  }
+
   runApp(
     ProviderScope(
       overrides: [
@@ -37,6 +45,10 @@ void main() async {
       child: const MyApp(),
     ),
   );
+}
+
+Future<void> _initializeFirebase() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
 
 Future<void> tempDeleteObjectBoxDatabase() async {
