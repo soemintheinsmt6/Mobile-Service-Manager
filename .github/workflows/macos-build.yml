@@ -17,6 +17,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          
+      - name: Clean previous build and pods
+        run: |
+          rm -rf macos/Pods
+          rm -rf macos/Podfile.lock
+          flutter clean
 
       - name: Install dependencies
         run: flutter pub get
