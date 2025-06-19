@@ -31,6 +31,7 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_macos_pods File.dirname(File.realpath(__FILE__))
+
   target 'RunnerTests' do
     inherit! :search_paths
   end
@@ -40,8 +41,17 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_macos_build_settings(target)
 
+    # All build settings changes that use 'config' must be inside this loop
     target.build_configurations.each do |config|
-      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'
+      # Ensure macOS deployment target is consistent
+      # This line needs to be inside the `target.build_configurations.each do |config|` block
+      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15' # Adjust if needed
+
+      # Add this block to enable the experimental feature for relevant pods
+      if target.name == "FirebaseCoreInternal" || target.name == "GoogleUtilities" || target.name == "FirebaseSessions"
+        config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['$(inherited)']
+        config.build_settings['OTHER_SWIFT_FLAGS'] << '-enable-experimental-feature AccessLevelOnImport'
+      end
     end
   end
 end
