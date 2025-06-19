@@ -1,11 +1,15 @@
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/constants/app_colors.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:mobile_service_manager/widgets/radio_button.dart';
 import 'package:mobile_service_manager/widgets/revenue_card.dart';
+import '../models/technician.dart';
 import '../providers/revenue_provider.dart';
+import '../providers/technician_provider.dart';
 import '../utils/date_time_picker.dart';
+import '../widgets/custom_drop_down_text_field.dart';
 
 enum DateType { specific, from, to }
 
@@ -17,6 +21,9 @@ class RevenueScreen extends ConsumerStatefulWidget {
 }
 
 class _RevenueScreenState extends ConsumerState<RevenueScreen> {
+  late SingleValueDropDownController _technicianController;
+  Technician? _selectedTechnician;
+
   DateTime? _selectedDate;
   DateTime? _fromDate;
   DateTime? _toDate;
@@ -27,6 +34,8 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   void initState() {
     super.initState();
 
+    _technicianController = SingleValueDropDownController();
+
     _selectedDate = DateTime.now();
     _revenueTitle = _selectedDate.toString().formattedDate;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -36,19 +45,36 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _technicianController.dispose();
+    super.dispose();
+  }
+
   void _setRevenueTitle() {
+    final technician =
+        _selectedTechnician == null ? '' : ' by ${_selectedTechnician!.name}';
     setState(() {
       if (_isDateRangeMode) {
         _revenueTitle =
-            '${_fromDate.toString().formattedDate} - ${_toDate.toString().formattedDate}';
+            '${_fromDate.toString().formattedDate} - ${_toDate.toString().formattedDate}$technician';
       } else {
-        _revenueTitle = _selectedDate.toString().formattedDate;
+        _revenueTitle = _selectedDate.toString().formattedDate + technician;
       }
     });
   }
 
+  int? _setTechnician() {
+    if (_selectedTechnician == null) {
+      return null;
+    }
+
+    return _selectedTechnician!.id;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final technicians = ref.watch(techniciansProvider);
     final revenueData = ref.watch(revenueNotifierProvider);
     final revenueNotifier = ref.read(revenueNotifierProvider.notifier);
     final isValidToSubmit =
@@ -73,7 +99,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 16),
-                    child: _dateTypes(),
+                    child: _dateTypes(technicians),
                   ),
                   Row(
                     children: [
@@ -159,11 +185,13 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                           _setRevenueTitle();
                           if (_isDateRangeMode) {
                             revenueNotifier.loadRevenueForDateRange(
-                                _fromDate!, _toDate!);
+                                _fromDate!, _toDate!,
+                                technicianId: _setTechnician());
                           } else {
                             ref
                                 .read(revenueNotifierProvider.notifier)
-                                .loadDailyRevenue(_selectedDate!);
+                                .loadDailyRevenue(_selectedDate!,
+                                    technicianId: _setTechnician());
                           }
                         },
                         child: const Text('Submit'),
@@ -194,7 +222,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     );
   }
 
-  Widget _dateTypes() {
+  Widget _dateTypes(List<Technician> technicians) {
     return Row(
       children: [
         RadioButton(
@@ -205,6 +233,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
             name: 'From Date - To Date',
             selected: _isDateRangeMode,
             onTap: () => _dateTypeToggle(true)),
+        _technicianWidget(technicians),
       ],
     );
   }
@@ -237,5 +266,28 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
         }
       });
     }
+  }
+
+  Widget _technicianWidget(List<Technician> technicians) {
+    return Container(
+      width: 220,
+      padding: const EdgeInsets.only(left: 8),
+      child: CustomDropDownTextField(
+        title: 'Technician',
+        clearOption: true,
+        showTitle: false,
+        controller: _technicianController,
+        dropDownList: technicians.map((technician) {
+          return DropDownValueModel(value: technician, name: technician.name);
+        }).toList(),
+        onChanged: (item) {
+          if (item is DropDownValueModel) {
+            _selectedTechnician = item.value;
+          } else {
+            _selectedTechnician = null;
+          }
+        },
+      ),
+    );
   }
 }

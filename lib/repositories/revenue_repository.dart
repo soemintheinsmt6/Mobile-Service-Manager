@@ -7,9 +7,10 @@ class RevenueRepository {
 
   RevenueRepository(this._objectBox);
 
-  Revenue getDailyRevenue(DateTime selectedDate) {
+  Revenue getDailyRevenue(DateTime selectedDate, {int? technicianId}) {
     // Get all service items for the selected date
-    List<ServiceItem> dayItems = _getServiceItemsForDate(selectedDate);
+    List<ServiceItem> dayItems =
+        _getServiceItemsForDate(selectedDate, technicianId: technicianId);
 
     // Calculate counts by status
     int doneCount = dayItems.where((item) => item.status == 'done').length;
@@ -46,7 +47,8 @@ class RevenueRepository {
     );
   }
 
-  List<ServiceItem> _getServiceItemsForDate(DateTime date) {
+  List<ServiceItem> _getServiceItemsForDate(DateTime date,
+      {int? technicianId}) {
     final dateString =
         date.toString().split(' ')[0]; // Get only the date part (YYYY-MM-DD)
 
@@ -54,32 +56,43 @@ class RevenueRepository {
     List<ServiceItem> allItems = _objectBox.getAllServiceItems();
 
     // Filter by date
-    return allItems.where((item) {
+    List<ServiceItem> filteredByDate = allItems.where((item) {
       final itemDateString =
           item.issueDate.split(' ')[0]; // Extract date part from stored item
       return itemDateString == dateString;
     }).toList();
+
+    // Filter by technician if provided
+    if (technicianId != null) {
+      return filteredByDate.where((item) {
+        return item.technician.target?.id == technicianId;
+      }).toList();
+    }
+
+    return filteredByDate;
   }
 
-  // Get revenue data for a date range
-  List<Revenue> getRevenueForDateRange(DateTime fromDate, DateTime toDate) {
+  // Get revenue data for a date range with optional technician filter
+  List<Revenue> getRevenueForDateRange(DateTime fromDate, DateTime toDate,
+      {int? technicianId}) {
     List<Revenue> revenueList = [];
     DateTime currentDate = fromDate;
 
     while (currentDate.isBefore(toDate.add(const Duration(days: 1)))) {
-      revenueList.add(getDailyRevenue(currentDate));
+      revenueList.add(getDailyRevenue(currentDate, technicianId: technicianId));
       currentDate = currentDate.add(const Duration(days: 1));
     }
 
     return revenueList;
   }
 
-  // Get monthly revenue summary
-  Revenue getMonthlyRevenue(int year, int month) {
+  // Get monthly revenue summary with optional technician filter
+  Revenue getMonthlyRevenue(int year, int month, {int? technicianId}) {
     DateTime firstDay = DateTime(year, month, 1);
     DateTime lastDay = DateTime(year, month + 1, 0);
 
-    List<Revenue> monthlyData = getRevenueForDateRange(firstDay, lastDay);
+    List<Revenue> monthlyData =
+        getRevenueForDateRange(firstDay, lastDay, technicianId: technicianId);
 
     // Aggregate all daily data into monthly summary
     int totalServiceItemCount =

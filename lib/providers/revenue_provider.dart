@@ -22,13 +22,16 @@ class RevenueNotifier extends StateNotifier<Revenue?> {
 
   RevenueNotifier(this.repository) : super(null);
 
-  void loadDailyRevenue(DateTime date) {
-    final dailyRevenue = repository.getDailyRevenue(date);
+  void loadDailyRevenue(DateTime date, {int? technicianId}) {
+    final dailyRevenue =
+        repository.getDailyRevenue(date, technicianId: technicianId);
     state = dailyRevenue;
   }
 
-  void loadRevenueForDateRange(DateTime fromDate, DateTime toDate) {
-    final dateRangeData = repository.getRevenueForDateRange(fromDate, toDate);
+  void loadRevenueForDateRange(DateTime fromDate, DateTime toDate,
+      {int? technicianId}) {
+    final dateRangeData = repository.getRevenueForDateRange(fromDate, toDate,
+        technicianId: technicianId);
 
     // Aggregate all days into a single total
     if (dateRangeData.isNotEmpty) {
@@ -38,12 +41,13 @@ class RevenueNotifier extends StateNotifier<Revenue?> {
     }
   }
 
-  void loadMonthlyRevenue(int year, int month) {
-    final monthlyRevenue = repository.getMonthlyRevenue(year, month);
+  void loadMonthlyRevenue(int year, int month, {int? technicianId}) {
+    final monthlyRevenue =
+        repository.getMonthlyRevenue(year, month, technicianId: technicianId);
     state = monthlyRevenue;
   }
 
-  // Helper method to aggregate multiple DailyRevenue into one total
+  // Helper method to aggregate multiple Revenue into one total
   Revenue _aggregateRevenue(
       List<Revenue> revenueList, DateTime fromDate, DateTime toDate) {
     int totalServiceItemCount =
