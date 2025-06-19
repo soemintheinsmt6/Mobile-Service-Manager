@@ -72,10 +72,11 @@ class BackupRestoreService {
   }
 
   /// Restore data from a backup file
-  Future<bool> restoreFromBackup({bool clearExisting = true, Function(String)? onProgress}) async {
+  Future<bool> restoreFromBackup(
+      {bool clearExisting = true, Function(String)? onProgress}) async {
     try {
       onProgress?.call('Selecting backup file...');
-      
+
       // Pick backup file
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -91,9 +92,10 @@ class BackupRestoreService {
         // Parse JSON in background to avoid blocking UI
         onProgress?.call('Parsing backup data...');
         final backupData = await compute(_parseBackupData, jsonString);
-        
-        // Perform the actual restore operations (ObjectBox operations must be on main thread)
-        return await _restoreFromJsonString(backupData, clearExisting, onProgress);
+
+        // Perform the actual restore operations with periodic yielding
+        return await _restoreFromJsonStringWithYielding(
+            backupData, clearExisting, onProgress);
       }
 
       return false;
@@ -108,19 +110,21 @@ class BackupRestoreService {
     return jsonDecode(jsonString) as Map<String, dynamic>;
   }
 
-  /// Restores data from parsed backup data
-  Future<bool> _restoreFromJsonString(
-      Map<String, dynamic> backupData, bool clearExisting, Function(String)? onProgress) async {
+  /// Restores data from parsed backup data with periodic yielding to prevent UI freeze
+  Future<bool> _restoreFromJsonStringWithYielding(
+      Map<String, dynamic> backupData,
+      bool clearExisting,
+      Function(String)? onProgress) async {
     try {
       final data = backupData['data'] as Map<String, dynamic>;
 
       if (clearExisting) {
         // Clear existing data and use simple restore
         await _clearAllData();
-        return await _restoreWithClearData(data, onProgress);
+        return await _restoreWithClearDataYielding(data, onProgress);
       } else {
         // Merge data with duplicate detection
-        return await _mergeDataWithDuplicateDetection(data, onProgress);
+        return await _mergeDataWithDuplicateDetectionYielding(data, onProgress);
       }
     } catch (e) {
       debugPrint('Error in restore process: $e');
@@ -128,16 +132,18 @@ class BackupRestoreService {
     }
   }
 
-  /// Simple restore for cleared database
-  Future<bool> _restoreWithClearData(Map<String, dynamic> data, Function(String)? onProgress) async {
+  /// Simple restore for cleared database with periodic yielding
+  Future<bool> _restoreWithClearDataYielding(
+      Map<String, dynamic> data, Function(String)? onProgress) async {
     try {
       onProgress?.call('Clearing existing data...');
+
       // Create ID mapping for relationships
       final Map<int, int> brandIdMap = {};
       final Map<int, int> technicianIdMap = {};
       final Map<int, int> faultIdMap = {};
 
-      // Restore brands
+      // Restore brands with yielding
       onProgress?.call('Restoring brands...');
       final brandsData = data['brands'] as List<dynamic>;
       for (int i = 0; i < brandsData.length; i++) {
@@ -147,14 +153,15 @@ class BackupRestoreService {
         brand.id = 0; // Reset ID
         final newId = _box.brandBox.put(brand);
         brandIdMap[oldId] = newId;
-        
-        // Update progress every 10 items
-        if (i % 10 == 0) {
+
+        // Yield control every 5 items to keep UI responsive
+        if (i % 5 == 0) {
+          await Future.delayed(Duration.zero); // Yield to event loop
           onProgress?.call('Restoring brands... ${i + 1}/${brandsData.length}');
         }
       }
 
-      // Restore technicians
+      // Restore technicians with yielding
       onProgress?.call('Restoring technicians...');
       final techniciansData = data['technicians'] as List<dynamic>;
       for (int i = 0; i < techniciansData.length; i++) {
@@ -164,14 +171,16 @@ class BackupRestoreService {
         technician.id = 0; // Reset ID
         final newId = _box.technicianBox.put(technician);
         technicianIdMap[oldId] = newId;
-        
-        // Update progress every 10 items
-        if (i % 10 == 0) {
-          onProgress?.call('Restoring technicians... ${i + 1}/${techniciansData.length}');
+
+        // Yield control every 5 items
+        if (i % 5 == 0) {
+          await Future.delayed(Duration.zero);
+          onProgress?.call(
+              'Restoring technicians... ${i + 1}/${techniciansData.length}');
         }
       }
 
-      // Restore faults
+      // Restore faults with yielding
       onProgress?.call('Restoring faults...');
       final faultsData = data['faults'] as List<dynamic>;
       for (int i = 0; i < faultsData.length; i++) {
@@ -181,24 +190,27 @@ class BackupRestoreService {
         fault.id = 0; // Reset ID
         final newId = _box.faultBox.put(fault);
         faultIdMap[oldId] = newId;
-        
-        // Update progress every 10 items
-        if (i % 10 == 0) {
+
+        // Yield control every 5 items
+        if (i % 5 == 0) {
+          await Future.delayed(Duration.zero);
           onProgress?.call('Restoring faults... ${i + 1}/${faultsData.length}');
         }
       }
 
-      // Restore service items
+      // Restore service items with yielding
       onProgress?.call('Restoring service items...');
       final serviceItemsData = data['serviceItems'] as List<dynamic>;
       for (int i = 0; i < serviceItemsData.length; i++) {
         final itemData = serviceItemsData[i];
         await _restoreServiceItem(
             itemData, brandIdMap, technicianIdMap, faultIdMap);
-        
-        // Update progress every 10 items
-        if (i % 10 == 0) {
-          onProgress?.call('Restoring service items... ${i + 1}/${serviceItemsData.length}');
+
+        // Yield control every 3 items (service items are more complex)
+        if (i % 3 == 0) {
+          await Future.delayed(Duration.zero);
+          onProgress?.call(
+              'Restoring service items... ${i + 1}/${serviceItemsData.length}');
         }
       }
 
@@ -210,11 +222,12 @@ class BackupRestoreService {
     }
   }
 
-  /// Advanced merge with duplicate detection and ID sequence handling
-  Future<bool> _mergeDataWithDuplicateDetection(
+  /// Advanced merge with duplicate detection and periodic yielding
+  Future<bool> _mergeDataWithDuplicateDetectionYielding(
       Map<String, dynamic> data, Function(String)? onProgress) async {
     try {
       onProgress?.call('Analyzing existing data...');
+
       // Get existing data for duplicate detection
       final existingBrands = _box.getAllBrands();
       final existingTechnicians = _box.getAllTechnicians();
@@ -229,8 +242,9 @@ class BackupRestoreService {
       // Fix ObjectBox ID sequences first
       onProgress?.call('Preparing ID sequences...');
       await _fixIdSequences(data);
+      await Future.delayed(Duration.zero); // Yield after sequence fix
 
-      // Merge brands with duplicate detection
+      // Merge brands with duplicate detection and yielding
       onProgress?.call('Merging brands...');
       final brandsData = data['brands'] as List<dynamic>;
       for (int i = 0; i < brandsData.length; i++) {
@@ -254,14 +268,15 @@ class BackupRestoreService {
           final newId = _box.brandBox.put(brand);
           brandIdMap[oldId] = newId;
         }
-        
-        // Update progress every 10 items
-        if (i % 10 == 0) {
+
+        // Yield control every 5 items
+        if (i % 5 == 0) {
+          await Future.delayed(Duration.zero);
           onProgress?.call('Merging brands... ${i + 1}/${brandsData.length}');
         }
       }
 
-      // Merge technicians with duplicate detection
+      // Merge technicians with duplicate detection and yielding
       onProgress?.call('Merging technicians...');
       final techniciansData = data['technicians'] as List<dynamic>;
       for (int i = 0; i < techniciansData.length; i++) {
@@ -286,14 +301,16 @@ class BackupRestoreService {
           final newId = _box.technicianBox.put(technician);
           technicianIdMap[oldId] = newId;
         }
-        
-        // Update progress every 10 items
-        if (i % 10 == 0) {
-          onProgress?.call('Merging technicians... ${i + 1}/${techniciansData.length}');
+
+        // Yield control every 5 items
+        if (i % 5 == 0) {
+          await Future.delayed(Duration.zero);
+          onProgress?.call(
+              'Merging technicians... ${i + 1}/${techniciansData.length}');
         }
       }
 
-      // Merge faults with duplicate detection
+      // Merge faults with duplicate detection and yielding
       onProgress?.call('Merging faults...');
       final faultsData = data['faults'] as List<dynamic>;
       for (int i = 0; i < faultsData.length; i++) {
@@ -317,24 +334,27 @@ class BackupRestoreService {
           final newId = _box.faultBox.put(fault);
           faultIdMap[oldId] = newId;
         }
-        
-        // Update progress every 10 items
-        if (i % 10 == 0) {
+
+        // Yield control every 5 items
+        if (i % 5 == 0) {
+          await Future.delayed(Duration.zero);
           onProgress?.call('Merging faults... ${i + 1}/${faultsData.length}');
         }
       }
 
-      // Merge service items with duplicate detection
+      // Merge service items with duplicate detection and yielding
       onProgress?.call('Merging service items...');
       final serviceItemsData = data['serviceItems'] as List<dynamic>;
       for (int i = 0; i < serviceItemsData.length; i++) {
         final itemData = serviceItemsData[i];
         await _mergeServiceItem(itemData, brandIdMap, technicianIdMap,
             faultIdMap, existingServiceItems);
-        
-        // Update progress every 10 items
-        if (i % 10 == 0) {
-          onProgress?.call('Merging service items... ${i + 1}/${serviceItemsData.length}');
+
+        // Yield control every 3 items (service items are more complex)
+        if (i % 3 == 0) {
+          await Future.delayed(Duration.zero);
+          onProgress?.call(
+              'Merging service items... ${i + 1}/${serviceItemsData.length}');
         }
       }
 
@@ -391,11 +411,16 @@ class BackupRestoreService {
             final temp = Brand(name: '__temp_$i');
             _box.brandBox.put(temp);
             _box.brandBox.remove(temp.id);
+
+            // Yield periodically during sequence fixing
+            if (i % 10 == 0) {
+              await Future.delayed(Duration.zero);
+            }
           }
         }
       }
 
-      // Repeat for other entities
+      // Repeat for other entities with yielding
       if (maxTechnicianId > 0) {
         final dummyTech = Technician(name: '__temp_sequence_fix__');
         final tempId = _box.technicianBox.put(dummyTech);
@@ -406,6 +431,10 @@ class BackupRestoreService {
             final temp = Technician(name: '__temp_$i');
             _box.technicianBox.put(temp);
             _box.technicianBox.remove(temp.id);
+
+            if (i % 10 == 0) {
+              await Future.delayed(Duration.zero);
+            }
           }
         }
       }
@@ -420,6 +449,10 @@ class BackupRestoreService {
             final temp = Fault(name: '__temp_$i');
             _box.faultBox.put(temp);
             _box.faultBox.remove(temp.id);
+
+            if (i % 10 == 0) {
+              await Future.delayed(Duration.zero);
+            }
           }
         }
       }
@@ -639,6 +672,7 @@ class BackupRestoreService {
 
   /// Merge data from backup without clearing existing data
   Future<bool> mergeFromBackup({Function(String)? onProgress}) async {
-    return await restoreFromBackup(clearExisting: false, onProgress: onProgress);
+    return await restoreFromBackup(
+        clearExisting: false, onProgress: onProgress);
   }
 }

@@ -9,6 +9,7 @@ import 'package:mobile_service_manager/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/providers/service_item_provider.dart';
 import 'package:mobile_service_manager/providers/technician_provider.dart';
 import 'package:mobile_service_manager/widgets/bar_button.dart';
+import 'package:mobile_service_manager/widgets/glass_box.dart';
 
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({super.key});
@@ -20,6 +21,8 @@ class SettingScreen extends ConsumerStatefulWidget {
 class _SettingScreenState extends ConsumerState<SettingScreen> {
   late BackupRestoreService _backupRestoreService;
   bool _isLoading = false;
+  bool _showProgress = false;
+  String _progress = '';
 
   Future<void> _createBackup() async {
     setState(() {
@@ -80,7 +83,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     if (confirmed != true) return;
 
     setState(() {
-      _isLoading = true;
+      _showProgress = true;
     });
 
     try {
@@ -89,6 +92,9 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
         onProgress: (progress) {
           if (mounted) {
             debugPrint('Restore progress: $progress');
+            setState(() {
+              _progress = progress;
+            });
           }
         },
       );
@@ -114,7 +120,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       }
     } finally {
       setState(() {
-        _isLoading = false;
+        _showProgress = false;
       });
     }
   }
@@ -229,7 +235,11 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           if (_isLoading)
             Center(
                 child: LoadingAnimationWidget.staggeredDotsWave(
-                    color: AppColors.primaryButton, size: 100))
+                    color: AppColors.primaryButton, size: 100)),
+          if (_showProgress)
+            Center(
+              child: GlassBox(title: _progress),
+            ),
         ],
       ),
     );

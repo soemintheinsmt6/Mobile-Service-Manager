@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/models/technician.dart';
 import 'package:mobile_service_manager/providers/repository_providers.dart';
+import 'package:mobile_service_manager/providers/trash_service_item_provider.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
 import '../models/service_item.dart';
@@ -47,6 +48,7 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
       state = state.where((item) => item.id != id).toList();
 
       ref.read(trashOperationProvider.notifier).state++;
+      ref.read(trashServiceItemProvider.notifier).loadTrashItems();
     }
   }
 
