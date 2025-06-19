@@ -1,4 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AlwaysDisabledFocusNode extends FocusNode {
   @override
@@ -73,3 +77,18 @@ String store(String status) {
 }
 
 enum Date { specific, from, to }
+
+Future<void> tempDeleteObjectBoxDatabase() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final isDeleted = prefs.getBool('isServiceItemsDeleted');
+
+  if (isDeleted == null || isDeleted == false) {
+    final docsDir = await getApplicationDocumentsDirectory();
+    final objectBoxDir = Directory(p.join(docsDir.path, "objectbox-db"));
+
+    if (await objectBoxDir.exists()) {
+      await objectBoxDir.delete(recursive: true);
+    }
+    prefs.setBool('isServiceItemsDeleted', true);
+  }
+}

@@ -13,9 +13,6 @@ import 'package:mobile_service_manager/screens/service_item_list_screen.dart';
 import 'package:mobile_service_manager/screens/setting_screen.dart';
 import 'package:mobile_service_manager/screens/technician_list_screen.dart';
 import 'package:mobile_service_manager/screens/trash_list_screen.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_size/window_size.dart';
 import 'constants/app_colors.dart';
 import 'database/object_box.dart';
@@ -49,21 +46,6 @@ void main() async {
 
 Future<void> _initializeFirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-}
-
-Future<void> tempDeleteObjectBoxDatabase() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final isDeleted = prefs.getBool('isServiceItemsDeleted');
-
-  if (isDeleted == null || isDeleted == false) {
-    final docsDir = await getApplicationDocumentsDirectory();
-    final objectBoxDir = Directory(p.join(docsDir.path, "objectbox-db"));
-
-    if (await objectBoxDir.exists()) {
-      await objectBoxDir.delete(recursive: true);
-    }
-    prefs.setBool('isServiceItemsDeleted', true);
-  }
 }
 
 class MyApp extends StatelessWidget {
