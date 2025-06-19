@@ -42,14 +42,9 @@ post_install do |installer|
 
     target.build_configurations.each do |config|
       config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '10.15'
-
-      # Force ARM64 only on GitHub CI (Apple Silicon)
       config.build_settings['EXCLUDED_ARCHS[sdk=macosx*]'] = 'x86_64'
-
-      # Enable Swift 6 feature if needed
       config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['']
       config.build_settings['OTHER_SWIFT_FLAGS'] << '-enable-experimental-feature' << 'AccessLevelOnImport'
     end
   end
 end
-
