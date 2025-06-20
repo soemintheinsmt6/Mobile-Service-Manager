@@ -23,21 +23,9 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          
-      - name: Clean previous build and pods
-        run: |
-          rm -rf macos/Pods
-          rm -rf macos/Podfile.lock
-          rm -rf ~/Library/Developer/Xcode/DerivedData
-          flutter clean
 
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Prepare pods
-        run: |
-          cd macos
-          pod install
 
       - name: Enable macOS build
         run: flutter config --enable-macos-desktop
@@ -162,3 +150,4 @@ jobs:
           path: |
             MobileServiceManagerInstaller.dmg
             INSTALLATION_INSTRUCTIONS.md
+          retention-days: 10

@@ -51,7 +51,7 @@ class CustomDropDownTextField extends StatelessWidget {
               textStyle: kDefaultTextStyle,
               searchTextStyle: kDefaultTextStyle,
               listTextStyle: kDefaultTextStyle,
-              textFieldDecoration: kTextFieldFormDecoration(
+              textFieldDecoration: kTextFieldDecoration(
                   hintText: title, borderColor: borderColor),
               clearOption: clearOption,
               enableSearch: enableSearch,

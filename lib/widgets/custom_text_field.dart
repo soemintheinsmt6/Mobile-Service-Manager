@@ -42,7 +42,10 @@ class CustomTextField extends StatelessWidget {
             autofocus: true,
             style: kDefaultTextStyle,
             obscureText: obscureText,
-            decoration: kTextFieldDecoration(hintText: showHint ? title : null),
+            decoration: kTextFieldDecoration(
+                hintText: showHint ? title : null,
+                contentPadding: const EdgeInsets.all(20),
+                borderRadius: 12),
             controller: controller,
             onChanged: onChanged,
           ),

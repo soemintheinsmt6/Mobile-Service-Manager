@@ -33,7 +33,7 @@ class CustomDatePickerTextField extends StatelessWidget {
             ),
           TextField(
             style: kDefaultTextStyle,
-            decoration: kTextFieldFormDecoration(hintText: title),
+            decoration: kTextFieldDecoration(hintText: title),
             focusNode: AlwaysDisabledFocusNode(),
             controller: controller,
             onTap: () => onTap!(),
