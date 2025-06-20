@@ -42,8 +42,7 @@ class CustomTextField extends StatelessWidget {
             autofocus: true,
             style: kDefaultTextStyle,
             obscureText: obscureText,
-            decoration: kTextFieldDecoration.copyWith(
-                hintText: showHint ? title : null),
+            decoration: kTextFieldDecoration(hintText: showHint ? title : null),
             controller: controller,
             onChanged: onChanged,
           ),

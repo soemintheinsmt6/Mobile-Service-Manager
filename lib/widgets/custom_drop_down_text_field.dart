@@ -4,20 +4,20 @@ import '../constants/constants.dart';
 import '../utils/decoration.dart';
 
 class CustomDropDownTextField extends StatelessWidget {
-  const CustomDropDownTextField({
-    super.key,
-    required this.title,
-    this.showTitle = true,
-    required this.dropDownList,
-    this.clearOption = false,
-    this.enableSearch = true,
-    this.textFieldFocusNode,
-    this.initialValue,
-    this.controller,
-    this.onChanged,
-    this.padding = const EdgeInsets.symmetric(vertical: 10),
-    this.validator,
-  });
+  const CustomDropDownTextField(
+      {super.key,
+      required this.title,
+      this.showTitle = true,
+      required this.dropDownList,
+      this.clearOption = false,
+      this.enableSearch = true,
+      this.textFieldFocusNode,
+      this.initialValue,
+      this.controller,
+      this.onChanged,
+      this.padding = const EdgeInsets.symmetric(vertical: 10),
+      this.validator,
+      this.borderColor = Colors.grey});
 
   final String title;
   final bool showTitle;
@@ -30,6 +30,7 @@ class CustomDropDownTextField extends StatelessWidget {
   final Function(dynamic)? onChanged;
   final EdgeInsetsGeometry padding;
   final String? Function(String?)? validator;
+  final Color borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +51,8 @@ class CustomDropDownTextField extends StatelessWidget {
               textStyle: kDefaultTextStyle,
               searchTextStyle: kDefaultTextStyle,
               listTextStyle: kDefaultTextStyle,
-              textFieldDecoration:
-                  kTextFieldFormDecoration.copyWith(hintText: title),
+              textFieldDecoration: kTextFieldFormDecoration(
+                  hintText: title, borderColor: borderColor),
               clearOption: clearOption,
               enableSearch: enableSearch,
               searchAutofocus: true,

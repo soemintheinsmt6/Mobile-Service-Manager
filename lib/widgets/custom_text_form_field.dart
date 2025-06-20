@@ -47,7 +47,7 @@ class CustomTextFormField extends StatelessWidget {
           TextFormField(
             maxLines: maxLines,
             style: kDefaultTextStyle,
-            decoration: kTextFieldFormDecoration.copyWith(hintText: title),
+            decoration: kTextFieldFormDecoration(hintText: title),
             keyboardType: keyboardType,
             focusNode: focusNode,
             autofocus: true,

@@ -88,12 +88,12 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Date Selection Section
+          /// Date and Technician Selection Section
           Card(
             elevation: 2,
             margin: const EdgeInsets.all(16),
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -108,22 +108,13 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                         Expanded(
                           child: Row(
                             children: [
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () => _selectDate(context,
-                                      dateType: DateType.specific,
-                                      initialDate: _selectedDate),
-                                  icon: const Icon(Icons.calendar_today,
-                                      color: Colors.black87),
-                                  label: Text(
-                                      _selectedDate != null
-                                          ? _selectedDate
-                                              .toString()
-                                              .formattedDate
-                                          : 'Select Date',
-                                      style: const TextStyle(
-                                          color: Colors.black87)),
-                                ),
+                              _datePicker(
+                                onPressed: () => _selectDate(context,
+                                    dateType: DateType.specific,
+                                    initialDate: _selectedDate),
+                                text: _selectedDate != null
+                                    ? _selectedDate.toString().formattedDate
+                                    : 'Select Date',
                               ),
                             ],
                           ),
@@ -133,68 +124,55 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                         Expanded(
                           child: Row(
                             children: [
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () => _selectDate(context,
-                                      dateType: DateType.from,
-                                      initialDate: _fromDate),
-                                  icon: const Icon(Icons.calendar_today,
-                                      color: Colors.black87),
-                                  label: Text(
-                                    _fromDate != null
-                                        ? 'From: ${_fromDate.toString().formattedDate}'
-                                        : 'From Date',
-                                    style:
-                                        const TextStyle(color: Colors.black87),
-                                  ),
-                                ),
+                              _datePicker(
+                                onPressed: () => _selectDate(context,
+                                    dateType: DateType.from,
+                                    initialDate: _fromDate),
+                                text: _fromDate != null
+                                    ? 'From: ${_fromDate.toString().formattedDate}'
+                                    : 'From Date',
                               ),
                               const SizedBox(width: 8),
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () => _selectDate(context,
-                                      dateType: DateType.to,
-                                      initialDate: _toDate),
-                                  icon: const Icon(Icons.calendar_today,
-                                      color: Colors.black87),
-                                  label: Text(
-                                    _toDate != null
-                                        ? 'To: ${_toDate.toString().formattedDate}'
-                                        : 'To Date',
-                                    style:
-                                        const TextStyle(color: Colors.black87),
-                                  ),
-                                ),
+                              _datePicker(
+                                onPressed: () => _selectDate(context,
+                                    dateType: DateType.to,
+                                    initialDate: _toDate),
+                                text: _toDate != null
+                                    ? 'To: ${_toDate.toString().formattedDate}'
+                                    : 'To Date',
                               ),
                             ],
                           ),
                         ),
                       ],
                       const SizedBox(width: 8),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isValidToSubmit
-                              ? AppColors.primaryButton
-                              : Colors.grey.shade100,
-                          foregroundColor:
-                              isValidToSubmit ? Colors.white : Colors.grey,
-                        ),
-                        onPressed: () {
-                          if (!isValidToSubmit) return;
+                      SizedBox(
+                        width: 180,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isValidToSubmit
+                                ? AppColors.primaryButton
+                                : Colors.grey.shade100,
+                            foregroundColor:
+                                isValidToSubmit ? Colors.white : Colors.grey,
+                          ),
+                          onPressed: () {
+                            if (!isValidToSubmit) return;
 
-                          _setRevenueTitle();
-                          if (_isDateRangeMode) {
-                            revenueNotifier.loadRevenueForDateRange(
-                                _fromDate!, _toDate!,
-                                technicianId: _setTechnician());
-                          } else {
-                            ref
-                                .read(revenueNotifierProvider.notifier)
-                                .loadDailyRevenue(_selectedDate!,
-                                    technicianId: _setTechnician());
-                          }
-                        },
-                        child: const Text('Submit'),
+                            _setRevenueTitle();
+                            if (_isDateRangeMode) {
+                              revenueNotifier.loadRevenueForDateRange(
+                                  _fromDate!, _toDate!,
+                                  technicianId: _setTechnician());
+                            } else {
+                              ref
+                                  .read(revenueNotifierProvider.notifier)
+                                  .loadDailyRevenue(_selectedDate!,
+                                      technicianId: _setTechnician());
+                            }
+                          },
+                          child: const Text('Submit'),
+                        ),
                       ),
                     ],
                   ),
@@ -222,19 +200,35 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     );
   }
 
+  Widget _datePicker({required String text, required Function()? onPressed}) {
+    return Expanded(
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: const Icon(Icons.calendar_today, color: Colors.black87),
+        label: Text(
+          text,
+          style: const TextStyle(color: Colors.black87),
+        ),
+      ),
+    );
+  }
+
   Widget _dateTypes(List<Technician> technicians) {
-    return Row(
-      children: [
-        RadioButton(
-            name: 'Specific Date',
-            selected: !_isDateRangeMode,
-            onTap: () => _dateTypeToggle(false)),
-        RadioButton(
-            name: 'From Date - To Date',
-            selected: _isDateRangeMode,
-            onTap: () => _dateTypeToggle(true)),
-        _technicianWidget(technicians),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5.0),
+      child: Row(
+        children: [
+          RadioButton(
+              name: 'Specific Date',
+              selected: !_isDateRangeMode,
+              onTap: () => _dateTypeToggle(false)),
+          RadioButton(
+              name: 'From Date - To Date',
+              selected: _isDateRangeMode,
+              onTap: () => _dateTypeToggle(true)),
+          _technicianWidget(technicians),
+        ],
+      ),
     );
   }
 
@@ -270,12 +264,15 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
 
   Widget _technicianWidget(List<Technician> technicians) {
     return Container(
-      width: 220,
+      width: 210,
+      height: 35,
       padding: const EdgeInsets.only(left: 8),
       child: CustomDropDownTextField(
         title: 'Technician',
         clearOption: true,
         showTitle: false,
+        padding: EdgeInsets.zero,
+        borderColor: Colors.black54,
         controller: _technicianController,
         dropDownList: technicians.map((technician) {
           return DropDownValueModel(value: technician, name: technician.name);
