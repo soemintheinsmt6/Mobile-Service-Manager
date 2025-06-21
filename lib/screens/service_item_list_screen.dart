@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/constants/app_colors.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
+import 'package:mobile_service_manager/models/service_item.dart';
 import 'package:mobile_service_manager/screens/search_service_items_screen.dart';
 import 'package:mobile_service_manager/screens/service_item_form.dart';
+import 'package:mobile_service_manager/services/service_list_printer.dart';
 import 'package:mobile_service_manager/utils/dialog.dart';
 import 'package:mobile_service_manager/screens/edit_service_item_screen.dart';
 import 'package:mobile_service_manager/widgets/right_elevated_button.dart';
@@ -22,6 +25,8 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
   final ScrollController _bodyHorizontalController = ScrollController();
   final ScrollController _headerHorizontalController = ScrollController();
   final ScrollController _verticalController = ScrollController();
+
+  String? _searchString;
 
   @override
   void initState() {
@@ -43,6 +48,10 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
     _headerHorizontalController.dispose();
     _verticalController.dispose();
     super.dispose();
+  }
+
+  void _print({required List<ServiceItem> list}) {
+    ServiceListPrinter.printServiceList(list, filterNames: _searchString);
   }
 
   @override
@@ -75,13 +84,18 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                           Text('Service List', style: kHeaderTextStyle),
                           if (isSearchActive)
                             Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Text(
                                 '- ${serviceItems.length} results',
                                 style: kDefaultTextStyle.copyWith(
                                     color: Colors.grey[800]),
                               ),
                             ),
+                          if (isSearchActive)
+                            IconButton(
+                                onPressed: () => _print(list: serviceItems),
+                                icon: const Icon(CupertinoIcons.printer))
                         ],
                       ),
                       Row(
@@ -94,6 +108,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                     style: kDefaultTextStyle.copyWith(
                                         color: AppColors.dangerButton)),
                                 onPressed: () {
+                                  _searchString = null;
                                   ref
                                       .read(serviceItemsProvider.notifier)
                                       .resetSearch();
@@ -102,11 +117,14 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                             ),
                           RightElevatedButton(
                             title: 'Search',
-                            onPressed: () {
-                              showCustomDialog(context,
+                            onPressed: () async {
+                              final searchString = await showCustomDialog(
+                                  context,
                                   width: 400,
                                   height: 770,
                                   child: const SearchServiceItemsScreen());
+
+                              _searchString = searchString;
                             },
                           ),
                         ],

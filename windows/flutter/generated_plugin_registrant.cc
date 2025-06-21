@@ -8,6 +8,7 @@
 
 #include <firebase_core/firebase_core_plugin_c_api.h>
 #include <objectbox_flutter_libs/objectbox_flutter_libs_plugin.h>
+#include <printing/printing_plugin.h>
 #include <window_size/window_size_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
@@ -15,6 +16,8 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
   ObjectboxFlutterLibsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ObjectboxFlutterLibsPlugin"));
+  PrintingPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("PrintingPlugin"));
   WindowSizePluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("WindowSizePlugin"));
 }

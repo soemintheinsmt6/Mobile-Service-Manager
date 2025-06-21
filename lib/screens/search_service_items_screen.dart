@@ -161,7 +161,54 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
     );
 
     // Close the search dialog
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(_generateSearchString());
+  }
+
+  String _generateSearchString() {
+    List<String> parts = [];
+
+    if (_invoiceController.text.isNotEmpty) {
+      parts.add(_invoiceController.text);
+    }
+    if (_customerNameController.text.isNotEmpty) {
+      parts.add(_customerNameController.text);
+    }
+
+    if (_phoneNumberController.text.isNotEmpty) {
+      parts.add(_phoneNumberController.text);
+    }
+
+    if (_selectedBrand != null) {
+      parts.add(_selectedBrand!.name);
+    }
+    if (_selectedFault != null) {
+      parts.add(_selectedFault!.name);
+    }
+    if (_selectedTechnician != null) {
+      parts.add(_selectedTechnician!.name);
+    }
+
+    if (_deviceStatus != null && _deviceStatus!.isNotEmpty) {
+      parts.add(translate(_deviceStatus!));
+    }
+    if (_deliveryStatus != null && _deliveryStatus!.isNotEmpty) {
+      parts.add(translate(_deliveryStatus!));
+    }
+
+    if (_selectedDateType == _dateTypes[1] && _specificDateTime != null) {
+      parts
+          .add('Specific Date: ${_specificDateTime!.toString().formattedDate}');
+    }
+
+    if (_selectedDateType == _dateTypes[2]) {
+      if (_fromDateTime != null && _toDateTime != null) {
+        final from = _fromDateTime!.toString().formattedDate;
+        final to = _toDateTime!.toString().formattedDate;
+        parts.add('From: $from - To: $to');
+      }
+    }
+
+    return parts.join('/');
   }
 
   @override
