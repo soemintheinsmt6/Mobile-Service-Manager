@@ -8,8 +8,10 @@ import 'package:mobile_service_manager/providers/fault_provider.dart';
 import 'package:mobile_service_manager/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/providers/service_item_provider.dart';
 import 'package:mobile_service_manager/providers/technician_provider.dart';
+import 'package:mobile_service_manager/utils/dialog.dart';
 import 'package:mobile_service_manager/widgets/bar_button.dart';
 import 'package:mobile_service_manager/widgets/glass_box.dart';
+import 'package:mobile_service_manager/widgets/info_card.dart';
 
 class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({super.key});
@@ -146,6 +148,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Backup & Restore'),
+        actions: [_info(context)],
       ),
       body: Stack(
         children: [
@@ -241,6 +244,19 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               child: GlassBox(title: _progress),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _info(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 20.0),
+      child: GestureDetector(
+        child: Image.asset('assets/info.png', width: 32, height: 32),
+        onTap: () {
+          showCustomDialog(context,
+              width: 400, height: 400, child: const InfoCard());
+        },
       ),
     );
   }

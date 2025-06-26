@@ -196,15 +196,14 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
     }
 
     if (_selectedDateType == _dateTypes[1] && _specificDateTime != null) {
-      parts
-          .add('Specific Date: ${_specificDateTime!.toString().formattedDate}');
+      parts.add(_specificDateTime!.toString().formattedDate);
     }
 
     if (_selectedDateType == _dateTypes[2]) {
       if (_fromDateTime != null && _toDateTime != null) {
         final from = _fromDateTime!.toString().formattedDate;
         final to = _toDateTime!.toString().formattedDate;
-        parts.add('From: $from - To: $to');
+        parts.add('$from - $to');
       }
     }
 
