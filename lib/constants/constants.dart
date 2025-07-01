@@ -13,7 +13,7 @@ final kLargeBoldTextStyle = GoogleFonts.montserrat(
 );
 
 final kHeaderTextStyle = GoogleFonts.montserrat(
-  fontSize: 24,
+  fontSize: 22,
   fontWeight: FontWeight.bold,
   color: AppColors.headerText,
 );

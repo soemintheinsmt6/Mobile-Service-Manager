@@ -25,7 +25,7 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
 
   void loadServiceItems() {
     _isSearchActive = false;
-    state = repository.getAllServiceItems();
+    state = repository.getTodayServiceItems();
   }
 
   Future<void> addServiceItem(ServiceItem item) async {

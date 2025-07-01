@@ -70,6 +70,19 @@ class ObjectBox {
         .find();
   }
 
+  List<ServiceItem> getTodayServiceItems() {
+    final now = DateTime.now();
+    final todayDateString = now.toString().split(' ')[0];
+
+    final query = serviceItemBox
+        .query(ServiceItem_.isTrash
+            .equals(false)
+            .and(ServiceItem_.issueDate.startsWith(todayDateString)))
+        .build();
+
+    return query.find();
+  }
+
   bool deleteServiceItem(int id) => serviceItemBox.remove(id);
 
   void closeStore() => _store.close();

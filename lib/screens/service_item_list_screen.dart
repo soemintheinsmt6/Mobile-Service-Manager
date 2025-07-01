@@ -10,6 +10,7 @@ import 'package:mobile_service_manager/screens/service_item_form.dart';
 import 'package:mobile_service_manager/services/service_list_printer.dart';
 import 'package:mobile_service_manager/utils/dialog.dart';
 import 'package:mobile_service_manager/screens/edit_service_item_screen.dart';
+import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:mobile_service_manager/widgets/right_elevated_button.dart';
 import 'package:mobile_service_manager/widgets/service_tile.dart';
 import '../providers/service_item_provider.dart';
@@ -74,9 +75,13 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final listWidth = (screenWidth - kNavigationBarWidth) * 4 / 5;
     final width = listWidth > 1220.0 ? listWidth : 1220.0;
+
     final serviceItems = ref.watch(serviceItemsProvider);
     final isSearchActive =
         ref.read(serviceItemsProvider.notifier).isSearchActive;
+    final title = isSearchActive
+        ? 'Service List'
+        : 'Service List - ${DateTime.now().toString().formattedDate}';
 
     return Scaffold(
       body: Stack(
@@ -98,7 +103,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                         children: [
                           Row(
                             children: [
-                              Text('Service List', style: kHeaderTextStyle),
+                              Text(title, style: kHeaderTextStyle),
                               if (isSearchActive)
                                 Padding(
                                   padding: const EdgeInsets.symmetric(

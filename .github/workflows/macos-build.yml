@@ -35,7 +35,7 @@ jobs:
 
       - name: Verify build output
         run: |
-          if [ -d "build/macos/Build/Products/Release/mobile_service_manager.app" ]; then
+          if [ -d "build/macos/Build/Products/Release/Mobile Service Manager.app" ]; then
             echo "✅ macOS app bundle created successfully"
             ls -la "build/macos/Build/Products/Release/"
           else
@@ -102,7 +102,7 @@ jobs:
           mkdir -p dmg_temp
           
           # Copy the app bundle to temp directory
-          cp -R "build/macos/Build/Products/Release/mobile_service_manager.app" dmg_temp/
+          cp -R "build/macos/Build/Products/Release/Mobile Service Manager.app" dmg_temp/
           
           # Copy installation instructions to DMG
           cp INSTALLATION_INSTRUCTIONS.md dmg_temp/
@@ -113,9 +113,9 @@ jobs:
             --window-pos 200 120 \
             --window-size 800 450 \
             --icon-size 100 \
-            --icon "mobile_service_manager.app" 200 190 \
+            --icon "Mobile Service Manager.app" 200 190 \
             --icon "INSTALLATION_INSTRUCTIONS.md" 400 300 \
-            --hide-extension "mobile_service_manager.app" \
+            --hide-extension "Mobile Service Manager.app" \
             --app-drop-link 600 185 \
             --hdiutil-verbose \
             "MobileServiceManagerInstaller.dmg" \

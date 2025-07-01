@@ -10,16 +10,19 @@ class ServiceItemRepository {
   ServiceItemRepository(this._objectBox);
 
   List<ServiceItem> getAllServiceItems() {
-    List<ServiceItem> allItems = _objectBox.getAllServiceItems();
-    return allItems.where((item) => !item.isTrash).toList();
+    return _objectBox.getAllServiceItems();
   }
 
   List<ServiceItem> getTrashServiceItems() {
-    List<ServiceItem> allItems = _objectBox.getTrashServiceItems();
-    return allItems.where((item) => item.isTrash).toList();
+    return _objectBox.getTrashServiceItems();
+  }
+
+  List<ServiceItem> getTodayServiceItems() {
+    return _objectBox.getTodayServiceItems();
   }
 
   int addServiceItem(ServiceItem item) => _objectBox.insertServiceItem(item);
+
   int updateServiceItem(ServiceItem item) => _objectBox.insertServiceItem(item);
 
   bool deleteServiceItem(int id) {
