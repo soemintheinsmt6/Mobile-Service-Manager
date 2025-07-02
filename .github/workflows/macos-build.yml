@@ -150,4 +150,4 @@ jobs:
           path: |
             MobileServiceManagerInstaller.dmg
             INSTALLATION_INSTRUCTIONS.md
-          retention-days: 1
+          retention-days: 10

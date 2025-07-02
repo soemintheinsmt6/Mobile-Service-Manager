@@ -537,6 +537,11 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
               onChanged: (item) {
                 if (item is DropDownValueModel) {
                   _deliveryStatus = store(item.value);
+
+                  if (item.value == deliveryStatus[0]) {
+                    _deliveryDateTime = null;
+                    _deliveryDateController.text = '';
+                  }
                 } else {
                   _deliveryStatus = '';
                 }

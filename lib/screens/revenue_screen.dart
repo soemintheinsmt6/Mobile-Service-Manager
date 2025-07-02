@@ -30,6 +30,9 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   bool _isDateRangeMode = false;
   late String _revenueTitle;
 
+  final List<String> _filterDateTypes = ['Issue Date', 'Delivery Date'];
+  bool _isIssueDate = true;
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +40,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     _technicianController = SingleValueDropDownController();
 
     _selectedDate = DateTime.now();
-    _revenueTitle = _selectedDate.toString().formattedDate;
+    _revenueTitle = 'Issue Date: ${_selectedDate.toString().formattedDate}';
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(revenueNotifierProvider.notifier)
@@ -54,12 +57,15 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   void _setRevenueTitle() {
     final technician =
         _selectedTechnician == null ? '' : ' by ${_selectedTechnician!.name}';
+    final dateBy = _isIssueDate ? 'Issue Date: ' : 'Delivery Date: ';
+
     setState(() {
       if (_isDateRangeMode) {
         _revenueTitle =
-            '${_fromDate.toString().formattedDate} - ${_toDate.toString().formattedDate}$technician';
+            '$dateBy${_fromDate.toString().formattedDate} - ${_toDate.toString().formattedDate}$technician';
       } else {
-        _revenueTitle = _selectedDate.toString().formattedDate + technician;
+        _revenueTitle =
+            dateBy + _selectedDate.toString().formattedDate + technician;
       }
     });
   }
@@ -99,7 +105,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 16),
-                    child: _dateTypes(technicians),
+                    child: _revenueFilter(technicians),
                   ),
                   Row(
                     children: [
@@ -163,12 +169,14 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                             if (_isDateRangeMode) {
                               revenueNotifier.loadRevenueForDateRange(
                                   _fromDate!, _toDate!,
-                                  technicianId: _setTechnician());
+                                  technicianId: _setTechnician(),
+                                  isIssueDate: _isIssueDate);
                             } else {
                               ref
                                   .read(revenueNotifierProvider.notifier)
                                   .loadDailyRevenue(_selectedDate!,
-                                      technicianId: _setTechnician());
+                                      technicianId: _setTechnician(),
+                                      isIssueDate: _isIssueDate);
                             }
                           },
                           child: const Text('Submit'),
@@ -213,7 +221,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     );
   }
 
-  Widget _dateTypes(List<Technician> technicians) {
+  Widget _revenueFilter(List<Technician> technicians) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5.0),
       child: Row(
@@ -226,6 +234,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
               name: 'From Date - To Date',
               selected: _isDateRangeMode,
               onTap: () => _dateTypeToggle(true)),
+          _filterDateTypeDropDown(),
           _technicianWidget(technicians),
         ],
       ),
@@ -262,11 +271,28 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     }
   }
 
+  Widget _filterDateTypeDropDown() {
+    return _dropDownContainer(
+      width: 160,
+      child: CustomDropDownTextField(
+        title: _filterDateTypes[0],
+        initialValue: _filterDateTypes[0],
+        showTitle: false,
+        enableSearch: false,
+        padding: EdgeInsets.zero,
+        borderColor: Colors.black54,
+        dropDownList: _filterDateTypes.map((type) {
+          return DropDownValueModel(value: type, name: type);
+        }).toList(),
+        onChanged: (item) {
+          _isIssueDate = item.value == _filterDateTypes[0];
+        },
+      ),
+    );
+  }
+
   Widget _technicianWidget(List<Technician> technicians) {
-    return Container(
-      width: 210,
-      height: 35,
-      padding: const EdgeInsets.only(left: 8),
+    return _dropDownContainer(
       child: CustomDropDownTextField(
         title: 'Technician',
         clearOption: true,
@@ -285,6 +311,15 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
           }
         },
       ),
+    );
+  }
+
+  Widget _dropDownContainer({required Widget child, double width = 210.0}) {
+    return Container(
+      width: width,
+      height: 35,
+      padding: const EdgeInsets.only(left: 8),
+      child: child,
     );
   }
 }

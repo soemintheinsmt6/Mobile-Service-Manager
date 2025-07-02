@@ -219,4 +219,4 @@ jobs:
           path: |
             installer_output/MobileServiceManagerSetup.exe
             WINDOWS_TROUBLESHOOTING.md
-          retention-days: 1
+          retention-days: 10
