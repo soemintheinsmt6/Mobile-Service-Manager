@@ -8,10 +8,16 @@ class RevenueRepository {
   RevenueRepository(this._objectBox);
 
   Revenue getDailyRevenue(DateTime selectedDate,
-      {int? technicianId, required bool isIssueDate}) {
+      {int? brandId,
+      int? faultId,
+      int? technicianId,
+      required bool isIssueDate}) {
     // Get all service items for the selected date
     List<ServiceItem> dayItems = _getServiceItemsForDate(selectedDate,
-        technicianId: technicianId, isIssueDate: isIssueDate);
+        brandId: brandId,
+        faultId: faultId,
+        technicianId: technicianId,
+        isIssueDate: isIssueDate);
 
     // Calculate counts by status
     int doneCount = dayItems.where((item) => item.status == 'done').length;
@@ -49,7 +55,10 @@ class RevenueRepository {
   }
 
   List<ServiceItem> _getServiceItemsForDate(DateTime date,
-      {int? technicianId, required bool isIssueDate}) {
+      {int? brandId,
+      int? faultId,
+      int? technicianId,
+      required bool isIssueDate}) {
     final dateString =
         date.toString().split(' ')[0]; // Get only the date part (YYYY-MM-DD)
 
@@ -57,7 +66,7 @@ class RevenueRepository {
     List<ServiceItem> allItems = _objectBox.getAllServiceItems();
 
     // Filter by date
-    List<ServiceItem> filteredByDate = allItems.where((item) {
+    List<ServiceItem> filtered = allItems.where((item) {
       if (isIssueDate) {
         final itemDateString =
             item.issueDate.split(' ')[0]; // Extract date part from stored item
@@ -70,69 +79,44 @@ class RevenueRepository {
       }
     }).toList();
 
-    // Filter by technician if provided
-    if (technicianId != null) {
-      return filteredByDate.where((item) {
-        return item.technician.target?.id == technicianId;
-      }).toList();
+    if (brandId != null) {
+      filtered =
+          filtered.where((item) => item.brand.target?.id == brandId).toList();
     }
 
-    return filteredByDate;
+    if (faultId != null) {
+      filtered = filtered
+          .where((item) => item.faults.any((fault) => fault.id == faultId))
+          .toList();
+    }
+
+    if (technicianId != null) {
+      filtered = filtered
+          .where((item) => item.technician.target?.id == technicianId)
+          .toList();
+    }
+
+    return filtered;
   }
 
   // Get revenue data for a date range with optional technician filter
   List<Revenue> getRevenueForDateRange(DateTime fromDate, DateTime toDate,
-      {int? technicianId, required bool isIssueDate}) {
+      {int? brandId,
+      int? faultId,
+      int? technicianId,
+      required bool isIssueDate}) {
     List<Revenue> revenueList = [];
     DateTime currentDate = fromDate;
 
     while (currentDate.isBefore(toDate.add(const Duration(days: 1)))) {
       revenueList.add(getDailyRevenue(currentDate,
-          technicianId: technicianId, isIssueDate: isIssueDate));
+          brandId: brandId,
+          faultId: faultId,
+          technicianId: technicianId,
+          isIssueDate: isIssueDate));
       currentDate = currentDate.add(const Duration(days: 1));
     }
 
     return revenueList;
-  }
-
-  // Get monthly revenue summary with optional technician filter
-  Revenue getMonthlyRevenue(int year, int month,
-      {int? technicianId, required bool isIssueDate}) {
-    DateTime firstDay = DateTime(year, month, 1);
-    DateTime lastDay = DateTime(year, month + 1, 0);
-
-    List<Revenue> monthlyData = getRevenueForDateRange(firstDay, lastDay,
-        technicianId: technicianId, isIssueDate: isIssueDate);
-
-    // Aggregate all daily data into monthly summary
-    int totalServiceItemCount =
-        monthlyData.fold(0, (sum, day) => sum + day.totalServiceItemCount);
-    int doneCount = monthlyData.fold(0, (sum, day) => sum + day.doneCount);
-    int inProgressCount =
-        monthlyData.fold(0, (sum, day) => sum + day.inProgressCount);
-    int returnCount = monthlyData.fold(0, (sum, day) => sum + day.returnCount);
-    int freeCount = monthlyData.fold(0, (sum, day) => sum + day.freeCount);
-    int inStoreCount =
-        monthlyData.fold(0, (sum, day) => sum + day.inStoreCount);
-    int deliveredCount =
-        monthlyData.fold(0, (sum, day) => sum + day.deliveredCount);
-    int priceTotal = monthlyData.fold(0, (sum, day) => sum + day.priceTotal);
-    int expenseTotal =
-        monthlyData.fold(0, (sum, day) => sum + day.expenseTotal);
-    int profit = priceTotal - expenseTotal;
-
-    return Revenue(
-      date: firstDay,
-      totalServiceItemCount: totalServiceItemCount,
-      doneCount: doneCount,
-      inProgressCount: inProgressCount,
-      returnCount: returnCount,
-      freeCount: freeCount,
-      inStoreCount: inStoreCount,
-      deliveredCount: deliveredCount,
-      priceTotal: priceTotal,
-      expenseTotal: expenseTotal,
-      profit: profit,
-    );
   }
 }

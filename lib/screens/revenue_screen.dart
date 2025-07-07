@@ -2,6 +2,10 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/constants/app_colors.dart';
+import 'package:mobile_service_manager/models/brand.dart';
+import 'package:mobile_service_manager/models/fault.dart';
+import 'package:mobile_service_manager/providers/brand_provider.dart';
+import 'package:mobile_service_manager/providers/fault_provider.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:mobile_service_manager/widgets/radio_button.dart';
 import 'package:mobile_service_manager/widgets/revenue_card.dart';
@@ -21,7 +25,12 @@ class RevenueScreen extends ConsumerStatefulWidget {
 }
 
 class _RevenueScreenState extends ConsumerState<RevenueScreen> {
+  late SingleValueDropDownController _brandController;
+  late SingleValueDropDownController _faultController;
   late SingleValueDropDownController _technicianController;
+
+  Brand? _selectedBrand;
+  Fault? _selectedFault;
   Technician? _selectedTechnician;
 
   DateTime? _selectedDate;
@@ -37,6 +46,8 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   void initState() {
     super.initState();
 
+    _brandController = SingleValueDropDownController();
+    _faultController = SingleValueDropDownController();
     _technicianController = SingleValueDropDownController();
 
     _selectedDate = DateTime.now();
@@ -50,36 +61,45 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
 
   @override
   void dispose() {
+    _brandController.dispose();
+    _faultController.dispose();
     _technicianController.dispose();
     super.dispose();
   }
 
   void _setRevenueTitle() {
+    final dateBy = _isIssueDate ? 'Issue Date: ' : 'Delivery Date: ';
+    final brand = _selectedBrand == null ? '' : ' / ${_selectedBrand!.name}';
+    final fault = _selectedFault == null ? '' : ' / ${_selectedFault!.name}';
     final technician =
         _selectedTechnician == null ? '' : ' by ${_selectedTechnician!.name}';
-    final dateBy = _isIssueDate ? 'Issue Date: ' : 'Delivery Date: ';
 
     setState(() {
       if (_isDateRangeMode) {
         _revenueTitle =
-            '$dateBy${_fromDate.toString().formattedDate} - ${_toDate.toString().formattedDate}$technician';
+            '$dateBy${_fromDate.toString().formattedDate} - ${_toDate.toString().formattedDate}$brand$fault$technician';
       } else {
-        _revenueTitle =
-            dateBy + _selectedDate.toString().formattedDate + technician;
+        _revenueTitle = dateBy +
+            _selectedDate.toString().formattedDate +
+            brand +
+            fault +
+            technician;
       }
     });
   }
 
-  int? _setTechnician() {
-    if (_selectedTechnician == null) {
+  int? _setID(dynamic item) {
+    if (item == null) {
       return null;
     }
 
-    return _selectedTechnician!.id;
+    return item!.id;
   }
 
   @override
   Widget build(BuildContext context) {
+    final brands = ref.watch(brandsProvider);
+    final faults = ref.watch(faultsProvider);
     final technicians = ref.watch(techniciansProvider);
     final revenueData = ref.watch(revenueNotifierProvider);
     final revenueNotifier = ref.read(revenueNotifierProvider.notifier);
@@ -105,7 +125,10 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 16),
-                    child: _revenueFilter(technicians),
+                    child: _revenueFilter(
+                        brands: brands,
+                        faults: faults,
+                        technicians: technicians),
                   ),
                   Row(
                     children: [
@@ -169,13 +192,17 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                             if (_isDateRangeMode) {
                               revenueNotifier.loadRevenueForDateRange(
                                   _fromDate!, _toDate!,
-                                  technicianId: _setTechnician(),
+                                  brandId: _setID(_selectedBrand),
+                                  faultId: _setID(_selectedFault),
+                                  technicianId: _setID(_selectedTechnician),
                                   isIssueDate: _isIssueDate);
                             } else {
                               ref
                                   .read(revenueNotifierProvider.notifier)
                                   .loadDailyRevenue(_selectedDate!,
-                                      technicianId: _setTechnician(),
+                                      brandId: _setID(_selectedBrand),
+                                      faultId: _setID(_selectedFault),
+                                      technicianId: _setID(_selectedTechnician),
                                       isIssueDate: _isIssueDate);
                             }
                           },
@@ -221,7 +248,10 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     );
   }
 
-  Widget _revenueFilter(List<Technician> technicians) {
+  Widget _revenueFilter(
+      {required List<Brand> brands,
+      required List<Fault> faults,
+      required List<Technician> technicians}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 5.0),
       child: Row(
@@ -235,6 +265,8 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
               selected: _isDateRangeMode,
               onTap: () => _dateTypeToggle(true)),
           _filterDateTypeDropDown(),
+          _brandWidget(brands),
+          _faultWidget(faults),
           _technicianWidget(technicians),
         ],
       ),
@@ -291,30 +323,73 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     );
   }
 
+  Widget _brandWidget(List<Brand> brands) {
+    return _dropDownWidget(
+        title: 'Brand',
+        list: brands,
+        width: 160,
+        controller: _brandController,
+        onChanged: (item) {
+          if (item is DropDownValueModel) {
+            _selectedBrand = item.value;
+          } else {
+            _selectedBrand = null;
+          }
+        });
+  }
+
+  Widget _faultWidget(List<Fault> faults) {
+    return _dropDownWidget(
+        title: 'Error',
+        list: faults,
+        controller: _faultController,
+        onChanged: (item) {
+          if (item is DropDownValueModel) {
+            _selectedFault = item.value;
+          } else {
+            _selectedFault = null;
+          }
+        });
+  }
+
   Widget _technicianWidget(List<Technician> technicians) {
-    return _dropDownContainer(
-      child: CustomDropDownTextField(
+    return _dropDownWidget(
         title: 'Technician',
-        clearOption: true,
-        showTitle: false,
-        padding: EdgeInsets.zero,
-        borderColor: Colors.black54,
+        list: technicians,
         controller: _technicianController,
-        dropDownList: technicians.map((technician) {
-          return DropDownValueModel(value: technician, name: technician.name);
-        }).toList(),
         onChanged: (item) {
           if (item is DropDownValueModel) {
             _selectedTechnician = item.value;
           } else {
             _selectedTechnician = null;
           }
-        },
+        });
+  }
+
+  Widget _dropDownWidget(
+      {required String title,
+      required List<dynamic> list,
+      required dynamic controller,
+      required dynamic Function(dynamic)? onChanged,
+      double width = 210.0}) {
+    return _dropDownContainer(
+      width: width,
+      child: CustomDropDownTextField(
+        title: title,
+        clearOption: true,
+        showTitle: false,
+        padding: EdgeInsets.zero,
+        borderColor: Colors.black54,
+        controller: controller,
+        dropDownList: list.map((item) {
+          return DropDownValueModel(value: item, name: item.name);
+        }).toList(),
+        onChanged: onChanged,
       ),
     );
   }
 
-  Widget _dropDownContainer({required Widget child, double width = 210.0}) {
+  Widget _dropDownContainer({required Widget child, required double width}) {
     return Container(
       width: width,
       height: 35,

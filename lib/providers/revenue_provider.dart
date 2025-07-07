@@ -23,16 +23,28 @@ class RevenueNotifier extends StateNotifier<Revenue?> {
   RevenueNotifier(this.repository) : super(null);
 
   void loadDailyRevenue(DateTime date,
-      {int? technicianId, bool isIssueDate = true}) {
+      {int? brandId,
+      int? faultId,
+      int? technicianId,
+      bool isIssueDate = true}) {
     final dailyRevenue = repository.getDailyRevenue(date,
-        technicianId: technicianId, isIssueDate: isIssueDate);
+        brandId: brandId,
+        faultId: faultId,
+        technicianId: technicianId,
+        isIssueDate: isIssueDate);
     state = dailyRevenue;
   }
 
   void loadRevenueForDateRange(DateTime fromDate, DateTime toDate,
-      {int? technicianId, bool isIssueDate = true}) {
+      {int? brandId,
+      int? faultId,
+      int? technicianId,
+      bool isIssueDate = true}) {
     final dateRangeData = repository.getRevenueForDateRange(fromDate, toDate,
-        technicianId: technicianId, isIssueDate: isIssueDate);
+        brandId: brandId,
+        faultId: faultId,
+        technicianId: technicianId,
+        isIssueDate: isIssueDate);
 
     // Aggregate all days into a single total
     if (dateRangeData.isNotEmpty) {
@@ -40,13 +52,6 @@ class RevenueNotifier extends StateNotifier<Revenue?> {
     } else {
       state = null;
     }
-  }
-
-  void loadMonthlyRevenue(int year, int month,
-      {int? technicianId, bool isIssueDate = true}) {
-    final monthlyRevenue = repository.getMonthlyRevenue(year, month,
-        technicianId: technicianId, isIssueDate: isIssueDate);
-    state = monthlyRevenue;
   }
 
   // Helper method to aggregate multiple Revenue into one total
