@@ -8,6 +8,7 @@ import 'package:separated_row/separated_row.dart';
 const _rowHeight = 35.0;
 final _dividerColor = Colors.grey.shade300;
 const _leftPadding = 8.0;
+const _priceWidth = 80.0;
 
 class ServiceTile extends StatelessWidget {
   const ServiceTile({
@@ -27,6 +28,9 @@ class ServiceTile extends StatelessWidget {
     final phoneNumber =
         item.phoneNumber == 'null' ? '' : item.phoneNumber.toString();
     final error = item.faults.map((e) => e.name).join(', ');
+    final expense = item.expense == null ? '' : item.expense!.formatted();
+    final price =
+        item.servicePrice == null ? '' : item.servicePrice!.formatted();
     final issueDate = item.issueDate.formattedDate;
     final deliveryDate =
         item.deliveryDate == null ? '' : item.deliveryDate!.formattedDate;
@@ -46,7 +50,7 @@ class ServiceTile extends StatelessWidget {
               _Box(text: (index + 1).toString(), width: 40),
               _Box(
                   text: item.invoiceId.toString(),
-                  width: 88,
+                  width: 85,
                   alignment: Alignment.centerLeft),
               _Cell(text: item.customerName, flex: 2),
               _Cell(text: phoneNumber),
@@ -54,7 +58,14 @@ class ServiceTile extends StatelessWidget {
                   text: '${item.brand.target?.name ?? ''} ${item.model}',
                   flex: 2),
               _Cell(text: error, flex: 2),
-              _Cell(text: item.simAndSd, isCenter: true),
+              _Box(
+                  text: expense,
+                  width: _priceWidth,
+                  alignment: Alignment.centerLeft),
+              _Box(
+                  text: price,
+                  width: _priceWidth,
+                  alignment: Alignment.centerLeft),
               _Cell(text: issueDate, isCenter: true),
               _Box(text: translate(item.status), color: setColor(item.status)),
               _Box(
@@ -80,14 +91,23 @@ Widget serviceHeader({bool isTrash = false}) {
           _Box(text: 'No.', width: 40, isHeader: true),
           _Box(
               text: 'Invoice ID',
-              width: 88,
+              width: 85,
               alignment: Alignment.centerLeft,
               isHeader: true),
           _Cell(text: 'Customer Name', flex: 2, isHeader: true),
           _Cell(text: 'Phone No.', isHeader: true),
           _Cell(text: 'Model', flex: 2, isHeader: true),
           _Cell(text: 'Error', flex: 2, isHeader: true),
-          _Cell(text: 'SIM & SD', isCenter: true, isHeader: true),
+          _Box(
+              text: 'Expense',
+              isHeader: true,
+              width: _priceWidth,
+              alignment: Alignment.centerLeft),
+          _Box(
+              text: 'Price',
+              isHeader: true,
+              width: _priceWidth,
+              alignment: Alignment.centerLeft),
           _Cell(text: 'Date', isCenter: true, isHeader: true),
           _Box(text: 'Status', isHeader: true),
           _Box(text: 'Delivery', isHeader: true),

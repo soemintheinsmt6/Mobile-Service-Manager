@@ -158,6 +158,19 @@ class ServiceItemRepository {
       }).toList();
     }
 
+    results.sort((a, b) {
+      DateTime dateA = DateTime.parse(a.issueDate);
+      DateTime dateB = DateTime.parse(b.issueDate);
+
+      int dateCompare = dateA.compareTo(dateB);
+      if (dateCompare != 0) {
+        return dateCompare;
+      } else {
+        return a.invoiceId
+            .compareTo(b.invoiceId); // sort by invoiceID if dates are equal
+      }
+    });
+
     return results;
   }
 }

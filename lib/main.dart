@@ -17,6 +17,7 @@ import 'package:window_size/window_size.dart';
 import 'constants/app_colors.dart';
 import 'database/object_box.dart';
 import 'firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,23 @@ void main() async {
 Future<void> _initializeFirebase() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
+
+void _onTabSelectedToLog(int index) {
+  FirebaseAnalytics.instance.logEvent(
+    name: _screenNameList[index],
+    parameters: {'tab_index': index, 'tab_name': _screenNameList[index]},
+  );
+}
+
+List<String> _screenNameList = [
+  'Service',
+  'Brand',
+  'Technician',
+  'Error',
+  'Bin',
+  'Revenue',
+  'Setting'
+];
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -95,6 +113,8 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _selectedIndex = index;
     });
+
+    _onTabSelectedToLog(index);
   }
 
   @override
@@ -119,16 +139,22 @@ class _MainScreenState extends State<MainScreen> {
               ),
               destinations: [
                 _navigationItem(
-                    icon: CupertinoIcons.square_list, text: 'Service'),
+                    icon: CupertinoIcons.square_list, text: _screenNameList[0]),
                 _navigationItem(
-                    icon: Icons.phone_android_rounded, text: 'Brand'),
-                _navigationItem(icon: Icons.engineering, text: 'Technician'),
+                    icon: Icons.phone_android_rounded,
+                    text: _screenNameList[1]),
                 _navigationItem(
-                    icon: Icons.error_outline_rounded, text: 'Error'),
-                _navigationItem(icon: CupertinoIcons.archivebox, text: 'Bin'),
+                    icon: Icons.engineering, text: _screenNameList[2]),
                 _navigationItem(
-                    icon: CupertinoIcons.money_dollar_circle, text: 'Revenue'),
-                _navigationItem(icon: CupertinoIcons.settings, text: 'Setting'),
+                    icon: Icons.error_outline_rounded,
+                    text: _screenNameList[3]),
+                _navigationItem(
+                    icon: CupertinoIcons.archivebox, text: _screenNameList[4]),
+                _navigationItem(
+                    icon: CupertinoIcons.money_dollar_circle,
+                    text: _screenNameList[5]),
+                _navigationItem(
+                    icon: CupertinoIcons.settings, text: _screenNameList[6]),
               ],
             ),
           ),

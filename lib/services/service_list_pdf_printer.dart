@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import '../models/service_item.dart';
 
-class ServiceListPrinter {
+class ServiceListPdfPrinter {
   static Future<void> printServiceList(
     List<ServiceItem> serviceItems, {
     String? filterNames,
@@ -220,10 +220,10 @@ class ServiceListPrinter {
       '#',
       'Invoice ID',
       'Customer',
-      'Phone',
       'Device',
-      'Issues',
-      'SIM/SD',
+      'Error',
+      'Expense',
+      'Price',
       'Issue Date',
       'Status',
       'Location',
@@ -232,11 +232,11 @@ class ServiceListPrinter {
 
     final columnWidths = <int, pw.TableColumnWidth>{
       0: const pw.FixedColumnWidth(20),
-      1: const pw.FixedColumnWidth(40),
-      2: const pw.FlexColumnWidth(2),
-      3: const pw.FlexColumnWidth(1),
+      1: const pw.FixedColumnWidth(38),
+      2: const pw.FlexColumnWidth(1.5),
+      3: const pw.FlexColumnWidth(2),
       4: const pw.FlexColumnWidth(2),
-      5: const pw.FlexColumnWidth(2),
+      5: const pw.FlexColumnWidth(1),
       6: const pw.FlexColumnWidth(1),
       7: const pw.FlexColumnWidth(1),
       8: const pw.FlexColumnWidth(1),
@@ -253,7 +253,8 @@ class ServiceListPrinter {
           decoration: const pw.BoxDecoration(color: PdfColors.grey300),
           children: headers
               .map((header) => pw.Container(
-                    padding: const pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.symmetric(
+                        horizontal: 2, vertical: 4),
                     child: pw.Text(
                       header,
                       style: pw.TextStyle(
@@ -272,9 +273,10 @@ class ServiceListPrinter {
           final index = entry.key;
           final item = entry.value;
 
-          final phoneNumber =
-              item.phoneNumber == 'null' ? '' : item.phoneNumber.toString();
           final error = item.faults.map((e) => e.name).join(', ');
+          final expense = item.expense == null ? '' : item.expense!.formatted();
+          final price =
+              item.servicePrice == null ? '' : item.servicePrice!.formatted();
           final issueDate = item.issueDate.formattedDate;
           final deliveryDate =
               item.deliveryDate == null ? '' : item.deliveryDate!.formattedDate;
@@ -283,10 +285,10 @@ class ServiceListPrinter {
             (index + 1).toString(),
             item.invoiceId.toString(),
             item.customerName,
-            phoneNumber,
             '${item.brand.target?.name ?? ''} ${item.model}',
             error,
-            item.simAndSd,
+            expense,
+            price,
             issueDate,
             translate(item.status),
             translate(item.location),
@@ -317,7 +319,8 @@ class ServiceListPrinter {
               }
 
               return pw.Container(
-                padding: const pw.EdgeInsets.all(3),
+                padding:
+                    const pw.EdgeInsets.symmetric(horizontal: 3, vertical: 5),
                 child: pw.Text(
                   cellText,
                   style: pw.TextStyle(
@@ -325,6 +328,8 @@ class ServiceListPrinter {
                     font: containsMyanmar ? myanmarFont : montserratRegular,
                   ),
                   textAlign: alignment,
+                  maxLines: 1,
+                  overflow: pw.TextOverflow.clip,
                 ),
               );
             }).toList(),

@@ -1,5 +1,12 @@
 import 'package:intl/intl.dart';
 
+extension StringCasingExtension on String {
+  String capitalizeFirst() {
+    if (isEmpty) return this;
+    return this[0].toUpperCase() + substring(1);
+  }
+}
+
 extension DateFormatter on String {
   String get formattedDate {
     try {
