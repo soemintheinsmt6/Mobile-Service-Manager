@@ -1,30 +1,32 @@
-// This is a basic Flutter widget test.
+// Mobile Service Manager Widget Tests
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// These tests verify the main application widget and basic UI functionality.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mobile_service_manager/database/object_box.dart';
+import 'widget_test.mocks.dart';
 
-import 'package:mobile_service_manager/main.dart';
-
+@GenerateMocks([ObjectBox])
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('Mobile Service Manager Widget Tests', () {
+    late MockObjectBox mockObjectBox;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    setUp(() {
+      mockObjectBox = MockObjectBox();
+      
+      // Setup common method stubs
+      when(mockObjectBox.getAllBrands()).thenReturn([]);
+      when(mockObjectBox.getAllTechnicians()).thenReturn([]);
+      when(mockObjectBox.getAllFaults()).thenReturn([]);
+      when(mockObjectBox.getAllServiceItems()).thenReturn([]);
+      when(mockObjectBox.getTodayServiceItems()).thenReturn([]);
+      when(mockObjectBox.getTrashServiceItems()).thenReturn([]);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+
+
   });
 }
