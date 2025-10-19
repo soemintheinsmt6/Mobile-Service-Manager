@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
-import 'package:mobile_service_manager/widgets/bar_button.dart';
-import 'custom_text_field.dart';
+import 'package:mobile_service_manager/widgets/buttons/bar_button.dart';
+import 'package:mobile_service_manager/widgets/text_fields/custom_text_field.dart';
 
 class AddNewItem extends StatefulWidget {
   const AddNewItem({super.key, required this.name});

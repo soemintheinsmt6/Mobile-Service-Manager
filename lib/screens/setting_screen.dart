@@ -9,7 +9,7 @@ import 'package:mobile_service_manager/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/providers/service_item_provider.dart';
 import 'package:mobile_service_manager/providers/technician_provider.dart';
 import 'package:mobile_service_manager/utils/dialog.dart';
-import 'package:mobile_service_manager/widgets/bar_button.dart';
+import 'package:mobile_service_manager/widgets/buttons/bar_button.dart';
 import 'package:mobile_service_manager/widgets/glass_box.dart';
 import 'package:mobile_service_manager/widgets/info_card.dart';
 

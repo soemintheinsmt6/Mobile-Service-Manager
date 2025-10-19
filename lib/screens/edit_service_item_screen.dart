@@ -7,7 +7,7 @@ import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/models/technician.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:mobile_service_manager/utils/utils.dart';
-import 'package:mobile_service_manager/widgets/bar_button.dart';
+import 'package:mobile_service_manager/widgets/buttons/bar_button.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
@@ -19,11 +19,11 @@ import '../providers/technician_provider.dart';
 import '../utils/alert.dart';
 import '../utils/date_time_picker.dart';
 import '../widgets/custom_check_box.dart';
-import '../widgets/custom_date_picker_text_field.dart';
-import '../widgets/custom_drop_down_text_field.dart';
-import '../widgets/custom_multi_select_field.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/dismiss_button.dart';
+import '../widgets/text_fields/custom_date_picker_text_field.dart';
+import '../widgets/text_fields/custom_drop_down_text_field.dart';
+import '../widgets/text_fields/custom_multi_select_drop_down_text_field.dart';
+import '../widgets/buttons/dismiss_button.dart';
+import '../widgets/text_fields/custom_text_form_field.dart';
 
 const _spacing = EdgeInsets.symmetric(vertical: 5);
 

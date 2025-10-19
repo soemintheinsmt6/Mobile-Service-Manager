@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_service_manager/constants/app_colors.dart';
-import '../constants/constants.dart';
+import '../../constants/constants.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
-import '../models/fault.dart';
+import '../../models/fault.dart';
 
 class CustomMultiSelectDropDownTextField extends StatelessWidget {
   const CustomMultiSelectDropDownTextField({

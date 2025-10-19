@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/utils/alert.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
-import 'package:mobile_service_manager/widgets/bar_button.dart';
-import 'package:mobile_service_manager/widgets/custom_date_picker_text_field.dart';
+import 'package:mobile_service_manager/widgets/buttons/bar_button.dart';
+import 'package:mobile_service_manager/widgets/text_fields/custom_date_picker_text_field.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import '../models/brand.dart';
 import '../models/fault.dart';
@@ -16,9 +16,9 @@ import '../providers/service_item_provider.dart';
 import '../providers/technician_provider.dart';
 import '../utils/date_time_picker.dart';
 import '../widgets/custom_check_box.dart';
-import '../widgets/custom_multi_select_field.dart';
-import '../widgets/custom_text_form_field.dart';
-import '../widgets/custom_drop_down_text_field.dart';
+import '../widgets/text_fields/custom_multi_select_drop_down_text_field.dart';
+import '../widgets/text_fields/custom_drop_down_text_field.dart';
+import '../widgets/text_fields/custom_text_form_field.dart';
 
 class ServiceItemForm extends ConsumerStatefulWidget {
   const ServiceItemForm({super.key});

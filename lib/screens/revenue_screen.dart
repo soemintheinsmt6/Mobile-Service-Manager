@@ -7,13 +7,13 @@ import 'package:mobile_service_manager/models/fault.dart';
 import 'package:mobile_service_manager/providers/brand_provider.dart';
 import 'package:mobile_service_manager/providers/fault_provider.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
-import 'package:mobile_service_manager/widgets/radio_button.dart';
 import 'package:mobile_service_manager/widgets/revenue_card.dart';
 import '../models/technician.dart';
 import '../providers/revenue_provider.dart';
 import '../providers/technician_provider.dart';
 import '../utils/date_time_picker.dart';
-import '../widgets/custom_drop_down_text_field.dart';
+import '../widgets/buttons/radio_button.dart';
+import '../widgets/text_fields/custom_drop_down_text_field.dart';
 
 enum DateType { specific, from, to }
 

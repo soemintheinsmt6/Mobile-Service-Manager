@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_service_manager/widgets/text_fields/custom_text_field.dart';
 import '../constants/app_colors.dart';
-import 'custom_text_field.dart';
 
 class UpdateItem extends StatefulWidget {
   const UpdateItem({super.key, required this.name});

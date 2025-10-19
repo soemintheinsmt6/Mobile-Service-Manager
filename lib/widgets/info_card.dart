@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_service_manager/widgets/dismiss_button.dart';
+import 'package:mobile_service_manager/widgets/buttons/dismiss_button.dart';
 import '../utils/utils.dart';
 
 class InfoCard extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
-import '../constants/constants.dart';
+import '../../constants/app_colors.dart';
+import '../../constants/constants.dart';
 
 class RightElevatedButton extends StatelessWidget {
   const RightElevatedButton({

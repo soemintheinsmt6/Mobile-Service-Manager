@@ -13,10 +13,10 @@ import 'package:mobile_service_manager/services/service_list_pdf_printer.dart';
 import 'package:mobile_service_manager/utils/dialog.dart';
 import 'package:mobile_service_manager/screens/edit_service_item_screen.dart';
 import 'package:mobile_service_manager/utils/extension.dart';
-import 'package:mobile_service_manager/widgets/custom_drop_down_text_field.dart';
-import 'package:mobile_service_manager/widgets/right_elevated_button.dart';
+import 'package:mobile_service_manager/widgets/text_fields/custom_drop_down_text_field.dart';
 import 'package:mobile_service_manager/widgets/service_tile.dart';
 import '../providers/service_item_provider.dart';
+import '../widgets/buttons/right_elevated_button.dart';
 
 class ServiceItemListScreen extends ConsumerStatefulWidget {
   const ServiceItemListScreen({super.key});

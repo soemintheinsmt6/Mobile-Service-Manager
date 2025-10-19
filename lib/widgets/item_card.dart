@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_service_manager/constants/constants.dart';
 import 'package:mobile_service_manager/models/item.dart';
-import 'package:mobile_service_manager/widgets/custom_icon_button.dart';
+import 'package:mobile_service_manager/widgets/buttons/custom_icon_button.dart';
 import '../constants/app_colors.dart';
 
 class ItemCard extends StatelessWidget {

@@ -3,7 +3,7 @@ name: Build Mobile Service Manager macOS App
 on:
   push:
     branches:
-      - master
+      - deploy
 
 jobs:
   build-macos:

@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/providers/fault_provider.dart';
-import 'package:mobile_service_manager/widgets/right_elevated_button.dart';
 import '../constants/constants.dart';
 import '../models/fault.dart';
 import '../utils/dialog.dart';
 import '../widgets/add_new_item.dart';
+import '../widgets/buttons/right_elevated_button.dart';
 import '../widgets/update_item.dart';
 
 class FaultListScreen extends ConsumerWidget {
