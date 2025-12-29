@@ -12,18 +12,41 @@ final trashServiceItemProvider =
 // Dedicated notifier for trash items
 class TrashServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
   final ServiceItemRepository repository;
+  int _pageSize = 50;
+  int _currentPage = 0;
+  int _totalCount = 0;
 
   TrashServiceItemsNotifier(this.repository) : super([]) {
     loadTrashItems();
   }
 
-  void loadTrashItems() {
-    state = repository.getTrashServiceItems();
+  int get pageSize => _pageSize;
+  int get currentPage => _currentPage;
+  int get totalCount => _totalCount;
+
+  void loadTrashItems({int page = 0, int? pageSize}) {
+    if (pageSize != null) {
+      _pageSize = pageSize;
+    }
+
+    final offset = page * _pageSize;
+    final result = repository.getTrashServiceItemsPaged(
+      limit: _pageSize,
+      offset: offset,
+    );
+
+    _currentPage = page;
+    _totalCount = result.totalCount;
+    state = result.items;
   }
 
   Future restoreServiceItem(int id, WidgetRef ref) async {
     if (repository.restoreServiceItem(id)) {
       state = state.where((item) => item.id != id).toList();
+
+      if (_totalCount > 0) {
+        _totalCount--;
+      }
 
       ref.read(trashOperationProvider.notifier).state++;
     }
@@ -32,6 +55,10 @@ class TrashServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
   Future permanentlyDelete(int id) async {
     if (repository.permanentlyDeleteServiceItem(id)) {
       state = state.where((item) => item.id != id).toList();
+
+      if (_totalCount > 0) {
+        _totalCount--;
+      }
     }
   }
 

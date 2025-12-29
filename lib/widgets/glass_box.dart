@@ -13,7 +13,7 @@ class GlassBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const width = 350.0;
+    const width = 380.0;
     const height = 230.0;
 
     return SizedBox(

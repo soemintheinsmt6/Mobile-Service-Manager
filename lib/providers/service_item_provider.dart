@@ -16,22 +16,47 @@ final serviceItemsProvider =
 class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
   final ServiceItemRepository repository;
   bool _isSearchActive = false;
+  int _pageSize = 50;
+  int _currentPage = 0;
+  int _totalCount = 0;
 
   ServiceItemsNotifier(this.repository) : super([]) {
     loadServiceItems();
   }
 
   bool get isSearchActive => _isSearchActive;
+  int get pageSize => _pageSize;
+  int get currentPage => _currentPage;
+  int get totalCount => _isSearchActive ? state.length : _totalCount;
 
-  void loadServiceItems() {
+  void loadServiceItems({int page = 0, int? pageSize}) {
     _isSearchActive = false;
-    state = repository.getTodayServiceItems();
+
+    if (pageSize != null) {
+      _pageSize = pageSize;
+    }
+
+    final offset = page * _pageSize;
+    final result = repository.getTodayServiceItemsPaged(
+      limit: _pageSize,
+      offset: offset,
+    );
+
+    _currentPage = page;
+    _totalCount = result.totalCount;
+    state = result.items;
   }
 
   Future<void> addServiceItem(ServiceItem item) async {
     final id = repository.addServiceItem(item);
     item.id = id;
-    state = [...state, item];
+
+    if (_isSearchActive) {
+      state = [...state, item];
+    } else {
+      _totalCount++;
+      state = [...state, item];
+    }
   }
 
   Future<void> updateServiceItem(ServiceItem item) async {
@@ -44,8 +69,11 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
 
   Future moveToTrash(int id, WidgetRef ref) async {
     if (repository.deleteServiceItem(id)) {
-      // Remove from current state since it's now in trash
       state = state.where((item) => item.id != id).toList();
+
+      if (!_isSearchActive && _totalCount > 0) {
+        _totalCount--;
+      }
 
       ref.read(trashOperationProvider.notifier).state++;
       ref.read(trashServiceItemProvider.notifier).loadTrashItems();
@@ -54,14 +82,21 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
 
   Future restoreFromTrash(int id) async {
     if (repository.restoreServiceItem(id)) {
-      // If we're viewing trash, remove from current state
       state = state.where((item) => item.id != id).toList();
+
+      if (!_isSearchActive && _totalCount > 0) {
+        _totalCount--;
+      }
     }
   }
 
   Future permanentlyDelete(int id) async {
     if (repository.permanentlyDeleteServiceItem(id)) {
       state = state.where((item) => item.id != id).toList();
+
+      if (!_isSearchActive && _totalCount > 0) {
+        _totalCount--;
+      }
     }
   }
 
@@ -78,7 +113,7 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
     DateTime? fromDate,
     DateTime? toDate,
   }) {
-    state = repository.searchServiceItems(
+    final results = repository.searchServiceItems(
       invoiceId: invoiceId,
       customerName: customerName,
       phoneNumber: phoneNumber,
@@ -93,10 +128,15 @@ class ServiceItemsNotifier extends StateNotifier<List<ServiceItem>> {
     );
 
     _isSearchActive = true;
+    _currentPage = 0;
+    _totalCount = results.length;
+    state = results;
   }
 
   void resetSearch() {
     if (_isSearchActive) {
+      _currentPage = 0;
+      _totalCount = 0;
       loadServiceItems();
     }
   }

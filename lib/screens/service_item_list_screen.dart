@@ -33,6 +33,8 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
 
   String? _searchString;
   bool _isLoading = false;
+  final int _rowsPerPage = 50;
+  int _currentPage = 0;
 
   final List<String> _printType = ['Excel', 'Pdf'];
   late String _selectedPrintType;
@@ -93,8 +95,45 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
     final width = listWidth > 1275.0 ? listWidth : 1275.0;
 
     final serviceItems = ref.watch(serviceItemsProvider);
-    final isSearchActive =
-        ref.read(serviceItemsProvider.notifier).isSearchActive;
+    final notifier = ref.read(serviceItemsProvider.notifier);
+    final isSearchActive = notifier.isSearchActive;
+    final totalItems = notifier.totalCount;
+    final rowsPerPage = _rowsPerPage;
+    final totalPages = totalItems == 0 ? 1 : (totalItems / rowsPerPage).ceil();
+
+    int currentPage;
+    List<ServiceItem> paginatedItems;
+    int startIndex;
+    int rangeStart;
+    int rangeEnd;
+
+    if (isSearchActive) {
+      var searchPage = _currentPage;
+      if (searchPage > totalPages - 1) {
+        searchPage = totalPages - 1;
+      }
+      if (searchPage < 0) {
+        searchPage = 0;
+      }
+
+      currentPage = searchPage;
+      startIndex = currentPage * rowsPerPage;
+      final endIndex = startIndex + rowsPerPage > totalItems
+          ? totalItems
+          : startIndex + rowsPerPage;
+      paginatedItems = totalItems == 0
+          ? <ServiceItem>[]
+          : serviceItems.sublist(startIndex, endIndex);
+      rangeStart = totalItems == 0 ? 0 : startIndex + 1;
+      rangeEnd = endIndex;
+    } else {
+      currentPage = notifier.currentPage;
+      startIndex = currentPage * rowsPerPage;
+      paginatedItems = serviceItems;
+      rangeStart = totalItems == 0 ? 0 : startIndex + 1;
+      final displayedCount = paginatedItems.length;
+      rangeEnd = totalItems == 0 ? 0 : startIndex + displayedCount;
+    }
     final title = isSearchActive
         ? 'Service List'
         : 'Service List - ${DateTime.now().toString().formattedDate}';
@@ -128,21 +167,16 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0),
                                       child: Text(
-                                        '- ${serviceItems.length} results',
+                                        '- $totalItems results',
                                         style: kDefaultTextStyle.copyWith(
                                             color: Colors.grey[800]),
                                       ),
                                     ),
-                                    IconButton(
-                                        onPressed: () => _print(
-                                            list: serviceItems,
-                                            type: _selectedPrintType),
-                                        icon:
-                                            const Icon(CupertinoIcons.printer)),
                                     Container(
                                       height: 35,
-                                      width: 100,
-                                      padding: const EdgeInsets.only(left: 8),
+                                      width: 120,
+                                      padding: const EdgeInsets.only(
+                                          left: 4, right: 6),
                                       child: CustomDropDownTextField(
                                           showTitle: false,
                                           enableSearch: false,
@@ -157,6 +191,12 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                             _selectedPrintType = item.value;
                                           }),
                                     ),
+                                    IconButton(
+                                        onPressed: () => _print(
+                                            list: serviceItems,
+                                            type: _selectedPrintType),
+                                        icon:
+                                            const Icon(CupertinoIcons.printer)),
                                   ],
                                 )
                             ],
@@ -171,7 +211,13 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                         style: kDefaultTextStyle.copyWith(
                                             color: AppColors.dangerButton)),
                                     onPressed: () {
-                                      _searchString = null;
+                                      setState(() {
+                                        _searchString = null;
+                                        _currentPage = 0;
+                                        if (_verticalController.hasClients) {
+                                          _verticalController.jumpTo(0);
+                                        }
+                                      });
                                       ref
                                           .read(serviceItemsProvider.notifier)
                                           .resetSearch();
@@ -187,7 +233,15 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                       height: 770,
                                       child: const SearchServiceItemsScreen());
 
-                                  _searchString = searchString;
+                                  if (!mounted) return;
+
+                                  setState(() {
+                                    _searchString = searchString;
+                                    _currentPage = 0;
+                                    if (_verticalController.hasClients) {
+                                      _verticalController.jumpTo(0);
+                                    }
+                                  });
                                 },
                               ),
                             ],
@@ -207,43 +261,131 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                       ),
                     ),
 
-                    /// Scrollable list (horizontal + vertical)
+                    /// Scrollable list (horizontal + vertical) with pagination
                     Expanded(
-                      child: Scrollbar(
-                        controller: _bodyHorizontalController,
-                        thumbVisibility: true,
-                        child: SingleChildScrollView(
-                          controller: _bodyHorizontalController,
-                          scrollDirection: Axis.horizontal,
-                          physics: const ClampingScrollPhysics(),
-                          child: SizedBox(
-                            width: width,
+                      child: Column(
+                        children: [
+                          Expanded(
                             child: Scrollbar(
-                              controller: _verticalController,
+                              controller: _bodyHorizontalController,
                               thumbVisibility: true,
-                              child: ListView.builder(
-                                controller: _verticalController,
-                                padding: const EdgeInsets.only(bottom: 20.0),
-                                itemCount: serviceItems.length,
-                                itemBuilder: (context, index) {
-                                  final item = serviceItems[index];
+                              child: SingleChildScrollView(
+                                controller: _bodyHorizontalController,
+                                scrollDirection: Axis.horizontal,
+                                physics: const ClampingScrollPhysics(),
+                                child: SizedBox(
+                                  width: width,
+                                  child: Scrollbar(
+                                    controller: _verticalController,
+                                    thumbVisibility: true,
+                                    child: ListView.builder(
+                                      controller: _verticalController,
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20.0),
+                                      itemCount: paginatedItems.length,
+                                      itemBuilder: (context, index) {
+                                        final item = paginatedItems[index];
+                                        final displayIndex = startIndex + index;
 
-                                  return ServiceTile(
-                                    item: item,
-                                    index: index,
-                                    onTap: () {
-                                      showCustomDialog(context,
-                                          width: 460,
-                                          height: 850,
-                                          child: EditServiceItemScreen(
-                                              serviceItem: item));
-                                    },
-                                  );
-                                },
+                                        return ServiceTile(
+                                          item: item,
+                                          index: displayIndex,
+                                          onTap: () {
+                                            showCustomDialog(context,
+                                                width: 460,
+                                                height: 850,
+                                                child: EditServiceItemScreen(
+                                                    serviceItem: item));
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                          SizedBox(
+                            height: 48,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Rows per page: $_rowsPerPage',
+                                    style: kDefaultTextStyle,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Text(
+                                    totalItems == 0
+                                        ? '0 of 0'
+                                        : '$rangeStart-$rangeEnd of $totalItems',
+                                    style: kDefaultTextStyle,
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.chevron_left,
+                                        size: 20),
+                                    onPressed: currentPage > 0
+                                        ? () {
+                                            if (isSearchActive) {
+                                              setState(() {
+                                                _currentPage--;
+                                                if (_verticalController
+                                                    .hasClients) {
+                                                  _verticalController.jumpTo(0);
+                                                }
+                                              });
+                                            } else {
+                                              ref
+                                                  .read(serviceItemsProvider
+                                                      .notifier)
+                                                  .loadServiceItems(
+                                                      page: currentPage - 1,
+                                                      pageSize: rowsPerPage);
+                                              if (_verticalController
+                                                  .hasClients) {
+                                                _verticalController.jumpTo(0);
+                                              }
+                                            }
+                                          }
+                                        : null,
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.chevron_right,
+                                        size: 20),
+                                    onPressed: currentPage < totalPages - 1 &&
+                                            totalItems > 0
+                                        ? () {
+                                            if (isSearchActive) {
+                                              setState(() {
+                                                _currentPage++;
+                                                if (_verticalController
+                                                    .hasClients) {
+                                                  _verticalController.jumpTo(0);
+                                                }
+                                              });
+                                            } else {
+                                              ref
+                                                  .read(serviceItemsProvider
+                                                      .notifier)
+                                                  .loadServiceItems(
+                                                      page: currentPage + 1,
+                                                      pageSize: rowsPerPage);
+                                              if (_verticalController
+                                                  .hasClients) {
+                                                _verticalController.jumpTo(0);
+                                              }
+                                            }
+                                          }
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

@@ -5,6 +5,16 @@ import '../models/service_item.dart';
 import '../models/technician.dart';
 import '../objectbox.g.dart';
 
+class PagedResult<T> {
+  final List<T> items;
+  final int totalCount;
+
+  PagedResult({
+    required this.items,
+    required this.totalCount,
+  });
+}
+
 class ServiceItemRepository {
   final ObjectBox _objectBox;
   ServiceItemRepository(this._objectBox);
@@ -19,6 +29,45 @@ class ServiceItemRepository {
 
   List<ServiceItem> getTodayServiceItems() {
     return _objectBox.getTodayServiceItems();
+  }
+
+  PagedResult<ServiceItem> getTodayServiceItemsPaged({
+    required int limit,
+    required int offset,
+  }) {
+    final now = DateTime.now();
+    final todayDateString = now.toString().split(' ')[0];
+
+    final query = _objectBox.serviceItemBox
+        .query(ServiceItem_.isTrash
+            .equals(false)
+            .and(ServiceItem_.issueDate.startsWith(todayDateString)))
+        .build();
+
+    final total = query.count();
+    query.limit = limit;
+    query.offset = offset;
+    final items = query.find();
+    query.close();
+
+    return PagedResult<ServiceItem>(items: items, totalCount: total);
+  }
+
+  PagedResult<ServiceItem> getTrashServiceItemsPaged({
+    required int limit,
+    required int offset,
+  }) {
+    final query = _objectBox.serviceItemBox
+        .query(ServiceItem_.isTrash.equals(true))
+        .build();
+
+    final total = query.count();
+    query.limit = limit;
+    query.offset = offset;
+    final items = query.find();
+    query.close();
+
+    return PagedResult<ServiceItem>(items: items, totalCount: total);
   }
 
   int addServiceItem(ServiceItem item) => _objectBox.insertServiceItem(item);

@@ -43,6 +43,17 @@ class _TrashListScreenState extends ConsumerState<TrashListScreen> {
     final listWidth = screenWidth - kNavigationBarWidth;
     final width = listWidth > 1220.0 ? listWidth : 1220.0;
     final trashItems = ref.watch(trashServiceItemProvider);
+    final notifier = ref.read(trashServiceItemProvider.notifier);
+    final totalItems = notifier.totalCount;
+    final rowsPerPage = notifier.pageSize;
+    final currentPage = notifier.currentPage;
+    final totalPages =
+        totalItems == 0 ? 1 : (totalItems / rowsPerPage).ceil();
+    final startIndex = currentPage * rowsPerPage;
+    final rangeStart = totalItems == 0 ? 0 : startIndex + 1;
+    final displayedCount = trashItems.length;
+    final rangeEnd =
+        totalItems == 0 ? 0 : startIndex + displayedCount;
 
     return Scaffold(
       appBar: AppBar(
@@ -63,35 +74,95 @@ class _TrashListScreenState extends ConsumerState<TrashListScreen> {
 
           // Scrollable list (horizontal + vertical)
           Expanded(
-            child: Scrollbar(
-              controller: _bodyHorizontalController,
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                controller: _bodyHorizontalController,
-                scrollDirection: Axis.horizontal,
-                physics: const ClampingScrollPhysics(),
-                child: SizedBox(
-                  width: width,
+            child: Column(
+              children: [
+                Expanded(
                   child: Scrollbar(
-                    controller: _verticalController,
+                    controller: _bodyHorizontalController,
                     thumbVisibility: true,
-                    child: ListView.builder(
-                      controller: _verticalController,
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      itemCount: trashItems.length,
-                      itemBuilder: (context, index) {
-                        final item = trashItems[index];
+                    child: SingleChildScrollView(
+                      controller: _bodyHorizontalController,
+                      scrollDirection: Axis.horizontal,
+                      physics: const ClampingScrollPhysics(),
+                      child: SizedBox(
+                        width: width,
+                        child: Scrollbar(
+                          controller: _verticalController,
+                          thumbVisibility: true,
+                          child: ListView.builder(
+                            controller: _verticalController,
+                            padding: const EdgeInsets.only(bottom: 20.0),
+                            itemCount: trashItems.length,
+                            itemBuilder: (context, index) {
+                              final item = trashItems[index];
+                              final displayIndex = startIndex + index;
 
-                        return ServiceTile(
-                          item: item,
-                          index: index,
-                          onTap: () {},
-                        );
-                      },
+                              return ServiceTile(
+                                item: item,
+                                index: displayIndex,
+                                onTap: () {},
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                SizedBox(
+                  height: 48,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Rows per page: $rowsPerPage',
+                          style: kDefaultTextStyle,
+                        ),
+                        const SizedBox(width: 16),
+                        Text(
+                          totalItems == 0
+                              ? '0 of 0'
+                              : '$rangeStart-$rangeEnd of $totalItems',
+                          style: kDefaultTextStyle,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left, size: 20),
+                          onPressed: currentPage > 0
+                              ? () {
+                                  ref
+                                      .read(trashServiceItemProvider.notifier)
+                                      .loadTrashItems(
+                                          page: currentPage - 1,
+                                          pageSize: rowsPerPage);
+                                  if (_verticalController.hasClients) {
+                                    _verticalController.jumpTo(0);
+                                  }
+                                }
+                              : null,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right, size: 20),
+                          onPressed: currentPage < totalPages - 1 &&
+                                  totalItems > 0
+                              ? () {
+                                  ref
+                                      .read(trashServiceItemProvider.notifier)
+                                      .loadTrashItems(
+                                          page: currentPage + 1,
+                                          pageSize: rowsPerPage);
+                                  if (_verticalController.hasClients) {
+                                    _verticalController.jumpTo(0);
+                                  }
+                                }
+                              : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
