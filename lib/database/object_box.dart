@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:mobile_service_manager/models/fault.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -22,6 +23,8 @@ class ObjectBox {
     faultBox = Box<Fault>(_store);
     serviceItemBox = Box<ServiceItem>(_store);
   }
+
+  ByteData get reference => _store.reference;
 
   static Future<ObjectBox> create() async {
     final docsDir = await getApplicationDocumentsDirectory();

@@ -16,6 +16,7 @@ import 'package:mobile_service_manager/utils/extension.dart';
 import 'package:mobile_service_manager/widgets/text_fields/custom_drop_down_text_field.dart';
 import 'package:mobile_service_manager/widgets/service_tile.dart';
 import '../providers/service_item_provider.dart';
+import '../providers/object_box_provider.dart';
 import '../widgets/buttons/right_elevated_button.dart';
 
 class ServiceItemListScreen extends ConsumerStatefulWidget {
@@ -33,7 +34,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
 
   String? _searchString;
   bool _isLoading = false;
-  final int _rowsPerPage = 50;
+  final int _itemsPerPage = 50;
   int _currentPage = 0;
 
   final List<String> _printType = ['Excel', 'Pdf'];
@@ -68,13 +69,22 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
       _isLoading = true;
     });
 
+    await Future.delayed(const Duration(milliseconds: 100));
+
     try {
       if (type == _printType[0]) {
-        await ServiceListExcelExporter.exportToExcel(list,
-            filterNames: _searchString);
+        await ServiceListExcelExporter.exportToExcel(
+          list,
+          filterNames: _searchString,
+        );
       } else {
-        await ServiceListPdfPrinter.printServiceList(list,
-            filterNames: _searchString);
+        final objectBox = ref.read(objectBoxProvider);
+        final ids = list.map((e) => e.id).toList();
+        await ServiceListPdfPrinter.savePdfToFile(
+          ids,
+          objectBox.reference,
+          filterNames: _searchString,
+        );
       }
     } catch (e) {
       debugPrint('There is an error occur: $e');
@@ -98,7 +108,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
     final notifier = ref.read(serviceItemsProvider.notifier);
     final isSearchActive = notifier.isSearchActive;
     final totalItems = notifier.totalCount;
-    final rowsPerPage = _rowsPerPage;
+    final rowsPerPage = _itemsPerPage;
     final totalPages = totalItems == 0 ? 1 : (totalItems / rowsPerPage).ceil();
 
     int currentPage;
@@ -314,7 +324,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    'Rows per page: $_rowsPerPage',
+                                    '$_itemsPerPage items per page |',
                                     style: kDefaultTextStyle,
                                   ),
                                   const SizedBox(width: 16),
