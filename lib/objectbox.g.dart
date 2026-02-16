@@ -14,10 +14,10 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
-import 'models/brand.dart';
-import 'models/fault.dart';
-import 'models/service_item.dart';
-import 'models/technician.dart';
+import 'data/models/brand.dart';
+import 'data/models/fault.dart';
+import 'data/models/service_item.dart';
+import 'data/models/technician.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 

@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_service_manager/models/brand.dart';
-import 'package:mobile_service_manager/models/fault.dart';
-import 'package:mobile_service_manager/models/service_item.dart';
-import 'package:mobile_service_manager/models/technician.dart';
-import 'package:mobile_service_manager/providers/service_item_provider.dart';
-import 'package:mobile_service_manager/repositories/service_item_repository.dart';
+import 'package:mobile_service_manager/data/models/brand.dart';
+import 'package:mobile_service_manager/data/models/fault.dart';
+import 'package:mobile_service_manager/data/models/service_item.dart';
+import 'package:mobile_service_manager/data/models/technician.dart';
+import 'package:mobile_service_manager/presentation/providers/service_item_provider.dart';
+import 'package:mobile_service_manager/data/repositories/service_item_repository.dart';
 import '../test_config.mocks.dart';
 
 class _FakeRepository extends ServiceItemRepository {

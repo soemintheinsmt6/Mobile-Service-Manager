@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_service_manager/models/revenue.dart';
+import 'package:mobile_service_manager/data/models/revenue.dart';
 
 void main() {
   group('Revenue Model Tests', () {

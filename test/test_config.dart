@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mobile_service_manager/database/object_box.dart';
-import 'package:mobile_service_manager/models/brand.dart';
-import 'package:mobile_service_manager/models/fault.dart';
-import 'package:mobile_service_manager/models/service_item.dart';
-import 'package:mobile_service_manager/models/technician.dart';
+import 'package:mobile_service_manager/data/database/object_box.dart';
+import 'package:mobile_service_manager/data/models/brand.dart';
+import 'package:mobile_service_manager/data/models/fault.dart';
+import 'package:mobile_service_manager/data/models/service_item.dart';
+import 'package:mobile_service_manager/data/models/technician.dart';
 import 'package:objectbox/objectbox.dart';
 
 import 'test_config.mocks.dart';

@@ -5,7 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mobile_service_manager/database/object_box.dart';
+import 'package:mobile_service_manager/data/database/object_box.dart';
 import 'widget_test.mocks.dart';
 
 @GenerateMocks([ObjectBox])

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_service_manager/utils/utils.dart';
+import 'package:mobile_service_manager/core/utils/utils.dart';
 
 void main() {
   group('Utils Tests', () {

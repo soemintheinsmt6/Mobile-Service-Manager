@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_service_manager/models/fault.dart';
+import 'package:mobile_service_manager/data/models/fault.dart';
 
 void main() {
   group('Fault Model Tests', () {

@@ -1,0 +1,32 @@
+import 'package:objectbox/objectbox.dart';
+
+import 'item.dart';
+
+@Entity()
+class Fault implements Item {
+  @Id()
+  @override
+  int id = 0;
+
+  @override
+  String name;
+
+  Fault({
+    this.id = 0,
+    required this.name,
+  });
+
+  factory Fault.fromJson(Map<String, dynamic> json) {
+    return Fault(
+      id: json['id'] as int? ?? 0,
+      name: json['name'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+  }
+}

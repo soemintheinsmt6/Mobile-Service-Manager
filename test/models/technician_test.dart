@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile_service_manager/models/technician.dart';
+import 'package:mobile_service_manager/data/models/technician.dart';
 
 void main() {
   group('Technician Model Tests', () {

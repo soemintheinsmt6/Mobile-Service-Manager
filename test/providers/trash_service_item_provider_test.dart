@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_service_manager/models/service_item.dart';
-import 'package:mobile_service_manager/providers/trash_service_item_provider.dart';
-import 'package:mobile_service_manager/repositories/service_item_repository.dart';
+import 'package:mobile_service_manager/data/models/service_item.dart';
+import 'package:mobile_service_manager/presentation/providers/trash_service_item_provider.dart';
+import 'package:mobile_service_manager/data/repositories/service_item_repository.dart';
 import '../test_config.mocks.dart';
 
 class _FakeRepository extends ServiceItemRepository {

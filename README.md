@@ -33,6 +33,107 @@ Mobile Service Manager is designed for mobile repair shops and service centers t
 - **Local-first Approach**: Works offline with local data storage
 - **Cross-platform**: Supports Windows, macOS, Web, and Mobile platforms
 
+## 📂 Project Folder Structure
+
+The project follows a **Simplified Layered Clean Architecture** with three main layers:
+
+```
+lib/
+├── core/                                  # Shared app-wide utilities & constants
+│   ├── constants/
+│   │   ├── app_colors.dart                # App color palette
+│   │   └── constants.dart                 # Text styles & layout constants
+│   └── utils/
+│       ├── alert.dart                     # Error message overlay
+│       ├── date_time_picker.dart          # Date picker helper
+│       ├── decoration.dart                # Input decoration helpers
+│       ├── dialog.dart                    # Custom dialog builder
+│       ├── extension.dart                 # String, int formatting extensions
+│       └── utils.dart                     # Status helpers, URL launcher
+│
+├── data/                                  # Data layer (models, DB, repos, services)
+│   ├── database/
+│   │   └── object_box.dart                # ObjectBox store & CRUD operations
+│   ├── models/
+│   │   ├── brand.dart                     # Brand entity
+│   │   ├── fault.dart                     # Fault entity
+│   │   ├── item.dart                      # Abstract Item interface
+│   │   ├── revenue.dart                   # Revenue data model
+│   │   ├── service_item.dart              # ServiceItem entity (core)
+│   │   └── technician.dart                # Technician entity
+│   ├── repositories/
+│   │   ├── brand_repository.dart          # Brand data access
+│   │   ├── fault_repository.dart          # Fault data access
+│   │   ├── revenue_repository.dart        # Revenue calculations
+│   │   ├── service_item_repository.dart   # Service item queries & CRUD
+│   │   └── technician_repository.dart     # Technician data access
+│   └── services/
+│       ├── backup_restore_service.dart     # Data backup & restore
+│       ├── service_list_excel_exporter.dart # Excel report generation
+│       └── service_list_pdf_printer.dart   # PDF report generation
+│
+├── presentation/                          # UI layer (providers, screens, widgets)
+│   ├── providers/
+│   │   ├── brand_provider.dart            # Brand state notifier
+│   │   ├── fault_provider.dart            # Fault state notifier
+│   │   ├── object_box_provider.dart       # ObjectBox DI provider
+│   │   ├── repository_providers.dart      # Repository DI providers
+│   │   ├── revenue_provider.dart          # Revenue state notifier
+│   │   ├── service_item_provider.dart     # Service item state notifier
+│   │   ├── technician_provider.dart       # Technician state notifier
+│   │   └── trash_service_item_provider.dart # Trash state notifier
+│   ├── screens/
+│   │   ├── brand_list_screen.dart         # Brand management
+│   │   ├── edit_service_item_screen.dart  # Edit service item
+│   │   ├── fault_list_screen.dart         # Fault management
+│   │   ├── revenue_screen.dart            # Revenue analytics
+│   │   ├── search_service_items_screen.dart # Advanced search
+│   │   ├── service_item_form.dart         # Create service item form
+│   │   ├── service_item_list_screen.dart  # Service item list (main)
+│   │   ├── setting_screen.dart            # App settings
+│   │   ├── technician_list_screen.dart    # Technician management
+│   │   └── trash_list_screen.dart         # Trash / recycle bin
+│   └── widgets/
+│       ├── buttons/
+│       │   ├── bar_button.dart            # Bar action button
+│       │   ├── custom_icon_button.dart    # Icon button
+│       │   ├── dismiss_button.dart        # Dismiss button
+│       │   ├── radio_button.dart          # Radio selection button
+│       │   └── right_elevated_button.dart # Right-aligned button
+│       ├── text_fields/
+│       │   ├── custom_date_picker_text_field.dart
+│       │   ├── custom_drop_down_text_field.dart
+│       │   ├── custom_multi_select_drop_down_text_field.dart
+│       │   ├── custom_text_field.dart
+│       │   └── custom_text_form_field.dart
+│       ├── add_new_item.dart              # Add item dialog
+│       ├── custom_check_box.dart          # Custom checkbox
+│       ├── glass_box.dart                 # Glassmorphism container
+│       ├── glass_container.dart           # Glass container variant
+│       ├── info_card.dart                 # Information display card
+│       ├── item_card.dart                 # Generic item card
+│       ├── revenue_card.dart              # Revenue display card
+│       ├── service_tile.dart              # Service item tile
+│       ├── technician_list_item.dart      # Technician list tile
+│       └── update_item.dart               # Update item dialog
+│
+├── main.dart                              # App entry point
+├── firebase_options.dart                  # Firebase config
+├── objectbox.g.dart                       # ObjectBox generated code
+└── objectbox-model.json                   # ObjectBox schema
+```
+
+### Layer Dependencies
+```
+┌──────────────┐
+│ presentation │ ──→ data, core
+├──────────────┤
+│     data     │ ──→ core
+├──────────────┤
+│     core     │ ──→ (no internal dependencies)
+└──────────────┘
+```
+
 ### Key Dependencies
 ```yaml
 - flutter_riverpod: ^2.6.1    # State management

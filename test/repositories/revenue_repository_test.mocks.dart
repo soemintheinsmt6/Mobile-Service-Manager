@@ -3,11 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:mobile_service_manager/database/object_box.dart' as _i3;
-import 'package:mobile_service_manager/models/brand.dart' as _i4;
-import 'package:mobile_service_manager/models/fault.dart' as _i6;
-import 'package:mobile_service_manager/models/service_item.dart' as _i7;
-import 'package:mobile_service_manager/models/technician.dart' as _i5;
+import 'package:mobile_service_manager/data/database/object_box.dart' as _i3;
+import 'package:mobile_service_manager/data/models/brand.dart' as _i4;
+import 'package:mobile_service_manager/data/models/fault.dart' as _i6;
+import 'package:mobile_service_manager/data/models/service_item.dart' as _i7;
+import 'package:mobile_service_manager/data/models/technician.dart' as _i5;
 import 'package:mobile_service_manager/objectbox.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
