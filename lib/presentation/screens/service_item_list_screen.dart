@@ -1,6 +1,7 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mobile_service_manager/core/constants/app_colors.dart';
@@ -110,6 +111,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
     final totalItems = notifier.totalCount;
     final rowsPerPage = _itemsPerPage;
     final totalPages = totalItems == 0 ? 1 : (totalItems / rowsPerPage).ceil();
+    final t = AppLocalizations.of(context)!;
 
     int currentPage;
     List<ServiceItem> paginatedItems;
@@ -145,8 +147,8 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
       rangeEnd = totalItems == 0 ? 0 : startIndex + displayedCount;
     }
     final title = isSearchActive
-        ? 'Service List'
-        : 'Service List - ${DateTime.now().toString().formattedDate}';
+        ? t.serviceList
+        : '${t.serviceList} - ${DateTime.now().toString().formattedDate}';
 
     return Scaffold(
       body: Stack(
@@ -177,7 +179,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0),
                                       child: Text(
-                                        '- $totalItems results',
+                                        '- $totalItems ${t.results}',
                                         style: kDefaultTextStyle.copyWith(
                                             color: Colors.grey[800]),
                                       ),
@@ -217,7 +219,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
                                   child: TextButton(
-                                    child: Text('Reset',
+                                    child: Text(t.reset,
                                         style: kDefaultTextStyle.copyWith(
                                             color: AppColors.dangerButton)),
                                     onPressed: () {
@@ -235,7 +237,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                   ),
                                 ),
                               RightElevatedButton(
-                                title: 'Search',
+                                title: t.search,
                                 onPressed: () async {
                                   final searchString = await showCustomDialog(
                                       context,
@@ -267,7 +269,7 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       child: SizedBox(
                         width: width,
-                        child: serviceHeader(),
+                        child: serviceHeader(context),
                       ),
                     ),
 
@@ -324,14 +326,14 @@ class _ServiceItemListScreenState extends ConsumerState<ServiceItemListScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    '$_itemsPerPage items per page |',
+                                    t.itemsPerPage(_itemsPerPage),
                                     style: kDefaultTextStyle,
                                   ),
                                   const SizedBox(width: 16),
                                   Text(
                                     totalItems == 0
-                                        ? '0 of 0'
-                                        : '$rangeStart-$rangeEnd of $totalItems',
+                                        ? '0 ${t.ofLabel} 0'
+                                        : '$rangeStart-$rangeEnd ${t.ofLabel} $totalItems',
                                     style: kDefaultTextStyle,
                                   ),
                                   IconButton(

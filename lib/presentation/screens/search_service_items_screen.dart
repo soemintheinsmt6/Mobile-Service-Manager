@@ -1,5 +1,6 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/data/models/technician.dart';
 import 'package:mobile_service_manager/presentation/providers/technician_provider.dart';
@@ -110,29 +111,31 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
   }
 
   bool _validateInput() {
+    final t = AppLocalizations.of(context)!;
+
     if (_invoiceController.text.isNotEmpty &&
         int.tryParse(_invoiceController.text) == null) {
-      showErrorMessage(context, 'Invoice ID is invalid');
+      showErrorMessage(context, t.invoiceIdInvalid);
       return false;
     }
 
     if (_selectedDateType == _dateTypes[1] && _specificDateTime == null) {
-      showErrorMessage(context, 'Please add Specific date');
+      showErrorMessage(context, t.pleaseAddSpecificDate);
       return false;
     }
 
     if (_selectedDateType == _dateTypes[1] && _specificDateTime == null) {
-      showErrorMessage(context, 'Please add Specific date');
+      showErrorMessage(context, t.pleaseAddSpecificDate);
       return false;
     }
 
     if (_selectedDateType == _dateTypes[2] && _fromDateTime == null) {
-      showErrorMessage(context, 'From Date is needed to fill');
+      showErrorMessage(context, t.fromDateRequired);
       return false;
     }
 
     if (_selectedDateType == _dateTypes[2] && _toDateTime == null) {
-      showErrorMessage(context, 'To Date is needed to fill');
+      showErrorMessage(context, t.toDateRequired);
       return false;
     }
     return true;
@@ -215,6 +218,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
     final brands = ref.watch(brandsProvider);
     final faults = ref.watch(faultsProvider);
     final technicians = ref.watch(techniciansProvider);
+    final t = AppLocalizations.of(context)!;
 
     return Card(
       child: Stack(
@@ -227,17 +231,17 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 CustomTextFormField(
-                    title: 'Invoice ID', controller: _invoiceController),
+                    title: t.invoiceId, controller: _invoiceController),
                 CustomTextFormField(
-                  title: 'Customer Name',
+                  title: t.customerName,
                   controller: _customerNameController,
                 ),
                 CustomTextFormField(
-                  title: 'Phone Number',
+                  title: t.phoneNumber,
                   controller: _phoneNumberController,
                 ),
                 CustomDropDownTextField(
-                  title: 'Brand',
+                  title: t.brand,
                   clearOption: true,
                   controller: _brandController,
                   dropDownList: brands.map((brand) {
@@ -252,7 +256,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
                   },
                 ),
                 CustomDropDownTextField(
-                  title: 'Error',
+                  title: t.error,
                   clearOption: true,
                   controller: _faultController,
                   dropDownList: faults.map((fault) {
@@ -267,7 +271,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
                   },
                 ),
                 CustomDropDownTextField(
-                  title: 'Technician',
+                  title: t.technician,
                   clearOption: true,
                   controller: _technicianController,
                   dropDownList: technicians.map((technician) {
@@ -284,7 +288,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
                 ),
                 _changeDeviceStatusTile(),
                 CustomDropDownTextField(
-                  title: 'Date Type',
+                  title: t.dateType,
                   initialValue: _selectedDateType,
                   enableSearch: false,
                   dropDownList: _dateTypes.map((type) {
@@ -301,7 +305,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.only(top: 10),
                     child: BarButton(
-                        title: 'Search', onPressed: _searchServiceItems)),
+                        title: t.search, onPressed: _searchServiceItems)),
               ],
             ),
           ),
@@ -311,11 +315,12 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
   }
 
   Widget _datePickerTextFields() {
+    final t = AppLocalizations.of(context)!;
     return Column(
       children: [
         if (_selectedDateType == _dateTypes[1])
           CustomDatePickerTextField(
-            title: 'Specific Date',
+            title: t.specificDate,
             showTitle: false,
             controller: _specificDateController,
             onTap: () async {
@@ -328,11 +333,12 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
   }
 
   Widget _fromDateToDate() {
+    final t = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: CustomDatePickerTextField(
-            title: 'From Date',
+            title: t.fromDate,
             showTitle: false,
             controller: _fromDateController,
             onTap: () async {
@@ -343,7 +349,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
         const SizedBox(width: 6),
         Expanded(
           child: CustomDatePickerTextField(
-            title: 'To Date',
+            title: t.toDate,
             showTitle: false,
             controller: _toDateController,
             onTap: () async {
@@ -356,6 +362,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
   }
 
   Widget _changeDeviceStatusTile() {
+    final t = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Column(
@@ -363,7 +370,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 4),
-            child: Text('Status', style: titleTextStyle),
+            child: Text(t.status, style: titleTextStyle),
           ),
           SizedBox(
             width: double.infinity,
@@ -371,7 +378,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
               children: [
                 Expanded(
                   child: CustomDropDownTextField(
-                    title: 'Service Status',
+                    title: t.serviceStatus,
                     padding: EdgeInsets.zero,
                     showTitle: false,
                     enableSearch: false,
@@ -392,7 +399,7 @@ class _EditServiceItemState extends ConsumerState<SearchServiceItemsScreen> {
                 const SizedBox(width: 6),
                 Expanded(
                   child: CustomDropDownTextField(
-                    title: 'Delivery Status',
+                    title: t.deliveryStatus,
                     padding: EdgeInsets.zero,
                     showTitle: false,
                     enableSearch: false,

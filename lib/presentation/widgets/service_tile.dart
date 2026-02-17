@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_service_manager/core/constants/constants.dart';
 import 'package:mobile_service_manager/data/models/service_item.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:mobile_service_manager/core/utils/extension.dart';
 import 'package:mobile_service_manager/core/utils/utils.dart';
 import 'package:separated_row/separated_row.dart';
@@ -78,7 +79,8 @@ class ServiceTile extends StatelessWidget {
   }
 }
 
-Widget serviceHeader({bool isTrash = false}) {
+Widget serviceHeader(BuildContext context, {bool isTrash = false}) {
+  final t = AppLocalizations.of(context)!;
   return Container(
     height: _rowHeight,
     decoration: BoxDecoration(
@@ -87,31 +89,31 @@ Widget serviceHeader({bool isTrash = false}) {
     ),
     child: SeparatedRow(
         separatorBuilder: (BuildContext context, int index) => _vDivider(),
-        children: const [
-          _Box(text: 'No.', width: 40, isHeader: true),
+        children: [
+          _Box(text: t.no, width: 40, isHeader: true),
           _Box(
-              text: 'Invoice ID',
+              text: t.invoiceId,
               width: 85,
               alignment: Alignment.centerLeft,
               isHeader: true),
-          _Cell(text: 'Customer Name', flex: 2, isHeader: true),
-          _Cell(text: 'Phone No.', isHeader: true),
-          _Cell(text: 'Model', flex: 2, isHeader: true),
-          _Cell(text: 'Error', flex: 2, isHeader: true),
+          _Cell(text: t.customerName, flex: 2, isHeader: true),
+          _Cell(text: t.phoneNo, isHeader: true),
+          _Cell(text: t.model, flex: 2, isHeader: true),
+          _Cell(text: t.error, flex: 2, isHeader: true),
           _Box(
-              text: 'Expense',
+              text: t.expense,
               isHeader: true,
               width: _priceWidth,
               alignment: Alignment.centerLeft),
           _Box(
-              text: 'Price',
+              text: t.price,
               isHeader: true,
               width: _priceWidth,
               alignment: Alignment.centerLeft),
-          _Cell(text: 'Date', isCenter: true, isHeader: true),
-          _Box(text: 'Status', isHeader: true),
-          _Box(text: 'Delivery', isHeader: true),
-          _Box(text: 'Delivery Date', isHeader: true),
+          _Cell(text: t.date, isCenter: true, isHeader: true),
+          _Box(text: t.status, isHeader: true),
+          _Box(text: t.delivery, isHeader: true),
+          _Box(text: t.deliveryDate, isHeader: true),
         ]),
   );
 }

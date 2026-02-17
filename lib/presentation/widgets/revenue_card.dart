@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_service_manager/data/models/revenue.dart';
 import 'package:mobile_service_manager/core/utils/extension.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import '../../core/constants/app_colors.dart';
 
 class RevenueCard extends StatelessWidget {
@@ -15,6 +16,7 @@ class RevenueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -36,7 +38,7 @@ class RevenueCard extends StatelessWidget {
                           color: AppColors.primaryButton,
                         ),
                   ),
-                  _totalItems(),
+                  _totalItems(t),
                 ],
               ),
             ),
@@ -46,7 +48,7 @@ class RevenueCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 4.0),
               child: Text(
-                'Service Status',
+                t.serviceStatus,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -57,22 +59,22 @@ class RevenueCard extends StatelessWidget {
               children: [
                 Expanded(
                   child:
-                      _buildStatusCard('Done', revenue.doneCount, Colors.green),
+                      _buildStatusCard(t.done, revenue.doneCount, Colors.green),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildStatusCard(
-                      'In Progress', revenue.inProgressCount, Colors.orange),
+                      t.inProgress, revenue.inProgressCount, Colors.orange),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildStatusCard(
-                      'Return', revenue.returnCount, Colors.red),
+                      t.returnStatus, revenue.returnCount, Colors.red),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildStatusCard(
-                      'Free', revenue.freeCount, Colors.grey.shade600),
+                      t.free, revenue.freeCount, Colors.grey.shade600),
                 ),
               ],
             ),
@@ -82,7 +84,7 @@ class RevenueCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 4.0),
               child: Text(
-                'Delivery Status',
+                t.deliveryStatus,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -93,12 +95,12 @@ class RevenueCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildStatusCard(
-                      'In Store', revenue.inStoreCount, Colors.blue),
+                      t.inStore, revenue.inStoreCount, Colors.blue),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildStatusCard(
-                      'Delivered', revenue.deliveredCount, Colors.purple),
+                      t.delivered, revenue.deliveredCount, Colors.purple),
                 ),
               ],
             ),
@@ -110,12 +112,12 @@ class RevenueCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Financial Summary',
+                  Text(t.financialSummary,
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold)),
-                  if (revenue.priceTotal > 0) _profitMargin(),
+                  if (revenue.priceTotal > 0) _profitMargin(t),
                 ],
               ),
             ),
@@ -130,13 +132,13 @@ class RevenueCard extends StatelessWidget {
               child: Column(
                 children: [
                   _buildFinancialRow(
-                      'Total Income', revenue.priceTotal, Colors.green[700]!),
+                      t.totalIncome, revenue.priceTotal, Colors.green[700]!),
                   const Divider(),
                   _buildFinancialRow(
-                      'Total Expense', revenue.expenseTotal, Colors.red[700]!),
+                      t.totalExpense, revenue.expenseTotal, Colors.red[700]!),
                   const Divider(),
                   _buildFinancialRow(
-                    'Net Profit',
+                    t.netProfit,
                     revenue.profit,
                     revenue.profit >= 0 ? Colors.green[700]! : Colors.red[700]!,
                     isProfit: true,
@@ -150,7 +152,7 @@ class RevenueCard extends StatelessWidget {
     );
   }
 
-  Widget _totalItems() {
+  Widget _totalItems(AppLocalizations t) {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         decoration: BoxDecoration(
@@ -169,12 +171,12 @@ class RevenueCard extends StatelessWidget {
           ],
         ),
         child: Text(
-          'Total Items: ${revenue.totalServiceItemCount}',
+          '${t.totalItems}: ${revenue.totalServiceItemCount}',
           style: const TextStyle(fontSize: 18, color: Colors.white),
         ));
   }
 
-  Widget _profitMargin() {
+  Widget _profitMargin(AppLocalizations t) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -185,7 +187,7 @@ class RevenueCard extends StatelessWidget {
         ),
       ),
       child: Text(
-        'Profit Margin: ${((revenue.profit / revenue.priceTotal) * 100).toStringAsFixed(2)}%',
+        '${t.profitMargin}: ${((revenue.profit / revenue.priceTotal) * 100).toStringAsFixed(2)}%',
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.w600,

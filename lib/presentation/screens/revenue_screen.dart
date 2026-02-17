@@ -2,6 +2,7 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/core/constants/app_colors.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:mobile_service_manager/data/models/brand.dart';
 import 'package:mobile_service_manager/data/models/fault.dart';
 import 'package:mobile_service_manager/data/models/technician.dart';
@@ -39,9 +40,6 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   bool _isDateRangeMode = false;
   late String _revenueTitle;
 
-  final List<String> _filterDateTypes = ['Issue Date', 'Delivery Date'];
-  bool _isIssueDate = true;
-
   @override
   void initState() {
     super.initState();
@@ -51,12 +49,23 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     _technicianController = SingleValueDropDownController();
 
     _selectedDate = DateTime.now();
-    _revenueTitle = 'Issue Date: ${_selectedDate.toString().formattedDate}';
+    _revenueTitle = '';
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final t = AppLocalizations.of(context)!;
+      setState(() {
+        _revenueTitle = '${t.issueDate}: ${_selectedDate.toString().formattedDate}';
+      });
       ref
           .read(revenueNotifierProvider.notifier)
           .loadDailyRevenue(_selectedDate!);
     });
+  }
+
+  bool _isIssueDate = true;
+
+  List<String> _filterDateTypes(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return [t.issueDate, t.deliveryDate];
   }
 
   @override
@@ -68,11 +77,12 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   }
 
   void _setRevenueTitle() {
-    final dateBy = _isIssueDate ? 'Issue Date: ' : 'Delivery Date: ';
+    final t = AppLocalizations.of(context)!;
+    final dateBy = _isIssueDate ? '${t.issueDate}: ' : '${t.deliveryDate}: ';
     final brand = _selectedBrand == null ? '' : ' / ${_selectedBrand!.name}';
     final fault = _selectedFault == null ? '' : ' / ${_selectedFault!.name}';
     final technician =
-        _selectedTechnician == null ? '' : ' by ${_selectedTechnician!.name}';
+        _selectedTechnician == null ? '' : ' ${t.byLabel} ${_selectedTechnician!.name}';
 
     setState(() {
       if (_isDateRangeMode) {
@@ -105,10 +115,11 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
     final revenueNotifier = ref.read(revenueNotifierProvider.notifier);
     final isValidToSubmit =
         _isDateRangeMode ? _fromDate != null && _toDate != null : true;
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Revenue Report'),
+          title: Text(t.revenueReport),
           backgroundColor: const Color(0xFF4372C4),
           foregroundColor: Colors.white),
       body: Column(
@@ -143,7 +154,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                                     initialDate: _selectedDate),
                                 text: _selectedDate != null
                                     ? _selectedDate.toString().formattedDate
-                                    : 'Select Date',
+                                    : t.selectDate,
                               ),
                             ],
                           ),
@@ -158,8 +169,8 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                                     dateType: DateType.from,
                                     initialDate: _fromDate),
                                 text: _fromDate != null
-                                    ? 'From: ${_fromDate.toString().formattedDate}'
-                                    : 'From Date',
+                                    ? '${t.fromLabel}: ${_fromDate.toString().formattedDate}'
+                                    : t.fromDate,
                               ),
                               const SizedBox(width: 8),
                               _datePicker(
@@ -167,8 +178,8 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                                     dateType: DateType.to,
                                     initialDate: _toDate),
                                 text: _toDate != null
-                                    ? 'To: ${_toDate.toString().formattedDate}'
-                                    : 'To Date',
+                                    ? '${t.toLabel}: ${_toDate.toString().formattedDate}'
+                                    : t.toDate,
                               ),
                             ],
                           ),
@@ -206,7 +217,7 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
                                       isIssueDate: _isIssueDate);
                             }
                           },
-                          child: const Text('Submit'),
+                          child: Text(t.submit),
                         ),
                       ),
                     ],
@@ -219,10 +230,10 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
           /// Revenue Data Display
           Expanded(
             child: revenueData == null
-                ? const Center(
+                ? Center(
                     child: Text(
-                      'No data available for selected date(s)',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      t.noDataAvailable,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   )
                 : SingleChildScrollView(
@@ -252,16 +263,17 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
       {required List<Brand> brands,
       required List<Fault> faults,
       required List<Technician> technicians}) {
+    final t = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(bottom: 5.0),
       child: Row(
         children: [
           RadioButton(
-              name: 'Specific Date',
+              name: t.specificDate,
               selected: !_isDateRangeMode,
               onTap: () => _dateTypeToggle(false)),
           RadioButton(
-              name: 'From Date - To Date',
+              name: t.fromDateToDate,
               selected: _isDateRangeMode,
               onTap: () => _dateTypeToggle(true)),
           _filterDateTypeDropDown(),
@@ -304,28 +316,30 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   }
 
   Widget _filterDateTypeDropDown() {
+    final types = _filterDateTypes(context);
     return _dropDownContainer(
       width: 160,
       child: CustomDropDownTextField(
-        title: _filterDateTypes[0],
-        initialValue: _filterDateTypes[0],
+        title: types[0],
+        initialValue: types[0],
         showTitle: false,
         enableSearch: false,
         padding: EdgeInsets.zero,
         borderColor: Colors.black54,
-        dropDownList: _filterDateTypes.map((type) {
+        dropDownList: types.map((type) {
           return DropDownValueModel(value: type, name: type);
         }).toList(),
         onChanged: (item) {
-          _isIssueDate = item.value == _filterDateTypes[0];
+          _isIssueDate = item.value == types[0];
         },
       ),
     );
   }
 
   Widget _brandWidget(List<Brand> brands) {
+    final t = AppLocalizations.of(context)!;
     return _dropDownWidget(
-        title: 'Brand',
+        title: t.brand,
         list: brands,
         width: 160,
         controller: _brandController,
@@ -339,8 +353,9 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   }
 
   Widget _faultWidget(List<Fault> faults) {
+    final t = AppLocalizations.of(context)!;
     return _dropDownWidget(
-        title: 'Error',
+        title: t.error,
         list: faults,
         controller: _faultController,
         onChanged: (item) {
@@ -353,8 +368,9 @@ class _RevenueScreenState extends ConsumerState<RevenueScreen> {
   }
 
   Widget _technicianWidget(List<Technician> technicians) {
+    final t = AppLocalizations.of(context)!;
     return _dropDownWidget(
-        title: 'Technician',
+        title: t.technician,
         list: technicians,
         controller: _technicianController,
         onChanged: (item) {

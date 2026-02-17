@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/constants.dart';
@@ -16,7 +17,7 @@ class BrandListScreen extends ConsumerWidget {
 
   void _addNewBrand(BuildContext context, WidgetRef ref) async {
     final result =
-        await showCustomDialog(context, child: const AddNewItem(name: 'Brand'));
+        await showCustomDialog(context, child: AddNewItem(name: AppLocalizations.of(context)!.brand));
 
     if (result != null) {
       final brand = result as String;
@@ -44,14 +45,15 @@ class BrandListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final brands = ref.watch(brandsProvider);
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Brand', style: kHeaderTextStyle),
+        title: Text(t.brand, style: kHeaderTextStyle),
         centerTitle: false,
         actions: [
           RightElevatedButton(
-            title: 'Add Brand',
+            title: t.addBrand,
             onPressed: () => _addNewBrand(context, ref),
           ),
         ],

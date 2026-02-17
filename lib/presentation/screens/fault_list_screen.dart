@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/constants.dart';
@@ -14,7 +15,7 @@ class FaultListScreen extends ConsumerWidget {
 
   void _addNewFault(BuildContext context, WidgetRef ref) async {
     final result =
-        await showCustomDialog(context, child: const AddNewItem(name: 'Error'));
+        await showCustomDialog(context, child: AddNewItem(name: AppLocalizations.of(context)!.error));
 
     if (result != null) {
       final fault = result as String;
@@ -42,14 +43,15 @@ class FaultListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final faults = ref.watch(faultsProvider);
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Error', style: kHeaderTextStyle),
+        title: Text(t.error, style: kHeaderTextStyle),
         centerTitle: false,
         actions: [
           RightElevatedButton(
-            title: 'Add Error',
+            title: t.addError,
             onPressed: () => _addNewFault(context, ref),
           ),
         ],

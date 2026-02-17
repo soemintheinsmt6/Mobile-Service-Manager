@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/core/constants/constants.dart';
 import 'package:mobile_service_manager/data/models/technician.dart';
@@ -15,7 +16,7 @@ class TechnicianListScreen extends ConsumerWidget {
 
   void _addNewTechnician(BuildContext context, WidgetRef ref) async {
     final result = await showCustomDialog(context,
-        child: const AddNewItem(name: 'Technician'));
+        child: AddNewItem(name: AppLocalizations.of(context)!.technician));
 
     if (result != null) {
       final technician = result as String;
@@ -46,14 +47,15 @@ class TechnicianListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final technicians = ref.watch(techniciansProvider);
+    final t = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Technician', style: kHeaderTextStyle),
+        title: Text(t.technician, style: kHeaderTextStyle),
         centerTitle: false,
         actions: [
           RightElevatedButton(
-            title: 'Add Technician',
+            title: t.addTechnician,
             onPressed: () => _addNewTechnician(context, ref),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/core/utils/alert.dart';
 import 'package:mobile_service_manager/core/utils/extension.dart';
@@ -88,28 +89,30 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
   }
 
   bool _validateInput() {
+    final t = AppLocalizations.of(context)!;
+
     if (_invoiceId == 0) {
-      showErrorMessage(context, 'Invoice ID is invalid');
+      showErrorMessage(context, t.invoiceIdInvalid);
       return false;
     }
 
     if (_customerName.isEmpty) {
-      showErrorMessage(context, 'Customer Name is empty');
+      showErrorMessage(context, t.customerNameEmpty);
       return false;
     }
 
     if (selectedBrand == null) {
-      showErrorMessage(context, 'Brand is empty');
+      showErrorMessage(context, t.brandEmpty);
       return false;
     }
 
     if (_model.isEmpty) {
-      showErrorMessage(context, 'Model is empty');
+      showErrorMessage(context, t.modelEmpty);
       return false;
     }
 
     if (selectedFaults.isEmpty) {
-      showErrorMessage(context, 'Error field is empty');
+      showErrorMessage(context, t.errorFieldEmpty);
       return false;
     }
 
@@ -174,6 +177,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
     final brands = ref.watch(brandsProvider);
     final technicians = ref.watch(techniciansProvider);
     final faults = ref.watch(faultsProvider);
+    final t = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
@@ -182,7 +186,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
         child: Column(
           children: [
             CustomTextFormField(
-              title: 'Invoice ID',
+              title: t.invoiceId,
               focusNode: _invoiceFocus,
               onSaved: (v) => _invoiceId = int.tryParse(v ?? '') ?? 0,
               onFieldSubmitted: (_) {
@@ -190,7 +194,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomTextFormField(
-              title: 'Customer Name',
+              title: t.customerName,
               focusNode: _customerNameFocus,
               onSaved: (v) => _customerName = v ?? '',
               onFieldSubmitted: (_) {
@@ -198,7 +202,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomTextFormField(
-              title: 'Phone Number',
+              title: t.phoneNumber,
               focusNode: _phoneNumberFocus,
               onSaved: (v) => _phoneNumber = v ?? '',
               onFieldSubmitted: (_) {
@@ -206,7 +210,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomDropDownTextField(
-              title: 'Brand',
+              title: t.brand,
               controller: _brandController,
               dropDownList: brands.map((brand) {
                 return DropDownValueModel(value: brand, name: brand.name);
@@ -220,7 +224,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomTextFormField(
-              title: 'Model',
+              title: t.model,
               focusNode: _modelFocus,
               onSaved: (v) => _model = v ?? '',
               onFieldSubmitted: (_) {
@@ -228,7 +232,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomTextFormField(
-              title: 'IMEI',
+              title: t.imei,
               focusNode: _imeiFocus,
               onSaved: (v) => _imei = v ?? '',
               onFieldSubmitted: (_) {
@@ -236,7 +240,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomMultiSelectDropDownTextField(
-              title: 'Error',
+              title: t.error,
               items: faults
                   .map((e) => DropdownItem(label: e.name, value: e))
                   .toList(),
@@ -246,7 +250,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomTextFormField(
-              title: 'Price',
+              title: t.price,
               focusNode: _priceFocus,
               keyboardType: TextInputType.number,
               onSaved: (v) => _servicePrice = int.tryParse(v ?? ''),
@@ -255,7 +259,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomDropDownTextField(
-              title: 'Technician',
+              title: t.technician,
               clearOption: true,
               controller: _technicianController,
               dropDownList: technicians.map((tech) {
@@ -270,14 +274,14 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               },
             ),
             CustomTextFormField(
-              title: 'Remark',
+              title: t.remark,
               focusNode: _remarkFocus,
               maxLines: null,
               keyboardType: TextInputType.multiline,
               onSaved: (v) => _remark = v,
             ),
             CustomDatePickerTextField(
-              title: 'Issue Date',
+              title: t.issueDate,
               controller: _dateController,
               onTap: () async {
                 await _createDateTimePicker();
@@ -312,7 +316,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
               padding: const EdgeInsets.only(top: 10, bottom: 20.0),
               width: double.infinity,
               child:
-                  BarButton(title: 'Add Service', onPressed: _saveServiceItem),
+                  BarButton(title: t.addService, onPressed: _saveServiceItem),
             ),
           ],
         ),

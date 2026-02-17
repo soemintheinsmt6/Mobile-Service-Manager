@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/presentation/providers/trash_service_item_provider.dart';
 import '../../core/constants/constants.dart';
@@ -39,6 +40,7 @@ class _TrashListScreenState extends ConsumerState<TrashListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
     final listWidth = screenWidth - kNavigationBarWidth;
     final width = listWidth > 1220.0 ? listWidth : 1220.0;
@@ -47,17 +49,15 @@ class _TrashListScreenState extends ConsumerState<TrashListScreen> {
     final totalItems = notifier.totalCount;
     final rowsPerPage = notifier.pageSize;
     final currentPage = notifier.currentPage;
-    final totalPages =
-        totalItems == 0 ? 1 : (totalItems / rowsPerPage).ceil();
+    final totalPages = totalItems == 0 ? 1 : (totalItems / rowsPerPage).ceil();
     final startIndex = currentPage * rowsPerPage;
     final rangeStart = totalItems == 0 ? 0 : startIndex + 1;
     final displayedCount = trashItems.length;
-    final rangeEnd =
-        totalItems == 0 ? 0 : startIndex + displayedCount;
+    final rangeEnd = totalItems == 0 ? 0 : startIndex + displayedCount;
 
     return Scaffold(
       appBar: AppBar(
-          title: Text('Deleted Service List', style: kHeaderTextStyle),
+          title: Text(t.deletedServiceList, style: kHeaderTextStyle),
           centerTitle: false),
       body: Column(
         children: [
@@ -68,7 +68,7 @@ class _TrashListScreenState extends ConsumerState<TrashListScreen> {
             physics: const NeverScrollableScrollPhysics(),
             child: SizedBox(
               width: width,
-              child: serviceHeader(isTrash: true),
+              child: serviceHeader(context, isTrash: true),
             ),
           ),
 
@@ -117,14 +117,14 @@ class _TrashListScreenState extends ConsumerState<TrashListScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          'Rows per page: $rowsPerPage',
+                          '${t.rowsPerPage}: $rowsPerPage',
                           style: kDefaultTextStyle,
                         ),
                         const SizedBox(width: 16),
                         Text(
                           totalItems == 0
-                              ? '0 of 0'
-                              : '$rangeStart-$rangeEnd of $totalItems',
+                              ? '0 ${t.ofLabel} 0'
+                              : '$rangeStart-$rangeEnd ${t.ofLabel} $totalItems',
                           style: kDefaultTextStyle,
                         ),
                         IconButton(

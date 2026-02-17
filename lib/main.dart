@@ -4,7 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mobile_service_manager/core/constants/constants.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
+import 'package:mobile_service_manager/presentation/providers/locale_provider.dart';
 import 'package:mobile_service_manager/presentation/providers/object_box_provider.dart';
 import 'package:mobile_service_manager/presentation/screens/brand_list_screen.dart';
 import 'package:mobile_service_manager/presentation/screens/fault_list_screen.dart';
@@ -66,14 +67,18 @@ List<String> _screenNameList = [
   'Setting'
 ];
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp(
       title: 'Mobile Service Manager',
-      debugShowCheckedModeBanner: false,
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       theme: ThemeData(
           visualDensity: VisualDensity.adaptivePlatformDensity,
           useMaterial3: true,
@@ -89,14 +94,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends ConsumerState<MainScreen> {
   int _selectedIndex = 0;
 
   static const List<Widget> _screens = [
@@ -119,44 +124,48 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context);
+    final navLabels = [
+      t?.service ?? 'Service',
+      t?.brand ?? 'Brand',
+      t?.technician ?? 'Technician',
+      t?.error ?? 'Error',
+      t?.bin ?? 'Bin',
+      t?.revenue ?? 'Revenue',
+      t?.setting ?? 'Setting',
+    ];
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Row(
         children: [
-          SizedBox(
-            width: kNavigationBarWidth,
-            child: NavigationRail(
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: _onItemTapped,
-              labelType: NavigationRailLabelType.all,
-              backgroundColor: AppColors.navigationBackground,
-              selectedLabelTextStyle: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
-              unselectedLabelTextStyle: GoogleFonts.montserrat(
-                color: AppColors.navigationUnselectedText,
-              ),
-              destinations: [
-                _navigationItem(
-                    icon: CupertinoIcons.square_list, text: _screenNameList[0]),
-                _navigationItem(
-                    icon: Icons.phone_android_rounded,
-                    text: _screenNameList[1]),
-                _navigationItem(
-                    icon: Icons.engineering, text: _screenNameList[2]),
-                _navigationItem(
-                    icon: Icons.error_outline_rounded,
-                    text: _screenNameList[3]),
-                _navigationItem(
-                    icon: CupertinoIcons.archivebox, text: _screenNameList[4]),
-                _navigationItem(
-                    icon: CupertinoIcons.money_dollar_circle,
-                    text: _screenNameList[5]),
-                _navigationItem(
-                    icon: CupertinoIcons.settings, text: _screenNameList[6]),
-              ],
+          NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: _onItemTapped,
+            labelType: NavigationRailLabelType.all,
+            backgroundColor: AppColors.navigationBackground,
+            selectedLabelTextStyle: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
             ),
+            unselectedLabelTextStyle: GoogleFonts.montserrat(
+              color: AppColors.navigationUnselectedText,
+            ),
+            destinations: [
+              _navigationItem(
+                  icon: CupertinoIcons.square_list, text: navLabels[0]),
+              _navigationItem(
+                  icon: Icons.phone_android_rounded, text: navLabels[1]),
+              _navigationItem(icon: Icons.engineering, text: navLabels[2]),
+              _navigationItem(
+                  icon: Icons.error_outline_rounded, text: navLabels[3]),
+              _navigationItem(
+                  icon: CupertinoIcons.archivebox, text: navLabels[4]),
+              _navigationItem(
+                  icon: CupertinoIcons.money_dollar_circle, text: navLabels[5]),
+              _navigationItem(
+                  icon: CupertinoIcons.settings, text: navLabels[6]),
+            ],
           ),
 
           // Main Content Area

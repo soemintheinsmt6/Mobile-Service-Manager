@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile_service_manager/core/utils/extension.dart';
+import 'package:mobile_service_manager/l10n/app_localizations.dart';
 
 import 'package:multi_dropdown/multi_dropdown.dart';
 import '../../core/constants/app_colors.dart';
@@ -207,34 +208,36 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
   }
 
   bool _validateInput() {
+    final t = AppLocalizations.of(context)!;
+
     if (_invoiceController.text.isEmpty ||
         int.tryParse(_invoiceController.text) == 0) {
-      showErrorMessage(context, 'Invoice ID is invalid');
+      showErrorMessage(context, t.invoiceIdInvalid);
       return false;
     }
 
     if (_customerNameController.text.isEmpty) {
-      showErrorMessage(context, 'Customer Name is empty');
+      showErrorMessage(context, t.customerNameEmpty);
       return false;
     }
 
     if (_selectedBrand == null) {
-      showErrorMessage(context, 'Brand is empty');
+      showErrorMessage(context, t.brandEmpty);
       return false;
     }
 
     if (_modelController.text.isEmpty) {
-      showErrorMessage(context, 'Model is empty');
+      showErrorMessage(context, t.modelEmpty);
       return false;
     }
 
     if (_selectedFaults.isEmpty) {
-      showErrorMessage(context, 'Error field is empty');
+      showErrorMessage(context, t.errorFieldEmpty);
       return false;
     }
 
     if (_deliveryStatus == 'delivered' && _deliveryDateTime == null) {
-      showErrorMessage(context, 'Delivery Date is needed to fill');
+      showErrorMessage(context, t.deliveryDateRequired);
       return false;
     }
 
@@ -280,6 +283,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
     final brands = ref.watch(brandsProvider);
     final technicians = ref.watch(techniciansProvider);
     final faults = ref.watch(faultsProvider);
+    final t = AppLocalizations.of(context)!;
 
     return Card(
       child: Stack(
@@ -292,9 +296,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Invoice ID'),
+                  _title(t.invoiceId),
                   _fixedTile(CustomTextFormField(
-                    title: 'Invoice ID',
+                    title: t.invoiceId,
                     padding: _spacing,
                     showTitle: false,
                     focusNode: _invoiceFocus,
@@ -305,9 +309,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Customer Name'),
+                  _title(t.customerName),
                   _fixedTile(CustomTextFormField(
-                    title: 'Customer Name',
+                    title: t.customerName,
                     padding: _spacing,
                     showTitle: false,
                     focusNode: _customerNameFocus,
@@ -318,9 +322,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Phone Number'),
+                  _title(t.phoneNumber),
                   _fixedTile(CustomTextFormField(
-                    title: 'Phone Number',
+                    title: t.phoneNumber,
                     padding: _spacing,
                     showTitle: false,
                     focusNode: _phoneNumberFocus,
@@ -331,9 +335,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Brand'),
+                  _title(t.brand),
                   _fixedTile(CustomDropDownTextField(
-                    title: 'Brand',
+                    title: t.brand,
                     padding: _spacing,
                     showTitle: false,
                     controller: _brandController,
@@ -350,9 +354,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Model'),
+                  _title(t.model),
                   _fixedTile(CustomTextFormField(
-                    title: 'Model',
+                    title: t.model,
                     padding: _spacing,
                     showTitle: false,
                     focusNode: _modelFocus,
@@ -363,9 +367,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Imei'),
+                  _title(t.imei),
                   _fixedTile(CustomTextFormField(
-                    title: 'Imei',
+                    title: t.imei,
                     padding: _spacing,
                     showTitle: false,
                     focusNode: _imeiFocus,
@@ -376,9 +380,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Error'),
+                  _title(t.error),
                   _fixedTile(CustomMultiSelectDropDownTextField(
-                    title: 'Error',
+                    title: t.error,
                     padding: _spacing,
                     showTitle: false,
                     items: faults
@@ -394,9 +398,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Price'),
+                  _title(t.price),
                   _fixedTile(CustomTextFormField(
-                    title: 'Price',
+                    title: t.price,
                     padding: _spacing,
                     showTitle: false,
                     focusNode: _priceFocus,
@@ -407,9 +411,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Expense'),
+                  _title(t.expense),
                   _fixedTile(CustomTextFormField(
-                    title: 'Expense',
+                    title: t.expense,
                     padding: _spacing,
                     showTitle: false,
                     focusNode: _expenseFocus,
@@ -420,9 +424,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Technician'),
+                  _title(t.technician),
                   _fixedTile(CustomDropDownTextField(
-                    title: 'Technician',
+                    title: t.technician,
                     padding: _spacing,
                     showTitle: false,
                     controller: _technicianController,
@@ -440,9 +444,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Remark'),
+                  _title(t.remark),
                   _fixedTile(CustomTextFormField(
-                    title: 'Remark',
+                    title: t.remark,
                     padding: _spacing,
                     showTitle: false,
                     maxLines: null,
@@ -452,9 +456,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Issue Date'),
+                  _title(t.issueDate),
                   _fixedTile(CustomDatePickerTextField(
-                    title: 'Issue Date',
+                    title: t.issueDate,
                     padding: _spacing,
                     showTitle: false,
                     controller: _issueDateController,
@@ -464,9 +468,9 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   ))
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  _title('Delivery Date'),
+                  _title(t.deliveryDate),
                   _fixedTile(CustomDatePickerTextField(
-                    title: 'Delivery Date',
+                    title: t.deliveryDate,
                     padding: _spacing,
                     showTitle: false,
                     controller: _deliveryDateController,
@@ -480,7 +484,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                 if (_profit != 0)
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, right: 16.0),
-                    child: Text('Profit: ${_profit.toMMks()}',
+                    child: Text('${t.profit}: ${_profit.toMMks()}',
                         style: kDefaultTextStyle.copyWith(
                             color: _profit < 0
                                 ? AppColors.dangerButton
@@ -490,7 +494,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
                   padding: const EdgeInsets.only(top: 5),
                   width: 260,
                   child: BarButton(
-                    title: 'Save',
+                    title: t.save,
                     onPressed: _updateServiceItem,
                   ),
                 ),
@@ -503,13 +507,14 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
   }
 
   Widget _changeDeviceStatusTile() {
+    final t = AppLocalizations.of(context)!;
     return SizedBox(
       width: 285,
       child: Row(
         children: [
           Expanded(
             child: CustomDropDownTextField(
-              title: 'Status',
+              title: t.status,
               padding: _spacing,
               showTitle: false,
               enableSearch: false,
@@ -529,7 +534,7 @@ class _EditServiceItemState extends ConsumerState<EditServiceItemScreen> {
           const SizedBox(width: 4),
           Expanded(
             child: CustomDropDownTextField(
-              title: 'Delivery',
+              title: t.delivery,
               padding: _spacing,
               showTitle: false,
               enableSearch: false,

@@ -38,7 +38,11 @@ Future<DateTime?> showDateTimePicker(
           opacity: anim1.drive(
             Tween(begin: 0, end: 1),
           ),
-          child: child);
+          child: Localizations.override(
+            context: context,
+            locale: const Locale('en'),
+            child: child,
+          ));
     },
     transitionDuration: const Duration(milliseconds: 200),
     barrierDismissible: true,
