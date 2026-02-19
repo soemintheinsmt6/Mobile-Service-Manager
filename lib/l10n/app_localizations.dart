@@ -98,11 +98,11 @@ abstract class AppLocalizations {
     Locale('my')
   ];
 
-  /// No description provided for @addService.
+  /// No description provided for @add.
   ///
   /// In en, this message translates to:
-  /// **'Add Service'**
-  String get addService;
+  /// **'Add'**
+  String get add;
 
   /// No description provided for @backupDescription.
   ///
@@ -416,11 +416,11 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get search;
 
-  /// No description provided for @service.
+  /// No description provided for @list.
   ///
   /// In en, this message translates to:
-  /// **'Service'**
-  String get service;
+  /// **'List'**
+  String get list;
 
   /// No description provided for @serviceList.
   ///

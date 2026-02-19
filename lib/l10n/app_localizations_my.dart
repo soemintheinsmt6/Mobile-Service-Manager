@@ -9,11 +9,11 @@ class AppLocalizationsMy extends AppLocalizations {
   AppLocalizationsMy([String locale = 'my']) : super(locale);
 
   @override
-  String get addService => 'ဝန်ဆောင်မှုထည့်မည်';
+  String get add => 'စာရင်းသွင်းမည်';
 
   @override
   String get backupDescription =>
-      'ဘရန်းများ၊ ပညာရှင်များ၊ ချွတ်ယွင်းချက်များနှင့် ဝန်ဆောင်မှုပစ္စည်းများ အပါအဝင် သင်၏ဒေတာအားလုံးကို အရန်သိမ်းမည်။';
+      'ဘရန်းများ၊ ပြုပြင််သူများ၊ ချွတ်ယွင်းချက်များနှင့် အလုံးစာရင််းများ အပါအဝင် သင်၏ဒေတာအားလုံးကို အရန်သိမ်းမည်။';
 
   @override
   String get backupError => 'အရန်သိမ်းရာတွင် အမှားရှိသည်:';
@@ -174,10 +174,10 @@ class AppLocalizationsMy extends AppLocalizations {
   String get search => 'ရှာဖွေမည်';
 
   @override
-  String get service => 'ဝန်ဆောင်မှု';
+  String get list => 'စာရင်း';
 
   @override
-  String get serviceList => 'ဝန်ဆောင်မှုစာရင်း';
+  String get serviceList => 'အလုံးစာရင်း';
 
   @override
   String get serviceStatus => 'ဝန်ဆောင်မှုအခြေအနေ';
@@ -195,7 +195,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get status => 'အခြေအနေ';
 
   @override
-  String get technician => 'ပညာရှင်';
+  String get technician => 'ပြုပြင်သူ';
 
   @override
   String get toDate => 'ရက်စွဲသို့';
@@ -210,7 +210,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get addError => 'ချွတ်ယွင်းချက်ထည့်မည်';
 
   @override
-  String get addTechnician => 'ပညာရှင်ထည့်မည်';
+  String get addTechnician => 'ပြုပြင်သူထည့်မည်';
 
   @override
   String get save => 'သိမ်းမည်';
@@ -222,7 +222,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get revenueReport => 'ဝင်ငွေအစီရင်ခံစာ';
 
   @override
-  String get submit => 'တင်ပြမည်';
+  String get submit => 'လုပ်ဆောင်မည်';
 
   @override
   String get noDataAvailable => 'ရွေးချယ်ထားသောရက်စွဲအတွက် ဒေတာမရှိပါ';
@@ -240,7 +240,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get toLabel => 'သို့';
 
   @override
-  String get deletedServiceList => 'ဖျက်ထားသော ဝန်ဆောင်မှုစာရင်း';
+  String get deletedServiceList => 'ဖျက်ထားသော အလုံးစာရင်း';
 
   @override
   String get rowsPerPage => 'တစ်မျက်နှာလျှင်';
@@ -252,7 +252,7 @@ class AppLocalizationsMy extends AppLocalizations {
   String get byLabel => 'မှ';
 
   @override
-  String get done => 'ပြီးပြီ';
+  String get done => 'ပြုပြင်ပီး';
 
   @override
   String get inProgress => 'လုပ်ဆောင်နေ';

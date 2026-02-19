@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get addService => 'Add Service';
+  String get add => 'Add';
 
   @override
   String get backupDescription =>
@@ -174,7 +174,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search';
 
   @override
-  String get service => 'Service';
+  String get list => 'List';
 
   @override
   String get serviceList => 'Service List';

@@ -315,8 +315,7 @@ class _ServiceItemFormState extends ConsumerState<ServiceItemForm> {
             Container(
               padding: const EdgeInsets.only(top: 10, bottom: 20.0),
               width: double.infinity,
-              child:
-                  BarButton(title: t.addService, onPressed: _saveServiceItem),
+              child: BarButton(title: t.add, onPressed: _saveServiceItem),
             ),
           ],
         ),

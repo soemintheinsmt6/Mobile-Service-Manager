@@ -72,10 +72,15 @@ lib/
 │       ├── service_list_excel_exporter.dart # Excel report generation
 │       └── service_list_pdf_printer.dart   # PDF report generation
 │
+├── l10n/                                  # Localization (ARB translation files)
+│   ├── app_en.arb                         # English translations (template)
+│   └── app_my.arb                         # Myanmar translations
+│
 ├── presentation/                          # UI layer (providers, screens, widgets)
 │   ├── providers/
 │   │   ├── brand_provider.dart            # Brand state notifier
 │   │   ├── fault_provider.dart            # Fault state notifier
+│   │   ├── locale_provider.dart           # Locale state management
 │   │   ├── object_box_provider.dart       # ObjectBox DI provider
 │   │   ├── repository_providers.dart      # Repository DI providers
 │   │   ├── revenue_provider.dart          # Revenue state notifier
@@ -90,7 +95,7 @@ lib/
 │   │   ├── search_service_items_screen.dart # Advanced search
 │   │   ├── service_item_form.dart         # Create service item form
 │   │   ├── service_item_list_screen.dart  # Service item list (main)
-│   │   ├── setting_screen.dart            # App settings
+│   │   ├── setting_screen.dart            # App settings & language switcher
 │   │   ├── technician_list_screen.dart    # Technician management
 │   │   └── trash_list_screen.dart         # Trash / recycle bin
 │   └── widgets/
@@ -136,13 +141,14 @@ lib/
 
 ### Key Dependencies
 ```yaml
-- flutter_riverpod: ^2.6.1    # State management
-- objectbox: ^4.0.1           # Local database
-- firebase_core: ^3.8.1       # Firebase integration
-- firebase_analytics: ^11.3.6 # Analytics
-- pdf: ^3.11.3               # PDF generation
-- excel: ^4.0.6              # Excel export
-- google_fonts: ^6.2.1       # Typography
+- flutter_riverpod: ^2.6.1        # State management
+- flutter_localizations (SDK)     # Internationalization support
+- objectbox: ^4.0.1               # Local database
+- firebase_core: ^3.8.1           # Firebase integration
+- firebase_analytics: ^11.3.6     # Analytics
+- pdf: ^3.11.3                   # PDF generation
+- excel: ^4.0.6                  # Excel export
+- google_fonts: ^6.2.1           # Typography
 ```
 
 ## 🚀 Features
@@ -182,8 +188,41 @@ lib/
 - **Material Design 3**: Modern, responsive UI design
 - **Navigation Rail**: Desktop-optimized navigation
 - **Custom Components**: Reusable UI components
-- **Multi-language Support**: Myanmar and English fonts included
+- **Multi-language Support**: Full localization for English and Myanmar (Burmese)
+- **Runtime Language Switching**: Change language on-the-fly from Settings
 - **Responsive Design**: Adapts to different screen sizes
+
+## 🌍 Localization
+
+The application is fully localized using Flutter's built-in internationalization (`gen_l10n`) system, supporting runtime language switching.
+
+### Supported Languages
+| Language | Locale Code | ARB File |
+|----------|-------------|----------|
+| English | `en` | `lib/l10n/app_en.arb` (template) |
+| Myanmar (Burmese) | `my` | `lib/l10n/app_my.arb` |
+
+### How It Works
+- **ARB Files**: Translation strings are defined in Application Resource Bundle (`.arb`) files located in `lib/l10n/`
+- **Code Generation**: Flutter's `gen_l10n` tool auto-generates the `AppLocalizations` class from the ARB files
+- **Configuration**: Localization settings are defined in `l10n.yaml` at the project root
+- **Runtime Switching**: Users can switch languages from the **Settings** screen via a dropdown, managed by `localeProvider`
+
+### Adding a New Translation String
+1. Add the key-value pair to `lib/l10n/app_en.arb` (the template file)
+2. Add the corresponding translation to `lib/l10n/app_my.arb`
+3. Run the app or execute `flutter gen-l10n` to regenerate the localization files
+4. Use the string in code:
+   ```dart
+   final t = AppLocalizations.of(context)!;
+   Text(t.yourNewKey);
+   ```
+
+### Adding a New Locale
+1. Create a new ARB file: `lib/l10n/app_<locale_code>.arb`
+2. Add translations for all keys from `app_en.arb`
+3. Add the new `Locale` to the dropdown in `setting_screen.dart`
+4. Regenerate with `flutter gen-l10n`
 
 ## 🛠️ Getting Started
 

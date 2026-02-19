@@ -126,7 +126,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context);
     final navLabels = [
-      t?.service ?? 'Service',
+      t?.list ?? 'List',
       t?.brand ?? 'Brand',
       t?.technician ?? 'Technician',
       t?.error ?? 'Error',

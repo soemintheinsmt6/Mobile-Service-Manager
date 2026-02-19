@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "addService": "Add Service",
+  "add": "Add",
   "backupDescription": "Create a backup of all your data including brands, technicians, faults, and service items.",
   "backupError": "Error creating backup:",
   "backupSuccess": "Backup created successfully at:",
@@ -53,7 +53,7 @@
   "results": "results",
   "revenue": "Revenue",
   "search": "Search",
-  "service": "Service",
+  "list": "List",
   "serviceList": "Service List",
   "serviceStatus": "Service Status",
   "setting": "Setting",
